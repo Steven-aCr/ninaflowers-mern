@@ -3,8 +3,8 @@ dotenv.config()
 
 import express from "express"
 import cors from "cors"
-import { connectDB } from "./config/bd.js"
-import usuarioRouter from "./routes/usuarioRoutes.js"
+import { connectDB } from "./src/config/bd.js"
+import usuarioRouter from "./src/routes/usuarioRoutes.js"
 
 //Configuracion App
 const app = express()
