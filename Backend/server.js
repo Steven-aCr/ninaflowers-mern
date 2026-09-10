@@ -1,7 +1,10 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import express from "express"
 import cors from "cors"
 import { connectDB } from "./config/bd.js"
-import dotenv from "dotenv"
+import usuarioRouter from "./routes/usuarioRoutes.js"
 
 //Configuracion App
 const app = express()
@@ -14,13 +17,17 @@ app.get("/", (req, res) => {
     res.send("API en ejecucion.")
 })
 
-//Conexion a DB
-const PORT =  process.env.PORT || 3000;
+//Endpoints API
+app.use("/api/usuarios", usuarioRouter);
 
-dotenv.config();
+//Conexion a DB
+const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`Servidor corriendo en: http://localhost:${PORT}`)
     })
-})
+}).catch((error) => {
+    console.error("Error al conectar a la base de datos:", error.message);
+    process.exit(1);
+});
