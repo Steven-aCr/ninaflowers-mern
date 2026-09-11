@@ -12,8 +12,7 @@ app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/productos", productoRoutes);
 app.use("/api/categorias", categoriaRoutes);
 app.use("/api/inventarios", inventarioRoutes);
-app.use("/api/proveedores", productoRoutes);
-
+app.use("/api/proveedores", proveedorRoutes);
 
 
 export default app;
