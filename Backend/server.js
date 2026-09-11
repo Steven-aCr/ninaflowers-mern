@@ -5,10 +5,17 @@ import express from "express"
 import cors from "cors"
 import { connectDB } from "./src/config/bd.js"
 import usuarioRouter from "./src/routes/usuarioRoutes.js"
+<<<<<<< HEAD
 import productoRouter from "./src/routes/productoRoutes.js"
 import categoriaRouter from "./src/routes/categoriaRoutes.js"
 import inventarioRouter from "./src/routes/inventarioRoutes.js"
 import proveedorRouter from "./src/routes/proveedorRoutes.js"
+=======
+import pedidoRouter from "./src/routes/pedidoRoutes.js"
+import carritoRouter from "./src/routes/carritoRoutes.js"
+import envioRouter from "./src/routes/envioRoutes.js"
+import pagoRouter from "./src/routes/pagoRoutes.js"
+>>>>>>> 2444c72 (feat: Modulos de Pedido, Carrito, Envío y Pago funcional)
 
 //Configuracion App
 const app = express()
@@ -23,10 +30,17 @@ app.get("/", (req, res) => {
 
 //Endpoints API
 app.use("/api/usuarios", usuarioRouter);
+<<<<<<< HEAD
 app.use("/api/productos", productoRouter);
 app.use("/api/categorias", categoriaRouter);
 app.use("/api/inventarios", inventarioRouter);
 app.use("/api/proveedores", proveedorRouter);
+=======
+app.use("/api/pedidos", pedidoRouter);
+app.use("/api/carrito", carritoRouter);
+app.use("/api/envio", envioRouter);
+app.use("/api/pago", pagoRouter);
+>>>>>>> 2444c72 (feat: Modulos de Pedido, Carrito, Envío y Pago funcional)
 
 //Conexion a DB
 const PORT = process.env.PORT || 3000;
