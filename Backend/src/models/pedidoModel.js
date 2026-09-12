@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DireccionSchema } from "./embebidos/direccionSchema.js";
+import { DireccionSchema } from "./usuarioModel.js";
 
 const ItemPedidoSchema = new mongoose.Schema({
     productoId:     { type: mongoose.Schema.Types.ObjectId, ref: "Producto", required: true },

@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 // Define la estructura de cada dirección del usuario, 
 // validando los datos esenciales y evitando un _id independiente.
-const DireccionSchema = new mongoose.Schema({
+export const DireccionSchema = new mongoose.Schema({
     etiqueta:   { type: String, required: true },
     linea1:     { type: String, required: true },
     linea2:     { type: String },

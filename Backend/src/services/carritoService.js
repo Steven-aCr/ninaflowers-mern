@@ -1,4 +1,4 @@
-import carritoModel from "../models/carritoModel";
+import carritoModel from "../models/carritoModel.js";
 
 export const crearCarrito = async (datosCarrito) => {
     const nuevoCarrito = new carritoModel(datosCarrito);

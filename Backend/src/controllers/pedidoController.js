@@ -1,4 +1,4 @@
-import * as pedidoService from "../services/pagoServices.js/";
+import * as pedidoService from "../services/pedidoService.js";
 
 export const crear = async (req, res) => {
     try {
