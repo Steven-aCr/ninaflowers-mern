@@ -1,0 +1,85 @@
+/* ==========================================================================
+   variables.css
+   Paleta de colores, tipografías y espaciados de NinaFlowers.
+   Todo el proyecto debe consumir estas variables (nada de colores "a mano").
+   ========================================================================== */
+
+:root {
+  /* --- Colores principales --- */
+  --color-primario: #365646;
+  --color-primario-contenedor: #4e6e5d;
+  --color-en-primario: #ffffff;
+  --color-primario-fijo: #c7ebd6;
+  --color-primario-fijo-oscuro: #accfba;
+  --color-en-primario-fijo: #012114;
+
+  /* --- Colores secundarios (rosa) --- */
+  --color-secundario: #884d59;
+  --color-secundario-contenedor: #feb2bf;
+  --color-en-secundario: #ffffff;
+  --color-secundario-fijo: #ffd9de;
+  --color-en-secundario-fijo: #370b17;
+
+  /* --- Colores terciarios (verde salvia) --- */
+  --color-terciario: #3d5449;
+  --color-terciario-contenedor: #556c61;
+  --color-en-terciario: #ffffff;
+  --color-terciario-fijo: #cee9da;
+  --color-en-terciario-fijo: #092017;
+
+  /* --- Superficies y fondos (blanco cálido / crema) --- */
+  --color-fondo: #fff5ee;
+  --color-superficie: #faf6ee;
+  --color-superficie-contenedor-bajo: #f3ecdd;
+  --color-superficie-contenedor: #ede3cd;
+  --color-superficie-contenedor-alto: #e4d7ba;
+  --color-superficie-contenedor-mas-bajo: #fffdf7;
+
+  /* --- Texto y bordes --- */
+  --color-en-superficie: #121c2c;
+  --color-en-superficie-variante: #424844;
+  --color-borde: #727973;
+  --color-borde-variante: #c1c8c2;
+  --color-error: #ba1a1a;
+
+  /* --- Tipografías --- */
+  --fuente-titulos: "Playfair Display", serif;
+  --fuente-texto: "Plus Jakarta Sans", sans-serif;
+
+  /* --- Escala tipográfica --- */
+  --tam-display-lg: 56px;
+  --tam-headline-lg: 40px;
+  --tam-headline-md: 28px;
+  --tam-headline-sm: 22px;
+  --tam-title-md: 18px;
+  --tam-body-lg: 16px;
+  --tam-body-md: 14px;
+  --tam-body-sm: 12px;
+  --tam-label-lg: 14px;
+  --tam-label-md: 12px;
+  --tam-label-caps: 11px;
+
+  /* --- Espaciados --- */
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 1.5rem;
+  --espacio-xl: 2.5rem;
+  --espacio-xxl: 4rem;
+  --margen: 3rem;
+  --margen-sm: 1.25rem;
+
+  /* --- Bordes redondeados --- */
+  --radio-sm: 0.25rem;
+  --radio-md: 0.5rem;
+  --radio-lg: 0.75rem;
+  --radio-full: 9999px;
+
+  /* --- Sombras --- */
+  --sombra-suave: 0 1px 8px rgba(45, 55, 72, 0.04);
+  --sombra-media: 0 4px 16px rgba(45, 55, 72, 0.08);
+  --sombra-fuerte: 0 10px 30px rgba(45, 55, 72, 0.12);
+
+  /* --- Contenedor máximo --- */
+  --ancho-maximo: 1360px;
+}

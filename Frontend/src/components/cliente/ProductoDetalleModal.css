@@ -1,0 +1,98 @@
+.producto-modal__fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-md);
+  background-color: rgba(18, 28, 44, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.producto-modal {
+  position: relative;
+  width: 100%;
+  max-width: 32rem;
+  padding: var(--espacio-lg);
+  border-radius: var(--radio-lg);
+  background-color: var(--color-superficie-contenedor-mas-bajo);
+  box-shadow: var(--sombra-fuerte);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-md);
+}
+
+.producto-modal__cerrar {
+  position: absolute;
+  top: var(--espacio-md);
+  right: var(--espacio-md);
+  color: var(--color-en-superficie-variante);
+  padding: var(--espacio-xs);
+  border-radius: var(--radio-full);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.producto-modal__cerrar:hover {
+  background-color: var(--color-superficie-contenedor);
+  color: var(--color-en-superficie);
+}
+
+.producto-modal__categoria {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-xs);
+  color: var(--color-primario);
+  font-size: var(--tam-label-caps);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.producto-modal__categoria .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.producto-modal__titulo {
+  font-size: var(--tam-headline-sm);
+}
+
+.producto-modal__descripcion {
+  color: var(--color-en-superficie-variante);
+  line-height: 1.6;
+}
+
+.producto-modal__precio-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--espacio-xs);
+}
+
+.producto-modal__precio-etiqueta {
+  font-size: var(--tam-label-md);
+  color: var(--color-en-superficie-variante);
+}
+
+.producto-modal__precio-valor {
+  font-size: var(--tam-title-md);
+  font-weight: 600;
+}
+
+.producto-modal__boton-agregar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-xs);
+  width: 100%;
+  padding: var(--espacio-md);
+  border-radius: var(--radio-full);
+  background-color: var(--color-primario);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: var(--sombra-suave);
+  transition: background-color 0.2s ease;
+}
+
+.producto-modal__boton-agregar:hover {
+  background-color: var(--color-primario-contenedor);
+}

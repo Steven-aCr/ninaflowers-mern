@@ -1,0 +1,36 @@
+.categoria-filtro {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  overflow-x: auto;
+  padding-bottom: var(--espacio-xs);
+}
+
+.categoria-filtro::-webkit-scrollbar {
+  display: none;
+}
+
+.categoria-filtro__pill {
+  padding: 0.65rem var(--espacio-lg);
+  border-radius: var(--radio-full);
+  font-size: var(--tam-label-lg);
+  white-space: nowrap;
+  background-color: var(--color-superficie-contenedor-bajo);
+  color: var(--color-en-superficie-variante);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.categoria-filtro__pill:hover {
+  background-color: var(--color-superficie-contenedor);
+  color: var(--color-en-superficie);
+}
+
+.categoria-filtro__pill--activo {
+  background-color: var(--color-primario);
+  color: #ffffff;
+  box-shadow: var(--sombra-suave);
+}
+
+.categoria-filtro__pill--activo:hover {
+  background-color: var(--color-primario);
+}

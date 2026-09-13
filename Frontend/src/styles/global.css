@@ -1,0 +1,39 @@
+/* ==========================================================================
+   global.css
+   Estilos generales del body y tipografía base.
+   Las fuentes (Playfair Display / Plus Jakarta Sans) se cargan en index.html
+   con <link> a Google Fonts, no aquí, para que el navegador las precargue
+   antes de pintar la página.
+   ========================================================================== */
+
+body {
+  font-family: var(--fuente-texto);
+  font-size: var(--tam-body-md);
+  color: var(--color-en-superficie);
+  background-color: var(--color-fondo);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-en-superficie);
+}
+
+/* Icono de Material Symbols: por defecto vienen "vacíos" (outline),
+   esta clase es la que ya trae Google Fonts, solo la dejamos documentada. */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
