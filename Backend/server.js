@@ -2,30 +2,15 @@ import dotenv from "dotenv"
 dotenv.config()
 
 import express from "express"
-import cors from "cors"
 import { connectDB } from "./src/config/bd.js"
-import usuarioRouter from "./src/routes/usuarioRoutes.js"
-import productoRouter from "./src/routes/productoRoutes.js"
-import categoriaRouter from "./src/routes/categoriaRoutes.js"
-import inventarioRouter from "./src/routes/inventarioRoutes.js"
-import proveedorRouter from "./src/routes/proveedorRoutes.js"
-import movInventarioRouter from "./src/routes/movInventarioRoutes.js"
 
-const app = express()
+import app from "./src/app.js"
 
 app.use(express.json())
-app.use(cors())
 
-app.get("/", (req, res) => {
+app.get("/", (res) => {
     res.send("API en ejecucion.")
 })
-
-app.use("/api/usuarios", usuarioRouter);
-app.use("/api/productos", productoRouter);
-app.use("/api/categorias", categoriaRouter);
-app.use("/api/inventarios", inventarioRouter);
-app.use("/api/proveedores", proveedorRouter);
-app.use("/api/movimientos-inventario", movInventarioRouter);
 
 const PORT = process.env.PORT || 3000;
 

@@ -1,12 +1,16 @@
 import { Router } from "express";
-import { crear, obtenerTodos, obtenerUno, actualizar, eliminar } from "../controllers/usuarioController.js";
-
-// NOTA1: cuando exista el módulo de autenticación, se importara a esta seccion.
-// import { verificarToken, verificarRol } from "../middleware/authMiddleware.js";
+import { login, crear, obtenerTodos, obtenerUno, actualizar, eliminar } from "../controllers/usuarioController.js";
+import { verificarToken, permitirRoles } from "../middleware/authMiddleware.js";
+import { opcionalHttpOnlyCooki } from "../middleware/cookieMiddleware.js";
 
 const router = Router();
 
-// NOTA2: proteger con verificarToken + verificarRol("administrador") una vez exista el middleware
+//Endpoint Publico
+router.post("/login", opcionalHttpOnlyCooki, login);
+
+// Endpoints protegidos exclusivamente para ADMINISTADORES.
+router.use(verificarToken, permitirRoles('administrador'));
+
 router.get("/", obtenerTodos);
 router.get("/:id", obtenerUno);
 router.post("/", crear);

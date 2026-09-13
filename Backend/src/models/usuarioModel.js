@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcrypt";
 
 // Define la estructura de cada dirección del usuario, 
 // validando los datos esenciales y evitando un _id independiente.
@@ -20,6 +21,18 @@ const UsuarioSchema = new mongoose.Schema({
     direcciones: { type: [DireccionSchema], default: [] },
     activo:      { type: Boolean, default: true },
 }, { timestamps: true });
+
+//HASH de password antes de guardar
+UsuarioSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+});
+
+//Metodo para comparar contra:
+UsuarioSchema.methods.compararPassword = async function(passwordCandidata) {
+    return await bcrypt.compare(passwordCandidata, this.password);
+};
 
 const usuarioModel = mongoose.models.Usuario || mongoose.model("Usuario", UsuarioSchema);
 

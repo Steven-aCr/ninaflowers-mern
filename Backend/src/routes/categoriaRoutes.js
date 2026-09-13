@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { crear, obtenerTodos, obtenerUno, actualizar, eliminar } from "../controllers/categoriaController.js";
-
-// NOTA: proteger con verificarToken + verificarRol("administrador") una vez exista el middleware
-// (crear, actualizar, eliminar deberían ser solo de administrador;
-//  obtenerTodos y obtenerUno pueden quedar públicas para el catálogo)
+import { verificarToken, permitirRoles } from "../middleware/authMiddleware.js";
 
 const router = Router();
+
+// Endpoints protegidos exclusivamente para ADMINISTADORES.
+router.use(verificarToken, permitirRoles('administrador'));
 
 router.get("/", obtenerTodos);
 router.get("/:id", obtenerUno);

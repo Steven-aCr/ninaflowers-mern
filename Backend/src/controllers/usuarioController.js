@@ -1,5 +1,14 @@
 import * as usuarioService from "../services/usuarioService.js";
 
+//Login
+export const login = async (req, res) => {
+    try {
+        const { correo, password } = req.body;
+        const resultado =  await usuarioService.login(correo, password);
+        res.status(200).json(resultado);
+    } catch (error) { res.status(400).json({ error: error.message }); }
+};
+
 // agregar registro de usuario.
 export const crear = async (req, res) => {
     try {
@@ -8,6 +17,7 @@ export const crear = async (req, res) => {
     } catch (error) { res.status(400).json({ error: error.message }); }
 };
 
+//Obtener la lista de usuarios completa
 export const obtenerTodos = async (req, res) => {
     try {
         const pagina = parseInt(req.query.page) || 1;
@@ -17,6 +27,7 @@ export const obtenerTodos = async (req, res) => {
     } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
+//Obtener usuarios por ID
 export const obtenerUno = async (req, res) => {
     try {
         const resultado = await usuarioService.buscarUsuarioId(req.params.id);
@@ -25,6 +36,7 @@ export const obtenerUno = async (req, res) => {
     } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
+//Actualizar datos del usuario
 export const actualizar = async (req, res) => {
     try {
         const resultado = await usuarioService.modificarUsuario(req.params.id, req.body);
@@ -33,6 +45,7 @@ export const actualizar = async (req, res) => {
     } catch (error) { res.status(400).json({ error: error.message }); }
 };
 
+//Eliminar documento.
 export const eliminar = async (req, res) => {
     try {
         const resultado = await usuarioService.eliminarUsuario(req.params.id);
