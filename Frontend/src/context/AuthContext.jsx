@@ -1,31 +1,48 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import * as authService from "../services/authService.js";
 
 export const AuthContext = createContext(null);
 
-// NOTA IMPORTANTE (leer antes de conectar authService real):
-// "usuario" es local por ahora (no persiste al recargar, no llama a la API).
-// login()/registrar() solo GUARDAN el objeto usuario en memoria para que el
-// resto de la app (Navbar, PrivateRoute, Perfil) ya tenga algo real con qué
-// trabajar. Cuando conectemos authService:
-//   - login(correo, password) hará authService.iniciarSesion(...) y GUARDARÁ
-//     el usuario que devuelva la API (no el que recibe por parámetro).
-//   - Se leerá el token de una cookie HttpOnly (según tu arquitectura de
-//     autenticación), no de localStorage.
-//   - Se agregará "cargando" (true mientras se verifica sesión al abrir la
-//     app) para que PrivateRoute no redirija de más antes de confirmar.
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
+  const [cargando, setCargando] = useState(true);
 
-  const login = (datosUsuario) => {
-    setUsuario(datosUsuario);
+  useEffect(() => {
+    const verificarSesion = async () => {
+      try {
+        const usuarioActual = await authService.obtenerSesionActual();
+        setUsuario(usuarioActual);
+      } catch (error) {
+        setUsuario(null);
+      } finally {
+        setCargando(false);
+      }
+    };
+    verificarSesion();
+  }, []);
+
+  const login = async (correo, password) => {
+    const data = await authService.login(correo, password);
+    setUsuario(data.usuario);
+    return data;
   };
 
-  const logout = () => {
-    setUsuario(null);
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Error al cerrar sesión en el servidor:", error.message);
+    } finally {
+      setUsuario(null);
+    }
+  };
+
+  const actualizarUsuario = (datosNuevos) => {
+    setUsuario((actual) => ({ ...actual, ...datosNuevos }));
   };
 
   return (
-    <AuthContext.Provider value={{ usuario, login, logout }}>
+    <AuthContext.Provider value={{ usuario, cargando, login, logout, actualizarUsuario }}>
       {children}
     </AuthContext.Provider>
   );

@@ -13,10 +13,10 @@ import pagoRoutes from "./routes/pagoRoutes.js";
 import movInventarioRoutes from "./routes/movInventarioRoutes.js";
 
 const corsOptions = {
-    origin: process.env.CLIENT_URL || '*', // Especificar URL utilizada en Frontend.
-    credential: true,
+    origin: process.env.CLIENT_URL || "http://localhost:5173", //URL utilizada en Frontend
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-use-cookie']
 };
 
 const app = express();

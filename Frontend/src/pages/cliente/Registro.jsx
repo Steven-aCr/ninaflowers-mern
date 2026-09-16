@@ -3,15 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Boton from "../../components/common/Boton.jsx";
 import { useAuth } from "../../hooks/useAuth.js";
 import "./Registro.css";
+import * as authService from "../../services/authService.js";
 
-// Campos según tu usuarioModel: nombre, apellido, correo, password,
-// telefono. "direcciones" no se pide aquí — según tu modelo es un arreglo
-// que se llena después, desde Perfil o al hacer el primer pedido.
-//
-// Igual que en Login: el submit todavía no llama a usuarioService/
-// authService. Arma el objeto localmente y lo guarda en AuthContext para
-// poder probar la UI. Cuando conectemos el backend, aquí va
-// usuarioService.crearUsuario(datos) seguido de login(usuarioCreado).
 function Registro() {
   const [form, setForm] = useState({
     nombre: "",
@@ -21,6 +14,7 @@ function Registro() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -28,7 +22,7 @@ function Registro() {
     setForm((actual) => ({ ...actual, [campo]: evento.target.value }));
   };
 
-  const manejarSubmit = (evento) => {
+  const manejarSubmit = async (evento) => {
     evento.preventDefault();
 
     const camposFaltantes = Object.entries(form).filter(([, valor]) => !valor.trim());
@@ -38,8 +32,19 @@ function Registro() {
     }
 
     setError("");
-    login({ ...form, rol: "cliente" });
-    navigate("/");
+    setEnviando(true);
+
+    try {
+      await authService.registro(form);       // crea el usuario en la BD
+      await login(form.correo, form.password); // inicia sesión automáticamente
+      navigate("/");
+    } catch (error) {
+      setError(
+        error.response?.data?.error || "No se pudo completar el registro."
+      );
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (

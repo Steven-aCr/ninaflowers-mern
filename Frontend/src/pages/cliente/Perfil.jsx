@@ -2,18 +2,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Boton from "../../components/common/Boton.jsx";
 import { useAuth } from "../../hooks/useAuth.js";
+import * as usuarioService from "../../services/usuarioService.js";
 import "./Perfil.css";
 
-// "usuario" viene de AuthContext (useAuth), no por props — es información
-// de sesión, igual que en Navbar. Los campos editables solo se guardan en
-// AuthContext por ahora (login() los sobrescribe); cuando conectemos
-// usuarioService, "Guardar cambios" hará
-// usuarioService.modificarUsuario(usuario._id, datos) antes de actualizar
-// la sesión.
 function Perfil() {
-  const { usuario, cerrarSesion } = useAuth();
+  const { usuario, logout, actualizarUsuario } = useAuth();
   const navigate = useNavigate();
   const [editando, setEditando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState("");
   const [datos, setDatos] = useState({
     nombre: usuario?.nombre || "",
     apellido: usuario?.apellido || "",
@@ -23,18 +20,30 @@ function Perfil() {
   const actualizarCampo = (campo) => (evento) =>
     setDatos((actual) => ({ ...actual, [campo]: evento.target.value }));
 
-  const manejarGuardar = (evento) => {
+  const manejarGuardar = async (evento) => {
     evento.preventDefault();
-    // TODO: usuarioService.modificarUsuario(usuario._id, datos)
-    setEditando(false);
+    setError("");
+    setGuardando(true);
+
+    try {
+     const usuarioActualizado = await usuarioService.actualizarPerfil(datos);
+     actualizarUsuario(usuarioActualizado); 
+     setEditando(false);
+    } catch (error) {
+      setError(error.response?.data?.error || "No se pudo guardar los cambios.");
+    } finally {
+      setGuardando(false);
+    }
   };
 
   const manejarCerrarSesion = () => {
-    cerrarSesion();
+    logout();
     navigate("/");
   };
 
-  return (
+  if (!usuario) return null;
+
+return (
     <main className="perfil">
       <div className="perfil__contenedor">
         <h1>Mi perfil</h1>
@@ -71,9 +80,13 @@ function Perfil() {
             <input value={datos.telefono} disabled={!editando} onChange={actualizarCampo("telefono")} />
           </label>
 
+          {error && <p className="perfil__error">{error}</p>}
+
           <div className="perfil__acciones">
             {editando ? (
-              <Boton type="submit">Guardar cambios</Boton>
+              <Boton type="submit" disabled={guardando}>
+                {guardando ? "Guardando..." : "Guardar cambios"}
+              </Boton>
             ) : (
               <Boton type="button" onClick={() => setEditando(true)}>
                 Editar perfil

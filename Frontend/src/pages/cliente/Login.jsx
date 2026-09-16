@@ -4,21 +4,15 @@ import Boton from "../../components/common/Boton.jsx";
 import { useAuth } from "../../hooks/useAuth.js";
 import "./Login.css";
 
-// NOTA: el submit todavía no llama a authService (no existe conexión real
-// a la API). Por ahora arma un objeto "usuario" mínimo con el correo
-// ingresado y lo guarda en AuthContext, solo para que el resto de la app
-// (Navbar, PrivateRoute) tenga sesión con la que trabajar mientras se
-// prueba la UI. Cuando conectemos authService, este handleSubmit hace
-// authService.iniciarSesion({correo, password}) y usa el usuario que
-// devuelva la API real.
 function Login() {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const manejarSubmit = (evento) => {
+  const manejarSubmit = async (evento) => {
     evento.preventDefault();
 
     if (!correo.trim() || !password.trim()) {
@@ -27,8 +21,18 @@ function Login() {
     }
 
     setError("");
-    login({ correo, nombre: correo.split("@")[0] });
-    navigate("/");
+    setEnviando(true);
+
+    try {
+      await login(correo, password);
+      navigate("/");
+    } catch (error) {
+      setError(
+        error.response?.data?.error || "Correo o contraseña incorrectos."
+      );
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -67,8 +71,8 @@ function Login() {
 
           {error && <p className="login__error">{error}</p>}
 
-          <Boton type="submit" variante="primario">
-            Iniciar sesión
+          <Boton type="submit" variante="primario" disabled={enviando}>
+            {enviando ? "Ingresando..." : "Iniciar sesión"}
           </Boton>
         </form>
 
