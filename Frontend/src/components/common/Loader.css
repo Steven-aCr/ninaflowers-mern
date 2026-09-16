@@ -1,0 +1,28 @@
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-xl);
+}
+
+.loader__spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radio-full);
+  border: 3px solid var(--color-superficie-contenedor);
+  border-top-color: var(--color-primario);
+  animation: loader-girar 0.7s linear infinite;
+}
+
+.loader__texto {
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+}
+
+@keyframes loader-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,15 +1,16 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import App from "./App.jsx";
+import "./index.css";
 
-// BrowserRouter debe envolver TODO el árbol de la app.
-// Es lo que le permite a react-router leer/cambiar la URL
-// y decidir qué página mostrar sin recargar el navegador.
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
+  </React.StrictMode>
 );

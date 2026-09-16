@@ -4,8 +4,8 @@ import Paginacion from "../../components/common/Paginacion.jsx";
 import Toast from "../../components/common/Toast.jsx";
 import CategoriaFiltro from "../../components/cliente/CategoriaFiltro.jsx";
 import ProductoCard from "../../components/cliente/ProductoCard.jsx";
-import ProductoDetalleModal from "../../components/cliente/ProductoDetalleModal.jsx";
 import { useDebounce } from "../../hooks/useDebounce.js";
+import { useCarrito } from "../../hooks/useCarrito.js";
 import "./Catalogo.css";
 
 const PRODUCTOS_POR_PAGINA = 6;
@@ -19,11 +19,11 @@ const PRODUCTOS_POR_PAGINA = 6;
 // la paginación deja de cortar el arreglo local para usar la respuesta
 // { totalDoc, pagActual, totalPag, datos } tal cual la devuelve tu API.
 function Catalogo({ productos = [], categorias = [] }) {
+  const { agregarItem } = useCarrito();
   const [busqueda, setBusqueda] = useState("");
   const [categoriaActiva, setCategoriaActiva] = useState("todos");
   const [orden, setOrden] = useState("nombre-asc");
   const [paginaActual, setPaginaActual] = useState(1);
-  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [mensajeToast, setMensajeToast] = useState("");
 
   const busquedaDebounced = useDebounce(busqueda, 400);
@@ -71,8 +71,8 @@ function Catalogo({ productos = [], categorias = [] }) {
   };
 
   const manejarAgregarCarrito = (producto) => {
+    agregarItem(producto, 1);
     setMensajeToast(`"${producto.nombre}" agregado al carrito ($${Number(producto.precio).toFixed(2)})`);
-    setProductoSeleccionado(null);
   };
 
   const limpiarFiltros = () => {
@@ -141,7 +141,6 @@ function Catalogo({ productos = [], categorias = [] }) {
                 key={producto._id}
                 producto={producto}
                 etiqueta={obtenerNombreCategoria(producto.categoriaId)}
-                onVerDetalles={setProductoSeleccionado}
                 onAgregarCarrito={manejarAgregarCarrito}
               />
             ))}
@@ -196,15 +195,6 @@ function Catalogo({ productos = [], categorias = [] }) {
           <span className="catalogo__banner-etiqueta">Taller Botánico Artesanal</span>
         </section>
       </div>
-
-      <ProductoDetalleModal
-        producto={productoSeleccionado}
-        categoriaNombre={
-          productoSeleccionado ? obtenerNombreCategoria(productoSeleccionado.categoriaId) : null
-        }
-        onCerrar={() => setProductoSeleccionado(null)}
-        onAgregarCarrito={manejarAgregarCarrito}
-      />
 
       <Toast mensaje={mensajeToast} onCerrar={() => setMensajeToast("")} />
     </main>

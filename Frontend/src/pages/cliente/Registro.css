@@ -1,0 +1,99 @@
+.registro {
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  padding: 120px var(--margen-sm) var(--espacio-xxl);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: var(--color-superficie);
+}
+
+.registro__tarjeta {
+  width: 100%;
+  max-width: 30rem;
+  background-color: var(--color-superficie-contenedor-mas-bajo);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-media);
+  padding: var(--espacio-xl);
+}
+
+.registro__encabezado {
+  text-align: center;
+  margin-bottom: var(--espacio-lg);
+}
+
+.registro__encabezado .material-symbols-outlined {
+  color: var(--color-primario);
+  font-size: 32px;
+  margin-bottom: var(--espacio-xs);
+}
+
+.registro__encabezado h1 {
+  font-size: var(--tam-headline-sm);
+  margin-bottom: var(--espacio-xs);
+}
+
+.registro__encabezado p {
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+}
+
+.registro__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-md);
+}
+
+.registro__fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-md);
+}
+
+.registro__campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+}
+
+.registro__campo label {
+  font-size: var(--tam-label-md);
+  color: var(--color-en-superficie-variante);
+}
+
+.registro__campo input {
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background-color: var(--color-superficie-contenedor-bajo);
+  border: 1px solid transparent;
+  font-size: var(--tam-body-md);
+  color: var(--color-en-superficie);
+}
+
+.registro__campo input:focus {
+  outline: none;
+  border-color: var(--color-primario);
+}
+
+.registro__error {
+  font-size: var(--tam-body-sm);
+  color: var(--color-error);
+}
+
+.registro__pie {
+  text-align: center;
+  margin-top: var(--espacio-lg);
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+}
+
+.registro__pie a {
+  color: var(--color-primario);
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .registro__fila {
+    grid-template-columns: 1fr;
+  }
+}

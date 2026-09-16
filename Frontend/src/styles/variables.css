@@ -2,42 +2,52 @@
    variables.css
    Paleta de colores, tipografías y espaciados de NinaFlowers.
    Todo el proyecto debe consumir estas variables (nada de colores "a mano").
+
+   GUÍA DE MARCA (fuente de verdad de los 4 colores base — no cambiar sin
+   revisar la guía de estilo):
+     Primary  #6B5B95  (lavanda)
+     Secondary #F0B7C4 (rosa pálido)
+     Tertiary  #8FA89B (verde salvia)
+     Neutral   #2D3748 (gris azulado, para texto — NO TOCAR sin avisar)
+   Las demás variables de cada color (contenedor, fijo, en-fijo) son tonos
+   más claros/oscuros DERIVADOS de estos 4 — si cambias un color base,
+   ajusta también sus derivados de este mismo bloque.
    ========================================================================== */
 
 :root {
-  /* --- Colores principales --- */
-  --color-primario: #365646;
-  --color-primario-contenedor: #4e6e5d;
+  /* --- Colores principales (lavanda — Primary #6B5B95) --- */
+  --color-primario: #6b5b95;
+  --color-primario-contenedor: #4f4270;
   --color-en-primario: #ffffff;
-  --color-primario-fijo: #c7ebd6;
-  --color-primario-fijo-oscuro: #accfba;
-  --color-en-primario-fijo: #012114;
+  --color-primario-fijo: #e3dff0;
+  --color-primario-fijo-oscuro: #b7abd4;
+  --color-en-primario-fijo: #2c2444;
 
-  /* --- Colores secundarios (rosa) --- */
-  --color-secundario: #884d59;
-  --color-secundario-contenedor: #feb2bf;
+  /* --- Colores secundarios (rosa pálido — Secondary #F0B7C4) --- */
+  --color-secundario: #f0b7c4;
+  --color-secundario-contenedor: #e08fa1;
   --color-en-secundario: #ffffff;
-  --color-secundario-fijo: #ffd9de;
-  --color-en-secundario-fijo: #370b17;
+  --color-secundario-fijo: #fbe9ed;
+  --color-en-secundario-fijo: #7a3345;
 
-  /* --- Colores terciarios (verde salvia) --- */
-  --color-terciario: #3d5449;
-  --color-terciario-contenedor: #556c61;
+  /* --- Colores terciarios (verde salvia — Tertiary #8FA89B) --- */
+  --color-terciario: #8fa89b;
+  --color-terciario-contenedor: #6e8579;
   --color-en-terciario: #ffffff;
-  --color-terciario-fijo: #cee9da;
-  --color-en-terciario-fijo: #092017;
+  --color-terciario-fijo: #dbe6e0;
+  --color-en-terciario-fijo: #2f3d37;
 
   /* --- Superficies y fondos (blanco cálido / crema) --- */
-  --color-fondo: #fff5ee;
+  --color-fondo: #faf6ee;
   --color-superficie: #faf6ee;
   --color-superficie-contenedor-bajo: #f3ecdd;
   --color-superficie-contenedor: #ede3cd;
   --color-superficie-contenedor-alto: #e4d7ba;
   --color-superficie-contenedor-mas-bajo: #fffdf7;
 
-  /* --- Texto y bordes --- */
-  --color-en-superficie: #121c2c;
-  --color-en-superficie-variante: #424844;
+  /* --- Texto y bordes (Neutral #2D3748 — SIN CAMBIOS, es el azul a conservar) --- */
+  --color-en-superficie: #2d3748;
+  --color-en-superficie-variante: #5b6472;
   --color-borde: #727973;
   --color-borde-variante: #c1c8c2;
   --color-error: #ba1a1a;
