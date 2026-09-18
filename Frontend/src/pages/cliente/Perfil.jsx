@@ -26,9 +26,9 @@ function Perfil() {
     setGuardando(true);
 
     try {
-     const usuarioActualizado = await usuarioService.actualizarPerfil(datos);
-     actualizarUsuario(usuarioActualizado); 
-     setEditando(false);
+      const usuarioActualizado = await usuarioService.actualizarPerfil(datos);
+      actualizarUsuario(usuarioActualizado);
+      setEditando(false);
     } catch (error) {
       setError(error.response?.data?.error || "No se pudo guardar los cambios.");
     } finally {
@@ -43,7 +43,7 @@ function Perfil() {
 
   if (!usuario) return null;
 
-return (
+  return (
     <main className="perfil">
       <div className="perfil__contenedor">
         <h1>Mi perfil</h1>
@@ -84,11 +84,11 @@ return (
 
           <div className="perfil__acciones">
             {editando ? (
-              <Boton type="submit" disabled={guardando}>
+              <Boton key="guardar" type="submit" disabled={guardando}>
                 {guardando ? "Guardando..." : "Guardar cambios"}
               </Boton>
             ) : (
-              <Boton type="button" onClick={() => setEditando(true)}>
+              <Boton key="editar" type="button" onClick={() => setEditando(true)}>
                 Editar perfil
               </Boton>
             )}
