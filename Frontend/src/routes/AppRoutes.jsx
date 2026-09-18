@@ -12,6 +12,19 @@ import Login from "../pages/cliente/Login.jsx";
 import Registro from "../pages/cliente/Registro.jsx";
 import Perfil from "../pages/cliente/Perfil.jsx";
 
+import AdminRoute from "./AdminRoute.jsx";
+import AdminLayout from "../layouts/AdminLayout.jsx";
+import Dashboard from "../pages/admin/Dashboard.jsx";
+import Productos from "../pages/admin/Productos.jsx";
+import Categorias from "../pages/admin/Categorias.jsx";
+import Proveedores from "../pages/admin/Proveedores.jsx";
+import Inventario from "../pages/admin/Inventario.jsx";
+import MovInventario from "../pages/admin/MovInventario.jsx";
+import Pedidos from "../pages/admin/Pedidos.jsx";
+import Pagos from "../pages/admin/pagos.jsx";
+import Envios from "../pages/admin/Envios.jsx";
+import Usuario from "../pages/admin/Usuario.jsx";
+
 // Todavía sin datos reales: Home, Catalogo, DetalleProducto, MisPedidos y
 // DetallePedido siguen recibiendo props vacías/null hasta que conectemos
 // productoService/categoriaService/pedidoService. Cuando eso pase, cada
@@ -19,10 +32,12 @@ import Perfil from "../pages/cliente/Perfil.jsx";
 // useParams donde corresponde).
 //
 // Checkout, MisPedidos, DetallePedido y Perfil exigen sesión (van dentro
-// de <PrivateRoute />) — como el login todavía no está conectado al
-// backend, hoy son inalcanzables hasta pasar por /login o /registro en la
-// misma sesión del navegador. AdminRoute se agrega junto con el módulo de
-// administrador, que todavía no existe.
+// de <PrivateRoute />).
+//
+// El bloque /admin exige sesión + rol administrador (AdminRoute) y monta
+// AdminLayout (Sidebar + Topbar) para todas sus rutas hijas. Las páginas
+// admin (Productos, Inventario, etc.) todavía no tienen datos reales;
+// eso se conecta módulo por módulo.
 function AppRoutes() {
   return (
     <Routes>
@@ -39,6 +54,21 @@ function AppRoutes() {
           <Route path="/mis-pedidos" element={<MisPedidos pedidos={[]} />} />
           <Route path="/mis-pedidos/:id" element={<DetallePedido pedido={null} />} />
           <Route path="/perfil" element={<Perfil />} />
+        </Route>
+      </Route>
+
+      <Route element={<AdminRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/productos" element={<Productos />} />
+          <Route path="/admin/categorias" element={<Categorias />} />
+          <Route path="/admin/proveedores" element={<Proveedores />} />
+          <Route path="/admin/inventario" element={<Inventario />} />
+          <Route path="/admin/movimientos" element={<MovInventario />} />
+          <Route path="/admin/pedidos" element={<Pedidos />} />
+          <Route path="/admin/pagos" element={<Pagos />} />
+          <Route path="/admin/envios" element={<Envios />} />
+          <Route path="/admin/usuarios" element={<Usuario />} />
         </Route>
       </Route>
     </Routes>
