@@ -1,0 +1,17 @@
+.usuarios-page__encabezado {
+  margin-bottom: var(--espacio-md);
+}
+
+.usuarios-page__filtros {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+}
+
+.usuarios-page__filtros select {
+  padding: var(--espacio-sm);
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie);
+}

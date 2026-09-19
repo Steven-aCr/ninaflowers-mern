@@ -61,13 +61,16 @@ function MovInventario() {
         inventarioService.listarInventario({ limite: 500 }),
         proveedorService.listarProveedores({ activo: "true", limite: 500 })
       ]);
-      // Solo productos que ya tienen inventario registrado pueden recibir movimientos.
-      const productos = resInventario.datos.map((inv) => ({
-        _id: inv.productoId._id,
-        nombre: inv.productoId.nombre,
-        sku: inv.productoId.sku,
-        stock: inv.stock
-      }));
+      // Se descartan registros de Inventario cuyo producto ya no existe
+      // (productoId poblado como null: producto borrado fuera de la API).
+      const productos = resInventario.datos
+        .filter((inv) => inv.productoId)
+        .map((inv) => ({
+          _id: inv.productoId._id,
+          nombre: inv.productoId.nombre,
+          sku: inv.productoId.sku,
+          stock: inv.stock
+        }));
       setProductosConInventario(productos);
       setProveedores(resProveedores.datos);
       setMostrarFormulario(true);

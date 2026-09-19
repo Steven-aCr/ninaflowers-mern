@@ -1,0 +1,55 @@
+.tabla-usuarios {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-superficie-contenedor-mas-bajo);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+  box-shadow: var(--sombra-suave);
+}
+
+.tabla-usuarios th,
+.tabla-usuarios td {
+  padding: var(--espacio-sm) var(--espacio-md);
+  text-align: left;
+  border-bottom: 1px solid var(--color-borde-variante);
+  font-size: var(--tam-body-md);
+}
+
+.tabla-usuarios th {
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-md);
+  text-transform: uppercase;
+}
+
+.tabla-usuarios__rol {
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radio-full);
+  font-size: var(--tam-label-md);
+  background: var(--color-superficie-contenedor-alto);
+  color: var(--color-en-superficie-variante);
+  text-transform: capitalize;
+}
+
+.tabla-usuarios__rol--administrador {
+  background: var(--color-primario-fijo);
+  color: var(--color-en-primario-fijo);
+}
+
+.tabla-usuarios__badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radio-full);
+  font-size: var(--tam-label-md);
+  background: var(--color-terciario-contenedor);
+  color: var(--color-en-terciario);
+}
+
+.tabla-usuarios__badge--inactivo {
+  background: var(--color-superficie-contenedor-alto);
+  color: var(--color-en-superficie-variante);
+}
+
+.tabla-usuarios__vacio {
+  color: var(--color-en-superficie-variante);
+  padding: var(--espacio-lg);
+  text-align: center;
+}

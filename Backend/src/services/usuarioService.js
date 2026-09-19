@@ -28,6 +28,9 @@ export const listarUsuario = async (parametrosQuery = {}, pagina = 1, limite = 1
     if (parametrosQuery.telefono) {
         filtros.telefono = { $regex: parametrosQuery.telefono, $options: 'i' };
     }
+    if (parametrosQuery.rol) {
+        filtros.rol = parametrosQuery.rol;
+    }
     if (parametrosQuery.activo !== undefined) {
         filtros.activo = parametrosQuery.activo === 'true';
     }

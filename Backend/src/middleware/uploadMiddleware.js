@@ -1,10 +1,15 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 
-const carpetaDestino = "uploads/productos";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename); // .../src/middleware
 
-// Crea la carpeta si no existe (evita el error de multer al arrancar en limpio).
+// Ruta absoluta a src/uploads/productos, sin importar desde dónde se
+// ejecute el comando "npm run server".
+const carpetaDestino = path.join(__dirname, "..", "uploads", "productos");
+
 if (!fs.existsSync(carpetaDestino)) {
     fs.mkdirSync(carpetaDestino, { recursive: true });
 }
@@ -25,7 +30,6 @@ const filtroArchivo = (req, file, cb) => {
     }
 };
 
-// Middleware listo para usar directo en la ruta: hasta 5 imágenes, 5MB c/u.
 export const uploadImagenesProducto = multer({
     storage,
     fileFilter: filtroArchivo,
