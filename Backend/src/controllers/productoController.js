@@ -1,9 +1,34 @@
 import * as productoService from "../services/productoService.js";
 
-// agregar registro de producto.
+// Los datos llegan como multipart/form-data (por las imágenes), así que
+// vienen todos como texto — aquí se convierten a sus tipos reales.
+const construirDatosProducto = (req) => {
+    const datos = { ...req.body };
+
+    if (datos.precio !== undefined) datos.precio = Number(datos.precio);
+    if (datos.costo !== undefined && datos.costo !== '') datos.costo = Number(datos.costo);
+    if (datos.componentes !== undefined) {
+        datos.componentes = typeof datos.componentes === 'string'
+            ? JSON.parse(datos.componentes)
+            : datos.componentes;
+    }
+    if (datos.activo !== undefined) {
+        datos.activo = datos.activo === 'true' || datos.activo === true;
+    }
+
+    // Si llegaron archivos nuevos, reemplazan el arreglo de imágenes completo.
+    // Si no llegó ningún archivo, "imagenes" ni se toca (se conservan las actuales).
+    if (req.files && req.files.length > 0) {
+        datos.imagenes = req.files.map((archivo) => `/uploads/productos/${archivo.filename}`);
+    }
+
+    return datos;
+};
+
 export const crear = async (req, res) => {
     try {
-        const resultado = await productoService.crearProducto(req.body);
+        const datos = construirDatosProducto(req);
+        const resultado = await productoService.crearProducto(datos);
         res.status(201).json(resultado);
     } catch (error) { res.status(400).json({ error: error.message }); }
 };
@@ -27,7 +52,8 @@ export const obtenerUno = async (req, res) => {
 
 export const actualizar = async (req, res) => {
     try {
-        const resultado = await productoService.modificarProducto(req.params.id, req.body);
+        const datos = construirDatosProducto(req);
+        const resultado = await productoService.modificarProducto(req.params.id, datos);
         if (!resultado) return res.status(404).json({ mensaje: 'Producto no encontrado.' });
         res.status(200).json(resultado);
     } catch (error) { res.status(400).json({ error: error.message }); }

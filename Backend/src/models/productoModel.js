@@ -12,7 +12,7 @@ const ProductoSchema = new mongoose.Schema({
     sku: { type: String, required: true, unique: true, trim: true },
     nombre: { type: String, required: true, trim: true },
     descripcion: { type: String },
-    categoriaId: { type: mongoose.Schema.Types.ObjectId, ref: "Ctaegoria", required: true },
+    categoriaId: { type: mongoose.Schema.Types.ObjectId, ref: "Categoria", required: true },
     tipoProducto: { type: String, enum: ["simple", "compuesto"], default: "simple" },
     componentes: { type: [ComponenteProductoSchema], default: [] },
     precio: { type: Number, required: true, min: 0 },
@@ -21,6 +21,6 @@ const ProductoSchema = new mongoose.Schema({
     activo: { type: Boolean, default: true },
 }, { timestamps: true });
 
-const productoModel = mongoose.model.Producto || mongoose.model("Producto", ProductoSchema);
+const productoModel = mongoose.models.Producto || mongoose.model("Producto", ProductoSchema);
 
 export default productoModel;

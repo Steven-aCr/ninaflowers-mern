@@ -1,0 +1,13 @@
+.proveedores-page__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--espacio-md);
+}
+
+.proveedores-page__encabezado button {
+  background: var(--color-primario);
+  color: var(--color-en-primario);
+  padding: var(--espacio-sm) var(--espacio-lg);
+  border-radius: var(--radio-full);
+}

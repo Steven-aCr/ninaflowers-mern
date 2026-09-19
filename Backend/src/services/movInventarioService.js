@@ -20,20 +20,23 @@ export const crearMovimiento = async (datosMovimiento) => {
     } else {
         throw new Error("Tipo de movimiento inválido.");
     }
-
+    
     // Se calcula aquí, nunca se recibe del cliente.
     const nuevoMovimiento = new movInventarioModel({
         ...datosMovimiento,
         stockResultante: nuevoStock
     });
     const movimientoGuardado = await nuevoMovimiento.save();
-
+   
     // Se refleja el cambio en el inventario real.
     inventario.stock = nuevoStock;
     inventario.ultimaActualizacion = new Date();
     await inventario.save();
 
-    return movimientoGuardado;
+    return await movInventarioModel.findById(movimientoGuardado._id)
+        .populate('productoId', 'nombre sku')
+        .populate('usuarioId', 'nombre apellido')
+        .populate('proveedorId', 'nombre');
 };
 
 export const listarMovimientos = async (parametrosQuery = {}, pagina = 1, limite = 10) => {
@@ -55,12 +58,24 @@ export const listarMovimientos = async (parametrosQuery = {}, pagina = 1, limite
     if (parametrosQuery.pedidoId) {
         filtros.pedidoId = parametrosQuery.pedidoId;
     }
+    if (parametrosQuery.fechaInicio || parametrosQuery.fechaFin) {
+        filtros.fecha = {};
+        if (parametrosQuery.fechaInicio) {
+            filtros.fecha.$gte = new Date(parametrosQuery.fechaInicio);
+        }
+        if (parametrosQuery.fechaFin) {
+            const fin = new Date(parametrosQuery.fechaFin);
+            fin.setHours(23, 59, 59, 999);
+            filtros.fecha.$lte = fin;
+        }
+    }
 
     const [total, movimientos] = await Promise.all([
         movInventarioModel.countDocuments(filtros),
         movInventarioModel.find(filtros)
             .populate('productoId', 'nombre sku')
             .populate('usuarioId', 'nombre apellido')
+            .populate('proveedorId', 'nombre')
             .skip(desde).limit(limite).sort({ fecha: -1 })
     ]);
 
@@ -75,5 +90,6 @@ export const listarMovimientos = async (parametrosQuery = {}, pagina = 1, limite
 export const buscarMovimientoId = async (id) => {
     return await movInventarioModel.findById(id)
         .populate('productoId', 'nombre sku')
-        .populate('usuarioId', 'nombre apellido');
+        .populate('usuarioId', 'nombre apellido')
+        .populate('proveedorId', 'nombre');
 };

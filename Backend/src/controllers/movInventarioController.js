@@ -2,7 +2,8 @@ import * as movInventarioService from "../services/movInventarioService.js";
 
 export const crear = async (req, res) => {
     try {
-        const resultado = await movInventarioService.crearMovimiento(req.body);
+        const datos = { ...req.body, usuarioId: req.usuario.id };
+        const resultado = await movInventarioService.crearMovimiento(datos);
         res.status(201).json(resultado);
     } catch (error) { res.status(400).json({ error: error.message }); }
 };

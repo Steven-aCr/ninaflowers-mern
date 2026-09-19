@@ -1,13 +1,14 @@
 import productoModel from "../models/productoModel.js";
 
+// Si el producto es compuesto, debe tener al menos un componente.
 export const crearProducto = async (datosProducto) => {
-    // Si el producto es compuesto, debe tener al menos un componente.
     if (datosProducto.tipoProducto === "compuesto" &&
         (!datosProducto.componentes || datosProducto.componentes.length === 0)) {
         throw new Error("Un producto compuesto debe tener al menos un componente.");
     }
     const nuevoProducto = new productoModel(datosProducto);
-    return await nuevoProducto.save();
+    await nuevoProducto.save();
+    return await productoModel.findById(nuevoProducto._id).populate('categoriaId', 'nombre');
 };
 
 export const listarProducto = async (parametrosQuery = {}, pagina = 1, limite = 10) => {
@@ -32,7 +33,9 @@ export const listarProducto = async (parametrosQuery = {}, pagina = 1, limite = 
 
     const [total, productos] = await Promise.all([
         productoModel.countDocuments(filtros),
-        productoModel.find(filtros).skip(desde).limit(limite).sort({ createdAt: -1 })
+        productoModel.find(filtros)
+            .populate('categoriaId', 'nombre')
+            .skip(desde).limit(limite).sort({ createdAt: -1 })
     ]);
 
     return {
@@ -44,7 +47,7 @@ export const listarProducto = async (parametrosQuery = {}, pagina = 1, limite = 
 };
 
 export const buscarProductoId = async (id) => {
-    return await productoModel.findById(id);
+    return await productoModel.findById(id).populate('categoriaId', 'nombre');
 };
 
 export const modificarProducto = async (id, datosActualizados) => {
@@ -52,7 +55,8 @@ export const modificarProducto = async (id, datosActualizados) => {
         datosActualizados.componentes && datosActualizados.componentes.length === 0) {
         throw new Error("Un producto compuesto debe tener al menos un componente.");
     }
-    return await productoModel.findByIdAndUpdate(id, datosActualizados, { new: true, runValidators: true });
+    return await productoModel.findByIdAndUpdate(id, datosActualizados, { new: true, runValidators: true })
+        .populate('categoriaId', 'nombre');
 };
 
 export const eliminarProducto = async (id) => {
