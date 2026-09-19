@@ -31,7 +31,6 @@ app.set('etag', false);
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // <-- ruta absoluta a src/uploads
 
 //Registro de rutas
 app.use("/api/usuarios", usuarioRoutes);

@@ -1,8 +1,10 @@
 import * as productoService from "../services/productoService.js";
+import cloudinary from "../config/cloudinaryConfig.js";
+import { subirImagenCloudinary } from "../utils/subirImagenCloudinary.js";
 
-// Los datos llegan como multipart/form-data (por las imágenes), así que
-// vienen todos como texto — aquí se convierten a sus tipos reales.
-const construirDatosProducto = (req) => {
+// Ahora es async porque subir a Cloudinary toma tiempo (ya no es
+// instantáneo como escribir a disco local).
+const construirDatosProducto = async (req) => {
     const datos = { ...req.body };
 
     if (datos.precio !== undefined) datos.precio = Number(datos.precio);
@@ -16,18 +18,24 @@ const construirDatosProducto = (req) => {
         datos.activo = datos.activo === 'true' || datos.activo === true;
     }
 
-    // Si llegaron archivos nuevos, reemplazan el arreglo de imágenes completo.
-    // Si no llegó ningún archivo, "imagenes" ni se toca (se conservan las actuales).
     if (req.files && req.files.length > 0) {
-        datos.imagenes = req.files.map((archivo) => `/uploads/productos/${archivo.filename}`);
+        datos.imagenes = await Promise.all(
+            req.files.map((archivo) => subirImagenCloudinary(archivo.buffer))
+        );
     }
 
     return datos;
 };
 
+const borrarImagenesCloudinary = async (imagenes = []) => {
+    await Promise.all(
+        imagenes.map((img) => cloudinary.uploader.destroy(img.publicId).catch(() => {}))
+    );
+};
+
 export const crear = async (req, res) => {
     try {
-        const datos = construirDatosProducto(req);
+        const datos = await construirDatosProducto(req);
         const resultado = await productoService.crearProducto(datos);
         res.status(201).json(resultado);
     } catch (error) { res.status(400).json({ error: error.message }); }
@@ -52,7 +60,15 @@ export const obtenerUno = async (req, res) => {
 
 export const actualizar = async (req, res) => {
     try {
-        const datos = construirDatosProducto(req);
+        const datos = await construirDatosProducto(req);
+
+        if (req.files && req.files.length > 0) {
+            const productoActual = await productoService.buscarProductoId(req.params.id);
+            if (productoActual?.imagenes?.length > 0) {
+                await borrarImagenesCloudinary(productoActual.imagenes);
+            }
+        }
+
         const resultado = await productoService.modificarProducto(req.params.id, datos);
         if (!resultado) return res.status(404).json({ mensaje: 'Producto no encontrado.' });
         res.status(200).json(resultado);

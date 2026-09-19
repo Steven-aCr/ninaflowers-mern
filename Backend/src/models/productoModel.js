@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
 
-//Subdocumento embebido: representa un producto de form parte
-// de un producto compuesto (ej. una rosa dentro de un ramo).
-// No tiene _id propio porque no se consulta de forma independiente.
 const ComponenteProductoSchema = new mongoose.Schema({
     productoId: { type: mongoose.Schema.Types.ObjectId, ref: "Producto", required: true },
     cantidad: { type: Number, required: true, min: 1 },
+}, { _id: false });
+
+// Cada imagen guarda su URL pública Y su publicId de Cloudinary
+// (el publicId es indispensable para poder borrarla más adelante).
+const ImagenProductoSchema = new mongoose.Schema({
+    url: { type: String, required: true },
+    publicId: { type: String, required: true }
 }, { _id: false });
 
 const ProductoSchema = new mongoose.Schema({
@@ -17,7 +21,7 @@ const ProductoSchema = new mongoose.Schema({
     componentes: { type: [ComponenteProductoSchema], default: [] },
     precio: { type: Number, required: true, min: 0 },
     costo: { type: Number, min: 0 },
-    imagenes: { type: [String], default: [] },
+    imagenes: { type: [ImagenProductoSchema], default: [] },
     activo: { type: Boolean, default: true },
 }, { timestamps: true });
 

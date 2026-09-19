@@ -1,4 +1,3 @@
-import { obtenerUrlImagen } from "../../services/productoService.js";
 import "./TablaProductos.css";
 
 function TablaProductos({ productos, onEditar, onCambiarEstado }) {
@@ -24,8 +23,8 @@ function TablaProductos({ productos, onEditar, onCambiarEstado }) {
         {productos.map((p) => (
           <tr key={p._id}>
             <td>
-              {p.imagenes?.[0] ? (
-                <img className="tabla-productos__miniatura" src={obtenerUrlImagen(p.imagenes[0])} alt={p.nombre} />
+              {p.imagenes?.[0]?.url ? (
+                <img className="tabla-productos__miniatura" src={p.imagenes[0].url} alt={p.nombre} />
               ) : (
                 <div className="tabla-productos__miniatura tabla-productos__miniatura--vacia" />
               )}

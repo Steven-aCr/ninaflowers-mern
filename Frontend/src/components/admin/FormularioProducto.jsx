@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { obtenerUrlImagen } from "../../services/productoService.js";
 import "./FormularioProducto.css";
 
 const ESTADO_INICIAL = {
@@ -7,7 +6,6 @@ const ESTADO_INICIAL = {
   tipoProducto: "simple", precio: "", costo: ""
 };
 
-// productosDisponibles: solo productos "simple" activos, para armar componentes.
 function FormularioProducto({ producto, categorias, productosDisponibles, onGuardar, onCancelar, guardando }) {
   const [form, setForm] = useState(
     producto
@@ -172,7 +170,7 @@ function FormularioProducto({ producto, categorias, productosDisponibles, onGuar
         {producto?.imagenes?.length > 0 && archivos.length === 0 && (
           <div className="formulario-producto__previews">
             {producto.imagenes.map((img) => (
-              <img key={img} src={obtenerUrlImagen(img)} alt={form.nombre} />
+              <img key={img.publicId} src={img.url} alt={form.nombre} />
             ))}
           </div>
         )}

@@ -1,11 +1,5 @@
 import api from "./api";
 
-// El backend sirve /uploads fuera de /api, así que se arma la URL
-// quitando el sufijo "/api" de la variable de entorno.
-const API_BASE = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
-
-export const obtenerUrlImagen = (rutaRelativa) => `${API_BASE}${rutaRelativa}`;
-
 export const listarProductos = async (params = {}) => {
   const { data } = await api.get("/productos", { params });
   return data;
@@ -38,7 +32,6 @@ export const crearProducto = async (datos, archivos = []) => {
   return data;
 };
 
-// Si "archivos" viene vacío, el backend conserva las imágenes actuales.
 export const modificarProducto = async (id, datos, archivos = []) => {
   const formData = construirFormData(datos, archivos);
   const { data } = await api.put(`/productos/${id}`, formData, {
@@ -47,12 +40,11 @@ export const modificarProducto = async (id, datos, archivos = []) => {
   return data;
 };
 
-// Activar/desactivar no manda imágenes: va como JSON simple.
 export const cambiarEstadoProducto = async (id, activo) => {
   if (activo) {
     const { data } = await api.put(`/productos/${id}`, { activo: true });
     return data;
   }
-  const { data } = await api.delete(`/productos/${id}`); // soft-delete
+  const { data } = await api.delete(`/productos/${id}`);
   return data;
 };
