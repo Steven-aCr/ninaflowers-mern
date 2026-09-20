@@ -25,11 +25,12 @@ import Pagos from "../pages/admin/pagos.jsx";
 import Envios from "../pages/admin/Envios.jsx";
 import Usuario from "../pages/admin/Usuario.jsx";
 
-// Todavía sin datos reales: Home, Catalogo, DetalleProducto, MisPedidos y
-// DetallePedido siguen recibiendo props vacías/null hasta que conectemos
-// productoService/categoriaService/pedidoService. Cuando eso pase, cada
-// página hará su propio fetch en un useEffect (ya leen su :id con
-// useParams donde corresponde).
+// Catalogo y DetalleProducto ya cargan sus propios datos desde la API
+// (productoService / categoriaService), por eso ya no reciben props.
+// Todavía sin datos reales: Home, MisPedidos y DetallePedido siguen
+// recibiendo props vacías/null hasta que conectemos productoService/
+// pedidoService. Cuando eso pase, cada página hará su propio fetch en un
+// useEffect (ya leen su :id con useParams donde corresponde).
 //
 // Checkout, MisPedidos, DetallePedido y Perfil exigen sesión (van dentro
 // de <PrivateRoute />).
@@ -43,8 +44,8 @@ function AppRoutes() {
     <Routes>
       <Route element={<ClienteLayout />}>
         <Route path="/" element={<Home productosDestacados={[]} />} />
-        <Route path="/catalogo" element={<Catalogo productos={[]} categorias={[]} />} />
-        <Route path="/producto/:id" element={<DetalleProducto producto={null} />} />
+        <Route path="/catalogo" element={<Catalogo />} />
+        <Route path="/producto/:id" element={<DetalleProducto />} />
         <Route path="/carrito" element={<Carrito />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { rutaInicialPorRol } from "../../utils/rutasPorRol.js";
 import Boton from "../../components/common/Boton.jsx";
 import { useAuth } from "../../hooks/useAuth.js";
 import "./Login.css";
@@ -24,8 +25,8 @@ function Login() {
     setEnviando(true);
 
     try {
-      await login(correo, password);
-      navigate("/");
+      const datos = await login(correo, password);
+      navigate(rutaInicialPorRol(datos.usuario.rol), { replace: true });
     } catch (error) {
       setError(
         error.response?.data?.error || "Correo o contraseña incorrectos."

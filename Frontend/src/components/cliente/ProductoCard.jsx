@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { obtenerUrlImagen } from "../../utils/obtenerImagen.js";
 import "./ProductoCard.css";
 
 // Recibe un objeto "producto" (tal como lo devuelve tu API de Producto)
@@ -11,7 +12,7 @@ import "./ProductoCard.css";
 //   navegando (ya no abre modal) y "Agregar" dispara la función recibida.
 function ProductoCard({ producto, etiqueta, onAgregarCarrito }) {
   const { _id, nombre, descripcion, precio, imagenes } = producto;
-  const imagenPrincipal = imagenes && imagenes.length > 0 ? imagenes[0] : null;
+  const imagenPrincipal = obtenerUrlImagen(imagenes?.[0]);
   const mostrarAccionesDobles = Boolean(onAgregarCarrito);
 
   return (

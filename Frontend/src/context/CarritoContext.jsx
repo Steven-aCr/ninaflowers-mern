@@ -1,4 +1,5 @@
 import { createContext, useMemo, useState } from "react";
+import { obtenerUrlImagen } from "../utils/obtenerImagen.js";
 
 export const CarritoContext = createContext(null);
 
@@ -34,7 +35,7 @@ export function CarritoProvider({ children }) {
           productoId: producto._id,
           nombre: producto.nombre,
           precio: producto.precio,
-          imagen: producto.imagenes && producto.imagenes[0] ? producto.imagenes[0] : null,
+          imagen: obtenerUrlImagen(producto.imagenes?.[0]),
           cantidad,
         },
       ];
