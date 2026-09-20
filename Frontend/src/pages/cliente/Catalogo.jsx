@@ -44,16 +44,18 @@ function Catalogo() {
 
   // NUEVO: carga las categorías UNA sola vez, al abrir la página (el [] final lo indica).
   // Si falla, solo lo dejamos en consola: el catálogo puede funcionar sin los botones de categoría.
-  useEffect(() => {
-    const cargarCategorias = async () => {
-      try {
-        setCategorias(await listarCategorias());
-      } catch (err) {
-        console.error("No se pudieron cargar las categorías:", err.message);
-      }
-    };
-    cargarCategorias();
-  }, []);
+useEffect(() => {
+  const cargarCategorias = async () => {
+    try {
+      const respuesta = await listarCategorias({ activo: true, limite: 100 });
+      // Acepta las dos formas: un arreglo directo o la respuesta paginada { datos: [...] }.
+      setCategorias(Array.isArray(respuesta) ? respuesta : respuesta?.datos ?? []);
+    } catch (err) {
+      console.error("No se pudieron cargar las categorías:", err.message);
+    }
+  };
+  cargarCategorias();
+}, []);
 
   // NUEVO: carga los productos. Se ejecuta al abrir la página y OTRA VEZ cada vez que
   // cambia algo de la lista de abajo (página, búsqueda, categoría, orden o "Reintentar").
