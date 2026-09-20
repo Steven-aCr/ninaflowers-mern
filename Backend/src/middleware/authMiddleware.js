@@ -30,3 +30,14 @@ export const permitirRoles = ( ...rolesPermitidos) => {
         next();
     };
 };
+
+// El dueño del recurso o un administrador. Compara el :usuarioId de la URL con el id del token.
+export const propietarioOAdmin = (req, res, next) => {
+    const esAdmin = req.usuario.rol === "administrador";
+    const esPropietario = req.usuario.id === req.params.usuarioId;
+
+    if (!esAdmin && !esPropietario) {
+        return res.status(403).json({ mensaje: 'ACCESO DENEGADO: Solo puedes acceder a tu propio carrito.' });
+    }
+    next();
+};

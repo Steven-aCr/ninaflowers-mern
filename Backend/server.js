@@ -1,12 +1,6 @@
-import dotenv from "dotenv"
-dotenv.config()
-
-import express from "express"
+import "dotenv/config"
 import { connectDB } from "./src/config/bd.js"
-
 import app from "./src/app.js"
-
-app.use(express.json())
 
 app.get("/", (req, res) => {
     res.send("API en ejecucion.")

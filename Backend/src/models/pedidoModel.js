@@ -33,7 +33,7 @@ const PedidoSchema = new mongoose.Schema({
     estadoPedido: {
         type: String,
         enum: ["pendiente", "pendiente_cotizacion", "confirmado", "en_preparacion", "listo_entrega", "entregado", "cancelado"],
-        default: "confirmado"
+        default: "pendiente"
     },
     fechaPedido:          { type: Date, default: Date.now },
     fechaEntregaEstimada: { type: Date, required: true }

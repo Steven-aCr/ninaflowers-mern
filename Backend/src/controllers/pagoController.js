@@ -39,3 +39,10 @@ export const actualizarEstado = async (req, res) => {
         res.status(200).json(resultado);
     } catch (error) { res.status(400).json({ error: error.message }); }
 };
+
+export const reporte = async (req, res) => {
+    try {
+        const resultado = await pagoService.reportePagos(req.query);
+        res.status(200).json(resultado);
+    } catch (error) { res.status(400).json({ error: error.message }); }
+};

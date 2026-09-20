@@ -9,8 +9,8 @@ export const obtener = async (req, res) => {
 
 export const agregarItem = async (req, res) => {
     try {
-        const { productoId, cantidad, precioUnitario } = req.body;
-        const resultado = await carritoService.agregarItem(req.params.usuarioId, productoId, cantidad, precioUnitario);
+        const { productoId, cantidad } = req.body;
+        const resultado = await carritoService.agregarItem(req.params.usuarioId, productoId, cantidad);
         res.status(200).json(resultado);
     } catch (error) { res.status(400).json({ error: error.message }); }
 };

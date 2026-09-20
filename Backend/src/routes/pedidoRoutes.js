@@ -1,15 +1,19 @@
 import { Router } from "express";
-import { crear, obtenerTodos, obtenerUno, actualizar, cancelar } from "../controllers/pedidoController.js";
+import { crear, crearDesdeCarrito, misPedidos, obtenerTodos, obtenerUno, actualizar, cancelar } from "../controllers/pedidoController.js";
 import { verificarToken, permitirRoles } from "../middleware/authMiddleware.js";
 
 const router = Router();
-// Endpoints protegidos exclusivamente para ADMINISTADORES.
-router.use(verificarToken, permitirRoles('administrador'));
+router.use(verificarToken);
 
-router.get("/", obtenerTodos);
-router.get("/:id", obtenerUno);
-router.post("/", crear);
-router.put("/:id", actualizar);
-router.patch("/:id/cancelar", cancelar);
+// Clientes y administradores.
+router.post("/desde-carrito", permitirRoles("cliente", "administrador"), crearDesdeCarrito);
+router.get("/mis-pedidos", permitirRoles("cliente", "administrador"), misPedidos);
+router.get("/:id", permitirRoles("cliente", "administrador"), obtenerUno);
+
+// Solo administradores.
+router.get("/", permitirRoles("administrador"), obtenerTodos);
+router.post("/", permitirRoles("administrador"), crear);
+router.put("/:id", permitirRoles("administrador"), actualizar);
+router.patch("/:id/cancelar", permitirRoles("administrador"), cancelar);
 
 export default router;

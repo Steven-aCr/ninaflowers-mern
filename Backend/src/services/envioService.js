@@ -6,7 +6,7 @@ const TARIFAS_ENVIO = {
     //fuera_zona no tiene tarifa fija: se envia al Cliente a cotizar el costo de envio con un Admin
 };
 
-export const crearEnvio = async (datosEnvio) => {
+export const crearEnvio = async (datosEnvio, session) => {
     const { tipo, costoEnvio, ...resto } = datosEnvio;
     let costoFinal;
 
@@ -23,7 +23,7 @@ export const crearEnvio = async (datosEnvio) => {
     }
 
     const nuevoEnvio = new envioModel({ ...resto, tipo, costoEnvio: costoFinal });
-    return await nuevoEnvio.save();
+    return await nuevoEnvio.save({ session });
 };
 
 export const listarEnvios = async (parametrosQuery = {}, pagina = 1, limite = 10) => {

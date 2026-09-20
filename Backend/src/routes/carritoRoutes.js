@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { obtener, agregarItem, actualizarCantidad, eliminarItem, vaciar } from "../controllers/carritoController.js";
-import { verificarToken, permitirRoles } from "../middleware/authMiddleware.js";
+import { verificarToken, permitirRoles, propietarioOAdmin } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-// Endpoints protegidos exclusivamente para ADMINISTADORES.
-router.use(verificarToken, permitirRoles('administrador'));
+// Clientes y administradores. Cada cliente solo accede a SU carrito.
+router.use(verificarToken, permitirRoles("cliente", "administrador"));
+router.use("/:usuarioId", propietarioOAdmin);
 
 router.get("/:usuarioId", obtener);
 router.post("/:usuarioId/items", agregarItem);

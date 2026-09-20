@@ -1,4 +1,5 @@
 import carritoModel from "../models/carritoModel.js";
+import productoModel from "../models/productoModel.js";
 
 export const crearCarrito = async (datosCarrito) => {
     const nuevoCarrito = new carritoModel(datosCarrito);
@@ -14,8 +15,18 @@ export const obtenerCarrito = async (usuarioId) => {
     return carrito;
 };
 
-//Si el producto ya esta en el carrito, suma la cantidad.
-export const agregarItem = async (usuarioId, productoId, cantidad, precioUnitario) => {
+//Si el producto ya esta en el carrito, suma la cantidad. El precio SIEMPRE sale de la base de datos.
+export const agregarItem = async (usuarioId, productoId, cantidad) => {
+    cantidad = Number(cantidad);
+    if (!Number.isInteger(cantidad) || cantidad < 1) {
+        throw new Error("La cantidad debe ser un número entero mayor a 0.");
+    }
+
+    const producto = await productoModel.findById(productoId);
+    if (!producto || !producto.activo) {
+        throw new Error("El producto no existe o no está disponible.");
+    }
+
     let carrito = await carritoModel.findOne({ usuarioId });
     if (!carrito) {
         carrito = new carritoModel({ usuarioId, items: [] });
@@ -27,8 +38,9 @@ export const agregarItem = async (usuarioId, productoId, cantidad, precioUnitari
 
     if (itemExistente) {
         itemExistente.cantidad += cantidad;
+        itemExistente.precioUnitario = producto.precio;
     } else {
-        carrito.items.push({ productoId, cantidad, precioUnitario });
+        carrito.items.push({ productoId, cantidad, precioUnitario: producto.precio });
     }
 
     return await carrito.save();
@@ -37,6 +49,10 @@ export const agregarItem = async (usuarioId, productoId, cantidad, precioUnitari
 //Cambia la cantidad de un producto ya existente.
 export const actualizarCantidadItem = async (usuarioId, productoId, cantidad) => {
     const carrito = await carritoModel.findOne({ usuarioId });
+        if (!Number.isInteger(cantidad)) {
+        throw new Error("La cantidad debe ser un número entero.");
+    }
+    
     if (!carrito) return null;
 
     if (cantidad <= 0) {
@@ -67,10 +83,10 @@ export const eliminarItem = async (usuarioId, productoId) => {
 };
 
 //Limpia todo el arreglo (se realiza esta accion despues de confirmar el pedido.)
-export const vaciarCarrito = async (usuarioId) => {
+export const vaciarCarrito = async (usuarioId, session) => {
     return await carritoModel.findOneAndUpdate(
         { usuarioId },
         { items: [] },
-        { new: true }
+        { new: true, session }
     );
 };
