@@ -7,8 +7,12 @@
   border-radius: var(--radio-full);
   font-size: var(--tam-label-lg);
   font-weight: 600;
-  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, transform 0.08s ease;
   white-space: nowrap;
+}
+
+.boton:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .boton .material-symbols-outlined {

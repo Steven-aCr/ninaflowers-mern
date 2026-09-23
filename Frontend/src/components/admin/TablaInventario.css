@@ -18,13 +18,23 @@
 .tabla-inventario th {
   color: var(--color-en-superficie-variante);
   font-size: var(--tam-label-md);
-  text-transform: uppercase;
+  font-weight: 600;
+  background: var(--color-superficie-contenedor-bajo);
+}
+
+.tabla-inventario tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.tabla-inventario tbody tr:hover {
+  background: var(--color-superficie-contenedor-bajo);
 }
 
 .tabla-inventario__badge {
   padding: 0.2rem 0.6rem;
   border-radius: var(--radio-full);
   font-size: var(--tam-label-md);
+  font-weight: 600;
   background: var(--color-terciario-contenedor);
   color: var(--color-en-terciario);
 }
@@ -32,6 +42,21 @@
 .tabla-inventario__badge--alerta {
   background: var(--color-error);
   color: #fff;
+}
+
+.tabla-inventario td button {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radio-full);
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+  border: 1px solid var(--color-borde-variante);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.tabla-inventario td button:hover {
+  background: var(--color-superficie-contenedor);
+  color: var(--color-en-superficie);
 }
 
 .tabla-inventario__vacio {

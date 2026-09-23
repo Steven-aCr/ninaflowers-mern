@@ -1,19 +1,62 @@
 .admin-layout {
+  /* Paleta local del panel admin — sobrescribe las variables de marca
+     SOLO dentro de .admin-layout. El resto del sitio (tienda cliente)
+     sigue usando la paleta original de variables.css sin cambios. */
+  --color-primario: #c2185b;
+  --color-primario-contenedor: #9c1350;
+  --color-en-primario: #ffffff;
+  --color-primario-fijo: #f7dce6;
+  --color-primario-fijo-oscuro: #e3a9c0;
+  --color-en-primario-fijo: #6b1235;
+
+  --color-secundario: #a6790a;
+  --color-secundario-contenedor: #8c6608;
+  --color-en-secundario: #ffffff;
+  --color-secundario-fijo: #f2e4c4;
+  --color-en-secundario-fijo: #5c4405;
+
+  --color-terciario: #4e7c50;
+  --color-terciario-contenedor: #3e6740;
+  --color-en-terciario: #ffffff;
+  --color-terciario-fijo: #deeadb;
+  --color-en-terciario-fijo: #23391f;
+
+  --admin-ink: #171d1b;
+  --admin-ink-2: #232d28;
+  --admin-sidebar-texto: #b9b3a7;
+
   display: flex;
   min-height: 100vh;
 }
 
 .admin-sidebar {
   width: 240px;
-  background: #1f2937;
+  flex-shrink: 0;
+  background: linear-gradient(195deg, var(--admin-ink) 0%, var(--admin-ink-2) 100%);
   color: #fff;
-  padding: 1rem;
+  padding: 1.25rem 0.9rem;
+  position: relative;
+}
+
+.admin-sidebar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(var(--color-primario), transparent 60%);
+  opacity: 0.5;
 }
 
 .admin-sidebar__logo {
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--fuente-titulos);
+  font-weight: 600;
+  font-size: 1.15rem;
+  padding: 0.4rem 0.6rem 1.4rem;
 }
 
 .admin-sidebar__lista {
@@ -22,40 +65,89 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
 }
 
 .admin-sidebar__link {
-  display: block;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 9px;
+  color: var(--admin-sidebar-texto);
   text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.admin-sidebar__link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
 }
 
 .admin-sidebar__link--activo {
-  background: #374151;
+  background: var(--color-primario);
   color: #fff;
+  box-shadow: var(--sombra-suave);
+}
+
+.admin-sidebar__icono {
+  display: flex;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.admin-sidebar__icono svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .admin-layout__main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .admin-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.75rem;
+  background: var(--color-superficie-contenedor-mas-bajo);
+  border-bottom: 1px solid var(--color-borde-variante);
+  box-shadow: var(--sombra-suave);
+}
+
+.admin-topbar__saludo {
+  font-weight: 600;
+  color: var(--color-en-superficie);
 }
 
 .admin-topbar__logout {
   cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-full);
+  border: 1px solid var(--color-borde-variante);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.admin-topbar__logout:hover {
+  background: var(--color-superficie-contenedor);
+  color: var(--color-en-superficie);
 }
 
 .admin-layout__content {
-  padding: 1.5rem;
+  padding: 1.5rem 1.75rem;
+  background: var(--color-fondo);
+  flex: 1;
 }

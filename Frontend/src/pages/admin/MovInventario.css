@@ -10,6 +10,17 @@
   color: var(--color-en-primario);
   padding: var(--espacio-sm) var(--espacio-lg);
   border-radius: var(--radio-full);
+  box-shadow: var(--sombra-suave);
+  font-weight: 600;
+  transition: filter 0.15s ease, transform 0.08s ease;
+}
+
+.movinventario-page__encabezado button:hover {
+  filter: brightness(1.07);
+}
+
+.movinventario-page__encabezado button:active {
+  transform: scale(0.97);
 }
 
 .movinventario-page__filtros {
@@ -33,4 +44,9 @@
   border-radius: var(--radio-full);
   color: var(--color-en-superficie-variante);
   border: 1px solid var(--color-borde-variante);
+  transition: background-color 0.15s ease;
+}
+
+.movinventario-page__filtros button:hover {
+  background: var(--color-superficie-contenedor);
 }

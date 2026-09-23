@@ -10,6 +10,17 @@
   color: var(--color-en-primario);
   padding: var(--espacio-sm) var(--espacio-lg);
   border-radius: var(--radio-full);
+  box-shadow: var(--sombra-suave);
+  font-weight: 600;
+  transition: filter 0.15s ease, transform 0.08s ease;
+}
+
+.inventario-page__encabezado button:hover {
+  filter: brightness(1.07);
+}
+
+.inventario-page__encabezado button:active {
+  transform: scale(0.97);
 }
 
 .inventario-page__filtro {

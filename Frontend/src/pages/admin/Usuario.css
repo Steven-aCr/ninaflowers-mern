@@ -6,6 +6,7 @@
   display: flex;
   gap: var(--espacio-sm);
   margin-bottom: var(--espacio-md);
+  flex-wrap: wrap;
 }
 
 .usuarios-page__filtros select {
@@ -14,4 +15,12 @@
   border-radius: var(--radio-md);
   font-size: var(--tam-body-sm);
   color: var(--color-en-superficie);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.usuarios-page__filtros select:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-primario-fijo);
 }

@@ -19,13 +19,23 @@
 .tabla-movimientos th {
   color: var(--color-en-superficie-variante);
   font-size: var(--tam-label-md);
-  text-transform: uppercase;
+  font-weight: 600;
+  background: var(--color-superficie-contenedor-bajo);
+}
+
+.tabla-movimientos tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.tabla-movimientos tbody tr:hover {
+  background: var(--color-superficie-contenedor-bajo);
 }
 
 .tabla-movimientos__badge {
   padding: 0.2rem 0.6rem;
   border-radius: var(--radio-full);
   font-size: var(--tam-label-md);
+  font-weight: 600;
 }
 
 .tabla-movimientos__badge--entrada {

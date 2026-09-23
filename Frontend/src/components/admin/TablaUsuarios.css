@@ -18,13 +18,23 @@
 .tabla-usuarios th {
   color: var(--color-en-superficie-variante);
   font-size: var(--tam-label-md);
-  text-transform: uppercase;
+  font-weight: 600;
+  background: var(--color-superficie-contenedor-bajo);
+}
+
+.tabla-usuarios tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.tabla-usuarios tbody tr:hover {
+  background: var(--color-superficie-contenedor-bajo);
 }
 
 .tabla-usuarios__rol {
   padding: 0.2rem 0.6rem;
   border-radius: var(--radio-full);
   font-size: var(--tam-label-md);
+  font-weight: 600;
   background: var(--color-superficie-contenedor-alto);
   color: var(--color-en-superficie-variante);
   text-transform: capitalize;
@@ -39,6 +49,7 @@
   padding: 0.2rem 0.6rem;
   border-radius: var(--radio-full);
   font-size: var(--tam-label-md);
+  font-weight: 600;
   background: var(--color-terciario-contenedor);
   color: var(--color-en-terciario);
 }
@@ -46,6 +57,21 @@
 .tabla-usuarios__badge--inactivo {
   background: var(--color-superficie-contenedor-alto);
   color: var(--color-en-superficie-variante);
+}
+
+.tabla-usuarios td button {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radio-full);
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+  border: 1px solid var(--color-borde-variante);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.tabla-usuarios td button:hover {
+  background: var(--color-superficie-contenedor);
+  color: var(--color-en-superficie);
 }
 
 .tabla-usuarios__vacio {
