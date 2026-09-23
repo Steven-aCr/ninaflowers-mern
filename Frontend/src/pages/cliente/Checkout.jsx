@@ -1,12 +1,12 @@
 import { useState } from "react";
+import * as pedidoService from "../../services/pedidoService.js";
 import { useNavigate } from "react-router-dom";
 import ResumenPedido from "../../components/cliente/ResumenPedido.jsx";
 import Boton from "../../components/common/Boton.jsx";
 import { useCarrito } from "../../hooks/useCarrito.js";
 import "./Checkout.css";
 
-const COSTO_ENVIO_REFERENCIAL = 8;
-const TASA_IMPUESTO = 0.1;
+const COSTOS_ENVIO = { retiro_tienda: 0, zona_cubierta: 2, fuera_zona: 0 };
 
 // Campos de dirección según tu Direccion embebida: etiqueta, linea1,
 // linea2, ciudad, referencia. "metodo" usa el mismo enum que pagoModel:
@@ -30,24 +30,28 @@ function Checkout() {
     ciudad: "",
     referencia: "",
   });
-  const [metodo, setMetodo] = useState("tarjeta");
+  const [tipoEnvio, setTipoEnvio] = useState("zona_cubierta");
+  const [fechaEntrega, setFechaEntrega] = useState("");
   const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-  const envio = COSTO_ENVIO_REFERENCIAL;
-  const impuesto = subtotal * TASA_IMPUESTO;
+  const envio = COSTOS_ENVIO[tipoEnvio];
+  const impuesto = 0;
 
   const actualizarCampo = (campo) => (evento) => {
     setDireccion((actual) => ({ ...actual, [campo]: evento.target.value }));
   };
 
-  const manejarConfirmar = () => {
-    if (!direccion.linea1.trim() || !direccion.ciudad.trim()) {
-      setError("Completa al menos la calle y la ciudad de entrega.");
-      return;
-    }
-    setError("");
-    vaciarCarrito();
-    navigate("/mis-pedidos");
+  const manejarConfirmar = async () => {
+    if (!direccion.linea1.trim() || !direccion.ciudad.trim()) { setError("Completa al menos la calle y la ciudad de entrega."); return; }
+    if (!fechaEntrega) { setError("Selecciona una fecha estimada de entrega."); return; }
+    setEnviando(true); setError("");
+    try {
+      await pedidoService.crearPedidoDesdeCarrito({ tipoEnvio, direccionEntrega: direccion, fechaEntregaEstimada: fechaEntrega });
+      await vaciarCarrito();
+      navigate("/mis-pedidos");
+    } catch (e) { setError(e.response?.data?.error || "No se pudo crear el pedido."); }
+    finally { setEnviando(false); }
   };
 
   return (
@@ -113,32 +117,14 @@ function Checkout() {
             </div>
 
             <div className="checkout__bloque">
-              <h2>
-                <span className="material-symbols-outlined">credit_card</span>
-                Método de pago
-              </h2>
-
+              <h2><span className="material-symbols-outlined">local_shipping</span>Tipo de entrega</h2>
               <div className="checkout__metodos">
-                {[
-                  { valor: "tarjeta", icono: "credit_card", texto: "Tarjeta" },
-                  { valor: "efectivo", icono: "payments", texto: "Efectivo" },
-                  { valor: "transferencia", icono: "account_balance", texto: "Transferencia" },
-                ].map((opcion) => (
-                  <button
-                    key={opcion.valor}
-                    type="button"
-                    className={
-                      metodo === opcion.valor
-                        ? "checkout__metodo checkout__metodo--activo"
-                        : "checkout__metodo"
-                    }
-                    onClick={() => setMetodo(opcion.valor)}
-                  >
-                    <span className="material-symbols-outlined">{opcion.icono}</span>
-                    <span>{opcion.texto}</span>
-                  </button>
+                {[{valor:"retiro_tienda",icono:"store",texto:"Retiro en tienda"},{valor:"zona_cubierta",icono:"local_shipping",texto:"Zona cubierta"},{valor:"fuera_zona",icono:"distance",texto:"Fuera de zona"}].map(opcion => (
+                  <button key={opcion.valor} type="button" className={tipoEnvio===opcion.valor?"checkout__metodo checkout__metodo--activo":"checkout__metodo"} onClick={()=>setTipoEnvio(opcion.valor)}><span className="material-symbols-outlined">{opcion.icono}</span><span>{opcion.texto}</span></button>
                 ))}
               </div>
+              {tipoEnvio === "fuera_zona" && <p className="checkout__error">El costo de envío será cotizado por administración antes de confirmar el pedido.</p>}
+              <div className="checkout__campo"><label htmlFor="checkout-fecha">Fecha estimada de entrega</label><input id="checkout-fecha" type="datetime-local" value={fechaEntrega} min={new Date(Date.now()+3600000).toISOString().slice(0,16)} onChange={e=>setFechaEntrega(e.target.value)} /></div>
             </div>
 
             {error && <p className="checkout__error">{error}</p>}
@@ -149,9 +135,9 @@ function Checkout() {
               subtotal={subtotal}
               envio={envio}
               impuesto={impuesto}
-              textoBoton="Continuar con el pago"
+              textoBoton={enviando ? "Creando pedido..." : "Confirmar pedido"}
               onContinuar={manejarConfirmar}
-              deshabilitado={items.length === 0}
+              deshabilitado={items.length === 0 || enviando}
             />
             <div className="checkout__nota">
               <Boton variante="fantasma" onClick={() => navigate("/carrito")} icono="arrow_back">

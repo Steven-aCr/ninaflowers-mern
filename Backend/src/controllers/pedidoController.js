@@ -37,10 +37,19 @@ export const actualizar = async (req, res) => {
     } catch (error) { res.status(400).json({ error: error.message }); }
 };
 
+export const actualizarEstado = async (req, res) => {
+    try {
+        const { estado, comentario } = req.body;
+        const resultado = await pedidoService.actualizarEstadoPedido(req.params.id, estado, req.usuario.id, comentario);
+        if (!resultado) return res.status(404).json({ mensaje: 'Pedido no encontrado.' });
+        res.status(200).json(resultado);
+    } catch (error) { res.status(400).json({ error: error.message }); }
+};
+
 export const cancelar = async (req, res) => {
     try {
-        const { usuarioId, comentario } = req.body;
-        const resultado = await pedidoService.cancelarPedido(req.params.id, usuarioId, comentario);
+        const { comentario } = req.body;
+        const resultado = await pedidoService.cancelarPedido(req.params.id, req.usuario.id, comentario);
         if (!resultado) return res.status(404).json({ mensaje: 'Pedido no encontrado.' });
         res.status(200).json(resultado);
     } catch (error) { res.status(400).json({ error: error.message }); }

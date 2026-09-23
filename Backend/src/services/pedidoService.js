@@ -53,6 +53,19 @@ export const modificarPedido = async (id, datosActualizados) => {
     return await pedidoModel.findByIdAndUpdate(id, datosActualizados, { new: true, runValidators: true });
 };
 
+export const actualizarEstadoPedido = async (id, estado, usuarioId, comentario = "") => {
+    const estadosValidos = ["pendiente", "pendiente_cotizacion", "confirmado", "en_preparacion", "listo_entrega", "entregado", "cancelado"];
+    if (!estadosValidos.includes(estado)) throw new Error("Estado de pedido inválido.");
+    return await pedidoModel.findByIdAndUpdate(
+        id,
+        {
+            estadoPedido: estado,
+            $push: { historialEstados: { estado, fecha: new Date(), usuarioId, comentario } }
+        },
+        { new: true, runValidators: true }
+    ).populate('usuarioId', 'nombre apellido correo');
+};
+
 export const cancelarPedido = async (id, usuarioId, comentario = '') => {
     return await pedidoModel.findByIdAndUpdate(
         id,

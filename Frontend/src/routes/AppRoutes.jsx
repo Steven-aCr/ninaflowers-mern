@@ -52,8 +52,8 @@ function AppRoutes() {
 
         <Route element={<PrivateRoute />}>
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/mis-pedidos" element={<MisPedidos pedidos={[]} />} />
-          <Route path="/mis-pedidos/:id" element={<DetallePedido pedido={null} />} />
+          <Route path="/mis-pedidos" element={<MisPedidos />} />
+          <Route path="/mis-pedidos/:id" element={<DetallePedido />} />
           <Route path="/perfil" element={<Perfil />} />
         </Route>
       </Route>

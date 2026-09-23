@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import * as pedidoService from "../../services/pedidoService.js";
+import Loader from "../../components/common/Loader.jsx";
 import { Link } from "react-router-dom";
 import Buscador from "../../components/common/Buscador.jsx";
 import { ESTADOS_EN_CURSO, obtenerEstadoPedido } from "../../utils/constantes.js";
@@ -17,9 +19,12 @@ const TABS = [
 // pedidoService.listarPedido({ usuarioId }) en un useEffect y "pedidos"
 // pasa de prop a estado local. La forma de cada pedido es la de tu
 // pedidoModel tal cual (productos, direccionEntrega, estadoPedido, etc.).
-function MisPedidos({ pedidos = [] }) {
+function MisPedidos() {
+  const [pedidos, setPedidos] = useState([]);
+  const [cargando, setCargando] = useState(true);
   const [tab, setTab] = useState("todos");
   const [busqueda, setBusqueda] = useState("");
+  useEffect(() => { (async () => { try { const r = await pedidoService.listarMisPedidos({ limite: 100 }); setPedidos(r.datos); } finally { setCargando(false); } })(); }, []);
 
   const contarPorTab = (valorTab) => {
     if (valorTab === "todos") return pedidos.length;
@@ -80,7 +85,7 @@ function MisPedidos({ pedidos = [] }) {
           </div>
         </div>
 
-        {pedidosFiltrados.length > 0 ? (
+        {cargando ? <Loader texto="Cargando tus pedidos..." /> : pedidosFiltrados.length > 0 ? (
           <div className="mis-pedidos__lista">
             {pedidosFiltrados.map((pedido) => {
               const estado = obtenerEstadoPedido(pedido.estadoPedido);

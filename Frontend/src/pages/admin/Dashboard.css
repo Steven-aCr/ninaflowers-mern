@@ -1,0 +1,401 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: #2d2d2d;
+}
+
+.dashboard__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.dashboard__encabezado h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.dashboard__encabezado p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.dashboard__actualizar {
+  padding: 10px 18px;
+  border: 1px solid #e4d4da;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.dashboard__actualizar:hover {
+  background: #faf4f6;
+}
+
+.dashboard__error {
+  padding: 12px 16px;
+  background: #fff0f0;
+  border: 1px solid #f0caca;
+  border-radius: 8px;
+  color: #a63c3c;
+}
+
+/* ===============================
+   TARJETAS
+================================ */
+
+.dashboard__tarjetas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.dashboard-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  background: white;
+  padding: 20px;
+
+  border: 1px solid #eee;
+  border-radius: 12px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-card__icono {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+  background: #fff1f5;
+
+  font-size: 22px;
+}
+
+.dashboard-card span {
+  display: block;
+  margin-bottom: 5px;
+  color: #777;
+  font-size: 13px;
+}
+
+.dashboard-card h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.dashboard-card p {
+  margin: 4px 0 0;
+  color: #999;
+  font-size: 12px;
+}
+
+/* ===============================
+   CONTENIDO
+================================ */
+
+.dashboard__contenido {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 20px;
+}
+
+.dashboard-panel {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-panel__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.dashboard-panel__encabezado h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.dashboard-panel__encabezado p {
+  margin: 4px 0 0;
+  color: #888;
+  font-size: 13px;
+}
+
+.dashboard-panel__encabezado button {
+  border: none;
+  background: transparent;
+  color: #b85c78;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===============================
+   TABLA PEDIDOS
+================================ */
+
+.dashboard-tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.dashboard-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dashboard-tabla th {
+  padding: 11px 12px;
+  border-bottom: 1px solid #eee;
+
+  color: #777;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.dashboard-tabla td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f2f2f2;
+  font-size: 13px;
+}
+
+.dashboard-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===============================
+   ESTADOS
+================================ */
+
+.dashboard-estado {
+  display: inline-block;
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  background: #f1f1f1;
+
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.dashboard-estado--pendiente,
+.dashboard-estado--pendiente_cotizacion {
+  background: #fff3cd;
+  color: #8a6d00;
+}
+
+.dashboard-estado--confirmado {
+  background: #dceeff;
+  color: #2563a5;
+}
+
+.dashboard-estado--en_preparacion {
+  background: #eee4ff;
+  color: #7048a8;
+}
+
+.dashboard-estado--listo_entrega {
+  background: #daf5ed;
+  color: #287d66;
+}
+
+.dashboard-estado--entregado {
+  background: #dff3df;
+  color: #327a32;
+}
+
+.dashboard-estado--cancelado {
+  background: #fde2e2;
+  color: #a33b3b;
+}
+
+/* ===============================
+   INVENTARIO BAJO
+================================ */
+
+.dashboard-alerta {
+  min-width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 8px;
+
+  background: #fff0f0;
+  color: #b23b3b;
+
+  border-radius: 20px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dashboard-stock {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-stock__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 13px 0;
+
+  border-bottom: 1px solid #eee;
+}
+
+.dashboard-stock__item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.dashboard-stock__item span {
+  color: #999;
+  font-size: 11px;
+}
+
+.dashboard-stock__cantidad {
+  color: #c14f5d;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.dashboard-stock__cantidad small {
+  color: #999;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.dashboard-stock__boton {
+  width: 100%;
+  margin-top: 18px;
+  padding: 10px;
+
+  border: 1px solid #eadde1;
+  border-radius: 8px;
+
+  background: #fff;
+  color: #a94f6b;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-stock__boton:hover {
+  background: #fff6f8;
+}
+
+/* ===============================
+   ACCESOS RÁPIDOS
+================================ */
+
+.dashboard-accesos__grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+.dashboard-accesos__grid button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 90px;
+
+  border: 1px solid #eee;
+  border-radius: 10px;
+
+  background: #fafafa;
+
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.dashboard-accesos__grid button:hover {
+  background: #fff3f6;
+  border-color: #e8ccd5;
+  transform: translateY(-2px);
+}
+
+.dashboard-accesos__grid span {
+  font-size: 22px;
+}
+
+/* ===============================
+   OTROS
+================================ */
+
+.dashboard__vacio,
+.dashboard__cargando {
+  padding: 35px 15px;
+  color: #999;
+  text-align: center;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1200px) {
+  .dashboard__tarjetas {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-accesos__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard__contenido {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard__encabezado {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard__tarjetas {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-accesos__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

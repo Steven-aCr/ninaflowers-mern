@@ -1,72 +1,116 @@
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { obtenerUrlImagen } from "../utils/obtenerImagen.js";
+import { useAuth } from "../hooks/useAuth.js";
+import * as carritoService from "../services/carritoService.js";
 
 export const CarritoContext = createContext(null);
 
-// NOTA IMPORTANTE (leer antes de conectar carritoService real):
-// El carrito vive en memoria (useState) por ahora — se pierde al recargar.
-// Cada función ya tiene la forma final que va a tener cuando conectemos la
-// API (mismo nombre, mismos parámetros), para que conectar carritoService
-// más adelante sea cambiar el CUERPO de estas funciones (agregar los
-// "await carritoService...."), no su forma de uso en el resto de la app.
-//
-// "items" usa la forma de ItemCarrito de tu modelo: { productoId, nombre,
-// precio, cantidad, imagen }. Guardamos "nombre"/"imagen" además del id
-// para no tener que ir a buscar el producto cada vez que se pinta el ícono
-// del carrito o la página de Carrito.
+const normalizar = (carrito) =>
+  (carrito?.items || []).map((i) => ({
+    productoId: i.productoId?._id || i.productoId,
+    nombre: i.productoId?.nombre || "Producto",
+    precio: Number(i.precioUnitario),
+    imagen: obtenerUrlImagen(i.productoId?.imagenes?.[0]),
+    cantidad: i.cantidad,
+  }));
+
 export function CarritoProvider({ children }) {
+  const { usuario } = useAuth();
   const [items, setItems] = useState([]);
+  const [cargandoCarrito, setCargandoCarrito] = useState(false);
+  const usuarioId = usuario?._id || usuario?.id;
 
-  const agregarItem = (producto, cantidad = 1) => {
-    setItems((actuales) => {
-      const existente = actuales.find((item) => item.productoId === producto._id);
-
-      if (existente) {
-        return actuales.map((item) =>
-          item.productoId === producto._id
-            ? { ...item, cantidad: item.cantidad + cantidad }
-            : item
-        );
+  useEffect(() => {
+    if (!usuarioId) return;
+    let activo = true;
+    (async () => {
+      setCargandoCarrito(true);
+      try {
+        const locales = [...items];
+        if (locales.length) {
+          for (const i of locales)
+            await carritoService.agregarItem(usuarioId, i.productoId, i.cantidad);
+        }
+        const c = await carritoService.obtenerCarrito(usuarioId);
+        if (activo) setItems(normalizar(c));
+      } catch (e) {
+        console.error("No se pudo sincronizar el carrito", e);
+      } finally {
+        if (activo) setCargandoCarrito(false);
       }
+    })();
+    return () => {
+      activo = false;
+    };
+    
+  }, [usuarioId]);
 
-      return [
-        ...actuales,
-        {
-          productoId: producto._id,
-          nombre: producto.nombre,
-          precio: producto.precio,
-          imagen: obtenerUrlImagen(producto.imagenes?.[0]),
-          cantidad,
-        },
-      ];
-    });
+  const refrescar = async () => {
+    if (!usuarioId) return;
+    const c = await carritoService.obtenerCarrito(usuarioId);
+    setItems(normalizar(c));
   };
 
-  const actualizarCantidad = (productoId, cantidad) => {
-    if (cantidad <= 0) {
-      eliminarItem(productoId);
+  const agregarItem = async (producto, cantidad = 1) => {
+    if (!usuarioId) {
+      setItems((a) => {
+        const x = a.find((i) => i.productoId === producto._id);
+        return x
+          ? a.map((i) =>
+              i.productoId === producto._id
+                ? { ...i, cantidad: i.cantidad + cantidad }
+                : i
+            )
+          : [
+              ...a,
+              {
+                productoId: producto._id,
+                nombre: producto.nombre,
+                precio: producto.precio,
+                imagen: obtenerUrlImagen(producto.imagenes?.[0]),
+                cantidad,
+              },
+            ];
+      });
       return;
     }
-    setItems((actuales) =>
-      actuales.map((item) => (item.productoId === productoId ? { ...item, cantidad } : item))
-    );
+    await carritoService.agregarItem(usuarioId, producto._id, cantidad);
+    await refrescar();
   };
 
-  const eliminarItem = (productoId) => {
-    setItems((actuales) => actuales.filter((item) => item.productoId !== productoId));
+  const actualizarCantidad = async (productoId, cantidad) => {
+    if (cantidad <= 0) return eliminarItem(productoId);
+    if (!usuarioId) {
+      setItems((a) =>
+        a.map((i) => (i.productoId === productoId ? { ...i, cantidad } : i))
+      );
+      return;
+    }
+    await carritoService.actualizarCantidad(usuarioId, productoId, Number(cantidad));
+    await refrescar();
   };
 
-  const vaciarCarrito = () => {
+  const eliminarItem = async (productoId) => {
+    if (!usuarioId) {
+      setItems((a) => a.filter((i) => i.productoId !== productoId));
+      return;
+    }
+    await carritoService.eliminarItem(usuarioId, productoId);
+    await refrescar();
+  };
+
+  const vaciarCarrito = async () => {
+    if (usuarioId) await carritoService.vaciarCarrito(usuarioId);
     setItems([]);
   };
 
   const cantidadTotal = useMemo(
-    () => items.reduce((total, item) => total + item.cantidad, 0),
+    () => items.reduce((t, i) => t + i.cantidad, 0),
     [items]
   );
 
   const subtotal = useMemo(
-    () => items.reduce((total, item) => total + item.precio * item.cantidad, 0),
+    () => items.reduce((t, i) => t + i.precio * i.cantidad, 0),
     [items]
   );
 
@@ -80,6 +124,8 @@ export function CarritoProvider({ children }) {
         vaciarCarrito,
         cantidadTotal,
         subtotal,
+        cargandoCarrito,
+        refrescar,
       }}
     >
       {children}

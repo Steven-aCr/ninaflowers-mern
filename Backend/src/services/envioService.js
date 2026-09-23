@@ -63,7 +63,18 @@ export const buscarEnvioPorPedido = async (pedidoId) => {
 };
 
 export const modificarEnvio = async (id, datosActualizados) => {
-    return await envioModel.findByIdAndUpdate(id, datosActualizados, { new: true, runValidators: true });
+    const actual = await envioModel.findById(id);
+    if (!actual) return null;
+    const tipo = datosActualizados.tipo ?? actual.tipo;
+    let costoEnvio;
+    if (tipo === "fuera_zona") {
+        costoEnvio = Number(datosActualizados.costoEnvio ?? actual.costoEnvio);
+        if (Number.isNaN(costoEnvio) || costoEnvio < 0) throw new Error("El costo de envío debe ser válido y no negativo.");
+    } else {
+        costoEnvio = TARIFAS_ENVIO[tipo];
+        if (costoEnvio === undefined) throw new Error(`Tipo de envío inválido: ${tipo}`);
+    }
+    return await envioModel.findByIdAndUpdate(id, { ...datosActualizados, tipo, costoEnvio }, { new: true, runValidators: true });
 };
 
 export const eliminarEnvio = async (id) => {

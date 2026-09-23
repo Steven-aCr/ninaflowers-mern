@@ -1,4 +1,7 @@
 import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import * as pedidoService from "../../services/pedidoService.js";
+import Loader from "../../components/common/Loader.jsx";
 import { obtenerEstadoPedido } from "../../utils/constantes.js";
 import { formatearPrecio } from "../../utils/formatearPrecio.js";
 import "./DetallePedido.css";
@@ -11,8 +14,12 @@ import "./DetallePedido.css";
 // componente está pensado para Carrito/Checkout (recalcula el total y
 // siempre muestra un botón de acción). Aquí el pedido ya está cerrado —
 // se muestran los montos guardados tal cual, sin botón.
-function DetallePedido({ pedido = null }) {
-  const { id } = useParams(); // eslint-disable-line no-unused-vars
+function DetallePedido() {
+  const { id } = useParams();
+  const [pedido, setPedido] = useState(null);
+  const [cargando, setCargando] = useState(true);
+  useEffect(() => { (async () => { try { setPedido(await pedidoService.obtenerPedido(id)); } catch { setPedido(null); } finally { setCargando(false); } })(); }, [id]);
+  if (cargando) return <main className="detalle-pedido"><Loader texto="Cargando pedido..." /></main>;
 
   if (!pedido) {
     return (
