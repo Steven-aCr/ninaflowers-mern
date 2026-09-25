@@ -1,72 +1,87 @@
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  color: #2d2d2d;
+  gap: var(--espacio-lg);
+  color: var(--color-en-superficie);
 }
+
+/* ==========================================================================
+   Encabezado
+   ========================================================================== */
 
 .dashboard__encabezado {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: var(--espacio-lg);
 }
 
 .dashboard__encabezado h1 {
-  margin: 0 0 6px;
-  font-size: 28px;
+  margin: 0 0 var(--espacio-xs);
+  font-size: var(--tam-headline-md);
   font-weight: 700;
 }
 
 .dashboard__encabezado p {
   margin: 0;
-  color: #777;
-  font-size: 14px;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
 }
 
 .dashboard__actualizar {
-  padding: 10px 18px;
-  border: 1px solid #e4d4da;
-  border-radius: 8px;
-  background: white;
+  padding: var(--espacio-sm) var(--espacio-lg);
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  color: var(--color-en-superficie);
   cursor: pointer;
-  transition: 0.2s;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .dashboard__actualizar:hover {
-  background: #faf4f6;
+  background: var(--color-superficie-contenedor);
+  border-color: var(--color-primario-fijo-oscuro);
 }
 
 .dashboard__error {
-  padding: 12px 16px;
-  background: #fff0f0;
-  border: 1px solid #f0caca;
-  border-radius: 8px;
-  color: #a63c3c;
+  padding: var(--espacio-sm) var(--espacio-md);
+  background: color-mix(
+    in srgb,
+    var(--color-error) 10%,
+    var(--color-superficie)
+  );
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--color-error) 35%,
+      var(--color-superficie)
+    );
+  border-radius: var(--radio-md);
+  color: var(--color-error);
 }
 
-/* ===============================
-   TARJETAS
-================================ */
+/* ==========================================================================
+   Tarjetas
+   ========================================================================== */
 
 .dashboard__tarjetas {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
+  gap: var(--espacio-md);
 }
 
 .dashboard-card {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--espacio-md);
+  min-width: 0;
+  padding: var(--espacio-lg);
 
-  background: white;
-  padding: 20px;
-
-  border: 1px solid #eee;
-  border-radius: 12px;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-suave);
 }
 
 .dashboard-card__icono {
@@ -76,82 +91,138 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
 
-  border-radius: 10px;
-  background: #fff1f5;
+  border-radius: var(--radio-md);
 
-  font-size: 22px;
+  background: var(--color-primario-fijo);
+  color: var(--color-primario);
 }
 
-.dashboard-card span {
+/*
+ * Material Symbols se utiliza para iconografía funcional.
+ * De esta forma evitamos emojis dependientes del sistema operativo.
+ */
+.dashboard-card__icono .material-symbols-outlined {
+  display: block;
+  margin: 0;
+
+  color: inherit;
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* Pedidos */
+
+.dashboard-card__icono--pedidos {
+  background: var(--color-primario-fijo);
+  color: var(--color-primario);
+}
+
+/* Ventas */
+
+.dashboard-card__icono--ventas {
+  background: var(--color-terciario-fijo);
+  color: var(--color-en-terciario-fijo);
+}
+
+/* Productos */
+
+.dashboard-card__icono--productos {
+  background: var(--color-secundario-fijo);
+  color: var(--color-en-secundario-fijo);
+}
+
+/* Usuarios */
+
+.dashboard-card__icono--usuarios {
+  background: var(--color-superficie-contenedor);
+  color: var(--color-en-superficie);
+}
+
+.dashboard-card__contenido {
+  min-width: 0;
+}
+
+.dashboard-card__contenido > span {
   display: block;
   margin-bottom: 5px;
-  color: #777;
-  font-size: 13px;
+
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-md);
 }
 
-.dashboard-card h2 {
+.dashboard-card__contenido h2 {
   margin: 0;
-  font-size: 24px;
+
+  color: var(--color-en-superficie);
+  font-size: var(--tam-headline-sm);
 }
 
-.dashboard-card p {
+.dashboard-card__contenido p {
   margin: 4px 0 0;
-  color: #999;
-  font-size: 12px;
+
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-caps);
 }
 
-/* ===============================
-   CONTENIDO
-================================ */
+/* ==========================================================================
+   Contenido
+   ========================================================================== */
 
 .dashboard__contenido {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-  gap: 20px;
+  gap: var(--espacio-md);
 }
 
 .dashboard-panel {
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 20px;
+  min-width: 0;
+  padding: var(--espacio-lg);
 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-suave);
 }
 
 .dashboard-panel__encabezado {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: var(--espacio-md);
+
+  margin-bottom: var(--espacio-lg);
 }
 
 .dashboard-panel__encabezado h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--tam-title-md);
 }
 
 .dashboard-panel__encabezado p {
   margin: 4px 0 0;
-  color: #888;
-  font-size: 13px;
+
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
 }
 
 .dashboard-panel__encabezado button {
   border: none;
   background: transparent;
-  color: #b85c78;
+
+  color: var(--color-primario);
   font-weight: 600;
+
   cursor: pointer;
 }
 
-/* ===============================
-   TABLA PEDIDOS
-================================ */
+.dashboard-panel__encabezado button:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Tabla de pedidos
+   ========================================================================== */
 
 .dashboard-tabla-contenedor {
   width: 100%;
@@ -161,79 +232,89 @@
 .dashboard-tabla {
   width: 100%;
   border-collapse: collapse;
+
+  font-size: var(--tam-body-sm);
 }
 
 .dashboard-tabla th {
-  padding: 11px 12px;
-  border-bottom: 1px solid #eee;
+  padding: var(--espacio-sm) var(--espacio-md);
 
-  color: #777;
-  font-size: 12px;
+  border-bottom: 1px solid var(--color-borde-variante);
+
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-caps);
   font-weight: 600;
   text-align: left;
 }
 
 .dashboard-tabla td {
-  padding: 14px 12px;
-  border-bottom: 1px solid #f2f2f2;
-  font-size: 13px;
+  padding: var(--espacio-md);
+
+  border-top: 1px solid var(--color-borde-variante);
+
+  vertical-align: middle;
+}
+
+.dashboard-tabla tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.dashboard-tabla tbody tr:hover {
+  background: var(--color-superficie-contenedor-mas-bajo);
 }
 
 .dashboard-tabla tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* ===============================
-   ESTADOS
-================================ */
+/* ==========================================================================
+   Estados
+   ========================================================================== */
 
 .dashboard-estado {
   display: inline-block;
-  padding: 5px 9px;
 
-  border-radius: 20px;
+  padding: 5px var(--espacio-sm);
 
-  background: #f1f1f1;
+  border-radius: var(--radio-full);
+  background: var(--color-superficie-contenedor);
 
-  font-size: 11px;
+  font-size: var(--tam-label-caps);
   font-weight: 600;
   text-transform: capitalize;
 }
 
 .dashboard-estado--pendiente,
 .dashboard-estado--pendiente_cotizacion {
-  background: #fff3cd;
-  color: #8a6d00;
+  background: var(--color-secundario-fijo);
+  color: var(--color-en-secundario-fijo);
 }
 
-.dashboard-estado--confirmado {
-  background: #dceeff;
-  color: #2563a5;
-}
-
+.dashboard-estado--confirmado,
 .dashboard-estado--en_preparacion {
-  background: #eee4ff;
-  color: #7048a8;
+  background: var(--color-primario-fijo);
+  color: var(--color-en-primario-fijo);
 }
 
-.dashboard-estado--listo_entrega {
-  background: #daf5ed;
-  color: #287d66;
-}
-
+.dashboard-estado--listo_entrega,
 .dashboard-estado--entregado {
-  background: #dff3df;
-  color: #327a32;
+  background: var(--color-terciario-fijo);
+  color: var(--color-en-terciario-fijo);
 }
 
 .dashboard-estado--cancelado {
-  background: #fde2e2;
-  color: #a33b3b;
+  background: color-mix(
+    in srgb,
+    var(--color-error) 15%,
+    var(--color-superficie)
+  );
+
+  color: var(--color-error);
 }
 
-/* ===============================
-   INVENTARIO BAJO
-================================ */
+/* ==========================================================================
+   Inventario bajo
+   ========================================================================== */
 
 .dashboard-alerta {
   min-width: 30px;
@@ -243,14 +324,18 @@
   align-items: center;
   justify-content: center;
 
-  padding: 0 8px;
+  padding: 0 var(--espacio-sm);
 
-  background: #fff0f0;
-  color: #b23b3b;
+  background: color-mix(
+    in srgb,
+    var(--color-error) 12%,
+    var(--color-superficie)
+  );
 
-  border-radius: 20px;
+  color: var(--color-error);
+  border-radius: var(--radio-full);
 
-  font-size: 13px;
+  font-size: var(--tam-body-sm);
   font-weight: 700;
 }
 
@@ -263,111 +348,152 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--espacio-md);
 
-  padding: 13px 0;
+  padding: var(--espacio-md) 0;
 
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-borde-variante);
 }
 
 .dashboard-stock__item strong {
   display: block;
+
   margin-bottom: 4px;
-  font-size: 13px;
+
+  font-size: var(--tam-body-sm);
 }
 
 .dashboard-stock__item span {
-  color: #999;
-  font-size: 11px;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-caps);
 }
 
 .dashboard-stock__cantidad {
-  color: #c14f5d;
-  font-size: 17px;
+  flex-shrink: 0;
+
+  color: var(--color-primario);
+
+  font-size: var(--tam-title-md);
   font-weight: 700;
 }
 
 .dashboard-stock__cantidad small {
-  color: #999;
-  font-size: 10px;
+  color: var(--color-en-superficie-variante);
+
+  font-size: var(--tam-label-caps);
   font-weight: 400;
 }
 
 .dashboard-stock__boton {
   width: 100%;
-  margin-top: 18px;
-  padding: 10px;
 
-  border: 1px solid #eadde1;
-  border-radius: 8px;
+  margin-top: var(--espacio-lg);
+  padding: var(--espacio-sm);
 
-  background: #fff;
-  color: #a94f6b;
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+
+  background: var(--color-superficie-contenedor-mas-bajo);
+  color: var(--color-primario);
 
   font-weight: 600;
+
   cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .dashboard-stock__boton:hover {
-  background: #fff6f8;
+  background: var(--color-superficie-contenedor);
+  border-color: var(--color-primario-fijo-oscuro);
 }
 
-/* ===============================
-   ACCESOS RÁPIDOS
-================================ */
+/* ==========================================================================
+   Accesos rápidos
+   ========================================================================== */
 
 .dashboard-accesos__grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 12px;
+  gap: var(--espacio-sm);
 }
 
 .dashboard-accesos__grid button {
+  min-height: 90px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  gap: 8px;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-md);
 
-  min-height: 90px;
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
 
-  border: 1px solid #eee;
-  border-radius: 10px;
+  background: var(--color-superficie-contenedor-bajo);
+  color: var(--color-en-superficie-variante);
 
-  background: #fafafa;
-
-  color: #555;
-  font-size: 12px;
+  font-size: var(--tam-label-md);
   font-weight: 600;
 
   cursor: pointer;
-  transition: 0.2s;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .dashboard-accesos__grid button:hover {
-  background: #fff3f6;
-  border-color: #e8ccd5;
+  background: var(--color-primario-fijo);
+  border-color: var(--color-primario-fijo-oscuro);
+  color: var(--color-en-primario-fijo);
+
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-suave);
+}
+
+.dashboard-accesos__grid .material-symbols-outlined {
+  color: var(--color-primario);
+
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+
+  transition: transform 0.2s ease;
+}
+
+.dashboard-accesos__grid button:hover .material-symbols-outlined {
   transform: translateY(-2px);
 }
 
-.dashboard-accesos__grid span {
-  font-size: 22px;
+.dashboard-accesos__texto {
+  font-size: var(--tam-label-md);
+  font-weight: 600;
 }
 
-/* ===============================
-   OTROS
-================================ */
+/* ==========================================================================
+   Estados generales
+   ========================================================================== */
 
 .dashboard__vacio,
 .dashboard__cargando {
-  padding: 35px 15px;
-  color: #999;
+  padding: var(--espacio-xl) var(--espacio-md);
+
+  color: var(--color-en-superficie-variante);
+
   text-align: center;
 }
 
-/* ===============================
-   RESPONSIVE
-================================ */
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
 
 @media (max-width: 1200px) {
   .dashboard__tarjetas {
@@ -391,11 +517,23 @@
     flex-direction: column;
   }
 
+  .dashboard__actualizar {
+    width: 100%;
+  }
+
   .dashboard__tarjetas {
     grid-template-columns: 1fr;
   }
 
   .dashboard-accesos__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-panel {
+    padding: var(--espacio-md);
+  }
+
+  .dashboard-stock__item {
+    align-items: flex-start;
   }
 }

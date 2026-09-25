@@ -1,0 +1,208 @@
+/* ==========================================================================
+   Sidebar NinaFlowers
+   Estilos exclusivos del menú administrativo.
+   ========================================================================== */
+
+.admin-sidebar {
+  /* Fondo integrado con el fondo del banner */
+  --sidebar-fondo: #f7f7f7;
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  background-color: var(--sidebar-fondo);
+  border-right: 1px solid var(--color-borde-variante);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Logo / Banner
+   ========================================================================== */
+
+.admin-sidebar__logo {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 8px 12px 6px;
+  background-color: var(--sidebar-fondo);
+}
+
+.admin-sidebar__logo-imagen {
+  display: block;
+  width: 175px;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   Navegación
+   ========================================================================== */
+
+.admin-sidebar__nav {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  background-color: var(--sidebar-fondo);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Lista de navegación
+   ========================================================================== */
+
+.admin-sidebar__lista {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 4px 12px 18px;
+  background-color: var(--sidebar-fondo);
+}
+
+.admin-sidebar__lista li {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   Enlaces
+   ========================================================================== */
+
+.admin-sidebar__link {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 7px 12px;
+  border-radius: var(--radio-md);
+  color: var(--color-en-superficie-variante);
+  font-family: var(--fuente-texto);
+  font-size: var(--tam-body-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* ==========================================================================
+   Hover
+   ========================================================================== */
+
+.admin-sidebar__link:hover {
+  background-color: var(--color-primario-fijo);
+  color: var(--color-primario);
+}
+
+/* ==========================================================================
+   Enlace activo
+   ========================================================================== */
+
+.admin-sidebar__link--activo {
+  background-color: var(--color-primario);
+  color: var(--color-en-primario);
+  font-weight: 600;
+  box-shadow: var(--sombra-suave);
+}
+
+.admin-sidebar__link--activo:hover {
+  background-color: var(--color-primario-contenedor);
+  color: var(--color-en-primario);
+}
+
+/* ==========================================================================
+   Iconos
+   ========================================================================== */
+
+.admin-sidebar__icono {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.admin-sidebar__icono svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ==========================================================================
+   Texto
+   ========================================================================== */
+
+.admin-sidebar__texto {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .admin-sidebar {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .admin-sidebar__logo {
+    padding: 6px 10px 4px;
+  }
+
+  .admin-sidebar__logo-imagen {
+    width: 155px;
+    max-width: 100%;
+  }
+
+  .admin-sidebar__lista {
+    gap: 1px;
+    padding: 3px 10px 14px;
+  }
+
+  .admin-sidebar__link {
+    min-height: 36px;
+    gap: 8px;
+    padding: 6px 10px;
+  }
+
+  .admin-sidebar__icono {
+    width: 19px;
+    height: 19px;
+  }
+
+  .admin-sidebar__icono svg {
+    width: 17px;
+    height: 17px;
+  }
+}

@@ -125,7 +125,6 @@ function Dashboard() {
 
       setPedidosRecientes(listaPedidos.slice(0, 5));
       setInventarioBajo(listaInventario.slice(0, 5));
-
     } catch (error) {
       console.error("Error cargando dashboard:", error);
 
@@ -214,11 +213,16 @@ function Dashboard() {
       <section className="dashboard__tarjetas">
 
         <article className="dashboard-card">
-          <div className="dashboard-card__icono">
-            🛒
+          <div className="dashboard-card__icono dashboard-card__icono--pedidos">
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              receipt_long
+            </span>
           </div>
 
-          <div>
+          <div className="dashboard-card__contenido">
             <span>Pedidos</span>
             <h2>{resumen.pedidos}</h2>
             <p>Pedidos registrados</p>
@@ -226,11 +230,16 @@ function Dashboard() {
         </article>
 
         <article className="dashboard-card">
-          <div className="dashboard-card__icono">
-            💰
+          <div className="dashboard-card__icono dashboard-card__icono--ventas">
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              payments
+            </span>
           </div>
 
-          <div>
+          <div className="dashboard-card__contenido">
             <span>Ventas recientes</span>
             <h2>{formatearMoneda(resumen.ventas)}</h2>
             <p>Según pedidos consultados</p>
@@ -238,11 +247,16 @@ function Dashboard() {
         </article>
 
         <article className="dashboard-card">
-          <div className="dashboard-card__icono">
-            🌸
+          <div className="dashboard-card__icono dashboard-card__icono--productos">
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              local_florist
+            </span>
           </div>
 
-          <div>
+          <div className="dashboard-card__contenido">
             <span>Productos</span>
             <h2>{resumen.productos}</h2>
             <p>Productos registrados</p>
@@ -250,11 +264,16 @@ function Dashboard() {
         </article>
 
         <article className="dashboard-card">
-          <div className="dashboard-card__icono">
-            👥
+          <div className="dashboard-card__icono dashboard-card__icono--usuarios">
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              group
+            </span>
           </div>
 
-          <div>
+          <div className="dashboard-card__contenido">
             <span>Usuarios</span>
             <h2>{resumen.usuarios}</h2>
             <p>Usuarios registrados</p>
@@ -422,33 +441,75 @@ function Dashboard() {
         <div className="dashboard-accesos__grid">
 
           <button onClick={() => navigate("/admin/productos")}>
-            <span>🌷</span>
-            Productos
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              local_florist
+            </span>
+            <span className="dashboard-accesos__texto">
+              Productos
+            </span>
           </button>
 
           <button onClick={() => navigate("/admin/pedidos")}>
-            <span>📦</span>
-            Pedidos
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              receipt_long
+            </span>
+            <span className="dashboard-accesos__texto">
+              Pedidos
+            </span>
           </button>
 
           <button onClick={() => navigate("/admin/inventario")}>
-            <span>📋</span>
-            Inventario
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              inventory_2
+            </span>
+            <span className="dashboard-accesos__texto">
+              Inventario
+            </span>
           </button>
 
           <button onClick={() => navigate("/admin/usuarios")}>
-            <span>👤</span>
-            Usuarios
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              group
+            </span>
+            <span className="dashboard-accesos__texto">
+              Usuarios
+            </span>
           </button>
 
           <button onClick={() => navigate("/admin/pagos")}>
-            <span>💳</span>
-            Pagos
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              credit_card
+            </span>
+            <span className="dashboard-accesos__texto">
+              Pagos
+            </span>
           </button>
 
           <button onClick={() => navigate("/admin/envios")}>
-            <span>🚚</span>
-            Envíos
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              local_shipping
+            </span>
+            <span className="dashboard-accesos__texto">
+              Envíos
+            </span>
           </button>
 
         </div>
