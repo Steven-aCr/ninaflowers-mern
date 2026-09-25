@@ -2,7 +2,7 @@ import api from "./api";
 
 export const listarMovimientos = async (params = {}) => {
   const { data } = await api.get("/movimientosInventario", { params });
-  return data; // { totalDoc, pagActual, totalPag, datos }
+  return data;
 };
 
 export const crearMovimiento = async (datos) => {

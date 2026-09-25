@@ -2,7 +2,7 @@ import api from "./api";
 
 export const listarInventario = async (params = {}) => {
   const { data } = await api.get("/inventarios", { params });
-  return data; // { totalDoc, pagActual, totalPag, datos }
+  return data;
 };
 
 export const crearInventario = async (datosInventario) => {
@@ -17,5 +17,10 @@ export const modificarInventario = async (id, datosActualizados) => {
 
 export const listarInventarioBajoMinimo = async () => {
   const { data } = await api.get("/inventarios", { params: { bajoMinimo: "true", limite: 100 } });
+  return data;
+};
+
+export const producirProducto = async (productoId, cantidad) => {
+  const { data } = await api.post("/inventarios/produccion", { productoId, cantidad: Number(cantidad) });
   return data;
 };
