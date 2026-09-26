@@ -20,11 +20,31 @@ import { webhook } from "./controllers/stripeController.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename); // .../src
 
+// Orígenes permitidos para CORS
+const allowedOrigins = (
+    process.env.CLIENT_URL || "http://localhost:5173"
+)
+    .split(",")
+    .map(origin => origin.trim());
+
 const corsOptions = {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+        // Permite peticiones sin Origin (Postman, servidor-servidor, etc.)
+        // y peticiones provenientes de los orígenes autorizados.
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        console.error(`Origen bloqueado por CORS: ${origin}`);
+        return callback(new Error("Origen no permitido por CORS"));
+    },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-use-cookie']
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "x-use-cookie"
+    ]
 };
 
 const app = express();
