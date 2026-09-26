@@ -131,3 +131,180 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.checkout__campo--fecha .react-datepicker-wrapper {
+  width: 100%;
+}
+
+.checkout__input-fecha {
+  width: 100%;
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background-color: var(--color-superficie-contenedor-bajo);
+  border: none;
+  font-size: var(--tam-body-md);
+  color: var(--color-en-superficie);
+  cursor: pointer;
+}
+ 
+.checkout__input-fecha:focus {
+  outline: 2px solid var(--color-primario-fijo-oscuro);
+}
+ 
+.checkout__input-fecha::placeholder {
+  color: var(--color-en-superficie-variante);
+}
+ 
+.react-datepicker-popper {
+  z-index: 20;
+}
+ 
+.react-datepicker {
+  font-family: var(--fuente-texto);
+  border: none;
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-media);
+  overflow: hidden;
+}
+ 
+.react-datepicker__triangle {
+  display: none;
+}
+ 
+.react-datepicker__header {
+  background-color: var(--color-primario);
+  border-bottom: none;
+  padding-top: var(--espacio-md);
+}
+ 
+.react-datepicker__current-month,
+.react-datepicker-time__header {
+  font-family: var(--fuente-titulos);
+  color: #ffffff;
+  font-size: var(--tam-title-md);
+}
+ 
+.react-datepicker__day-name {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+}
+ 
+.react-datepicker__navigation-icon::before {
+  border-color: #ffffff;
+}
+ 
+.react-datepicker__month {
+  margin: var(--espacio-sm);
+}
+ 
+.react-datepicker__day {
+  border-radius: var(--radio-full);
+  color: var(--color-en-superficie);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+ 
+.react-datepicker__day:hover {
+  background-color: var(--color-superficie-contenedor);
+}
+ 
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: var(--color-primario) !important;
+  color: #ffffff !important;
+}
+ 
+.react-datepicker__day--outside-month {
+  color: var(--color-borde-variante);
+}
+ 
+.react-datepicker__day--disabled {
+  color: var(--color-borde-variante);
+  cursor: not-allowed;
+}
+ 
+.react-datepicker__time-container {
+  border-left: 1px solid var(--color-borde-variante);
+}
+ 
+.react-datepicker__time-list-item {
+  font-size: var(--tam-body-sm) !important;
+}
+ 
+.react-datepicker__time-list-item:hover {
+  background-color: var(--color-superficie-contenedor) !important;
+}
+ 
+.react-datepicker__time-list-item--selected {
+  background-color: var(--color-primario) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.checkout__opcion {
+  display: flex;
+  gap: var(--espacio-sm);
+  align-items: flex-start;
+  padding: var(--espacio-md);
+  border-radius: var(--radio-md);
+  border: 1.5px solid var(--color-borde-variante);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.checkout__opcion:not(:last-child) {
+  margin-bottom: var(--espacio-sm);
+}
+
+.checkout__opcion:hover {
+  background-color: var(--color-superficie-contenedor-bajo);
+}
+
+.checkout__opcion input[type="radio"] {
+  margin-top: 3px;
+  accent-color: var(--color-primario);
+  flex-shrink: 0;
+}
+
+.checkout__opcion strong {
+  display: block;
+  font-size: var(--tam-body-md);
+  margin-bottom: 2px;
+}
+
+.checkout__opcion p {
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+}
+
+.checkout__opcion--activa {
+  border-color: var(--color-primario);
+  background-color: var(--color-primario-fijo);
+}
+
+/* ===== Textarea de referencia =====
+   Antes solo el <input> tenía estilo; el <textarea> se veía sin diseño. */
+.checkout__campo textarea {
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background-color: var(--color-superficie-contenedor-bajo);
+  border: none;
+  font-size: var(--tam-body-md);
+  color: var(--color-en-superficie);
+  resize: vertical;
+  min-height: 72px;
+  font-family: inherit;
+}
+
+.checkout__campo textarea:focus {
+  outline: 2px solid var(--color-primario-fijo-oscuro);
+}
+
+/* ===== Aviso (ej. "fuera de zona, cotización pendiente") ===== */
+.checkout__aviso {
+  padding: var(--espacio-md);
+  border-radius: var(--radio-md);
+  background-color: var(--color-secundario-fijo);
+  color: var(--color-en-secundario-fijo);
+  font-size: var(--tam-body-sm);
+  line-height: 1.6;
+}

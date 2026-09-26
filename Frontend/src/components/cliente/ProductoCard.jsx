@@ -2,14 +2,10 @@ import { Link } from "react-router-dom";
 import { obtenerUrlImagen } from "../../utils/obtenerImagen.js";
 import "./ProductoCard.css";
 
-// Recibe un objeto "producto" (tal como lo devuelve tu API de Producto)
-// y una "etiqueta" opcional para el badge superior (ej. "Selección Rosa").
-// No trae datos de ejemplo quemados: si no hay imagen, usamos un placeholder.
-//
-// "onAgregarCarrito" es opcional:
-// - Sin él (uso en Home): un solo botón "Ver detalles" que navega a /producto/:id.
-// - Con él (uso en Catalogo): se muestran dos botones — "Ver detalles" sigue
-//   navegando (ya no abre modal) y "Agregar" dispara la función recibida.
+// Misma firma de siempre: producto, etiqueta (opcional) y onAgregarCarrito (opcional).
+// - Sin onAgregarCarrito (uso en Home): un solo botón "Ver detalles".
+// - Con onAgregarCarrito (uso en Catalogo): botones circulares de ícono
+//   (ver detalles / agregar) en vez de dos botones de texto lado a lado.
 function ProductoCard({ producto, etiqueta, onAgregarCarrito }) {
   const { _id, nombre, descripcion, precio, imagenes } = producto;
   const imagenPrincipal = obtenerUrlImagen(imagenes?.[0]);
@@ -33,29 +29,32 @@ function ProductoCard({ producto, etiqueta, onAgregarCarrito }) {
         <div>
           {descripcion && <p className="producto-card__descripcion">{descripcion}</p>}
           <h3 className="producto-card__nombre">{nombre}</h3>
-          <span className="producto-card__precio">${Number(precio).toFixed(2)}</span>
         </div>
 
         {mostrarAccionesDobles ? (
-          <div className="producto-card__acciones">
-            <Link
-              to={`/producto/${_id}`}
-              className="producto-card__boton producto-card__boton--secundario"
-            >
-              <span className="material-symbols-outlined">visibility</span>
-              <span>Ver detalles</span>
-            </Link>
-            <button
-              type="button"
-              className="producto-card__boton producto-card__boton--primario"
-              onClick={() => onAgregarCarrito(producto)}
-            >
-              <span className="material-symbols-outlined">local_mall</span>
-              <span>Agregar</span>
-            </button>
+          <div className="producto-card__pie">
+            <span className="producto-card__precio">${Number(precio).toFixed(2)}</span>
+            <div className="producto-card__acciones">
+              <Link
+                to={`/producto/${_id}`}
+                className="producto-card__icobtn producto-card__icobtn--secundario"
+                aria-label={`Ver detalles de ${nombre}`}
+              >
+                <span className="material-symbols-outlined">visibility</span>
+              </Link>
+              <button
+                type="button"
+                className="producto-card__icobtn producto-card__icobtn--primario"
+                aria-label={`Agregar ${nombre} al carrito`}
+                onClick={() => onAgregarCarrito(producto)}
+              >
+                <span className="material-symbols-outlined">add</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="producto-card__pie">
+            <span className="producto-card__precio">${Number(precio).toFixed(2)}</span>
             <Link to={`/producto/${_id}`} className="producto-card__boton producto-card__boton--secundario">
               Ver detalles
             </Link>

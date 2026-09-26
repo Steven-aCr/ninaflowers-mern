@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DatePicker, { registerLocale } from "react-datepicker";
+import es from "date-fns/locale/es";
+import "react-datepicker/dist/react-datepicker.css";
 import * as pedidoService from "../../services/pedidoService.js";
 import * as pagoService from "../../services/pagoService.js";
 import * as stripeService from "../../services/stripeService.js";
@@ -8,10 +11,19 @@ import Boton from "../../components/common/Boton.jsx";
 import { useCarrito } from "../../hooks/useCarrito.js";
 import "./Checkout.css";
 
+registerLocale("es", es);
+
 const COSTOS_ENVIO = {
   retiro_tienda: 0,
   zona_cubierta: 2,
   fuera_zona: 0
+};
+
+const formatearFechaLocal = (fecha) => {
+  const pad = (numero) => String(numero).padStart(2, "0");
+  return `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())}T${pad(
+    fecha.getHours()
+  )}:${pad(fecha.getMinutes())}`;
 };
 
 function Checkout() {
@@ -28,7 +40,7 @@ function Checkout() {
 
   const [tipoEnvio, setTipoEnvio] = useState("zona_cubierta");
   const [metodoPago, setMetodoPago] = useState("tarjeta");
-  const [fechaEntrega, setFechaEntrega] = useState("");
+  const [fechaEntrega, setFechaEntrega] = useState(null);
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
 
@@ -163,7 +175,7 @@ function Checkout() {
             <div className="checkout__bloque">
               <h2><span className="material-symbols-outlined">local_shipping</span>Método de entrega</h2>
 
-              <label className="checkout__opcion">
+              + <label className={`checkout__opcion ${tipoEnvio === "retiro_tienda" ? "checkout__opcion--activa" : ""}`}>
                 <input
                   type="radio"
                   name="envio"
@@ -177,7 +189,7 @@ function Checkout() {
                 </div>
               </label>
 
-              <label className="checkout__opcion">
+              <label className={`checkout__opcion ${tipoEnvio === "zona_cubierta" ? "checkout__opcion--activa" : ""}`}>
                 <input
                   type="radio"
                   name="envio"
@@ -191,7 +203,7 @@ function Checkout() {
                 </div>
               </label>
 
-              <label className="checkout__opcion">
+             <label className={`checkout__opcion ${tipoEnvio === "fuera_zona" ? "checkout__opcion--activa" : ""}`}>
                 <input
                   type="radio"
                   name="envio"
@@ -206,20 +218,31 @@ function Checkout() {
               </label>
             </div>
 
-            <div className="checkout__bloque">
+             <div className="checkout__bloque">
               <h2><span className="material-symbols-outlined">calendar_month</span>Fecha de entrega</h2>
-              <div className="checkout__campo">
-                <input
-                  type="datetime-local"
-                  value={fechaEntrega}
-                  onChange={(e) => setFechaEntrega(e.target.value)}
+              {/* CAMBIO: antes <input type="datetime-local">. El calendario que
+                  se veía era del navegador (no era CSS tuyo) y no se podía
+                  restylear. Ahora es <DatePicker>, un componente de React que
+                  sí se puede pintar con las variables de marca (ver Checkout.css). */}
+              <div className="checkout__campo checkout__campo--fecha">
+                <DatePicker
+                  selected={fechaEntrega}
+                  onChange={(fecha) => setFechaEntrega(fecha)}
+                  showTimeSelect
+                  timeIntervals={30}
+                  timeCaption="Hora"
+                  dateFormat="dd/MM/yyyy h:mm aa"
+                  locale="es"
+                  placeholderText="Selecciona fecha y hora"
+                  className="checkout__input-fecha"
+                  calendarClassName="checkout__calendario"
                 />
               </div>
             </div>
-
+ 
             <div className="checkout__bloque">
               <h2><span className="material-symbols-outlined">payments</span>Método de pago</h2>
-
+ 
               {tipoEnvio === "fuera_zona" ? (
                 <div className="checkout__aviso">
                   Primero necesitamos cotizar el costo del envío.
@@ -241,7 +264,7 @@ function Checkout() {
                       <p>Pago seguro mediante Stripe.</p>
                     </div>
                   </label>
-
+ 
                   <label className="checkout__opcion">
                     <input
                       type="radio"
@@ -255,7 +278,7 @@ function Checkout() {
                       <p>El administrador confirmará el pago cuando sea recibido.</p>
                     </div>
                   </label>
-
+ 
                   <label className="checkout__opcion">
                     <input
                       type="radio"
@@ -272,9 +295,9 @@ function Checkout() {
                 </>
               )}
             </div>
-
+ 
             {error && <div className="checkout__error">{error}</div>}
-
+ 
             <Boton onClick={manejarConfirmar} disabled={enviando || !items.length}>
               {enviando
                 ? "Procesando..."
@@ -285,7 +308,7 @@ function Checkout() {
                     : "Confirmar pedido"}
             </Boton>
           </section>
-
+ 
           <aside>
             <ResumenPedido items={items} subtotal={subtotal} envio={envio} impuesto={impuesto} />
           </aside>
@@ -294,5 +317,5 @@ function Checkout() {
     </main>
   );
 }
-
+ 
 export default Checkout;

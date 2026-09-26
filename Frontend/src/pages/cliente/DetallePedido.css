@@ -5,27 +5,64 @@
   min-height: 60vh;
 }
 
-.detalle-pedido--vacio {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--espacio-sm);
-  text-align: center;
-}
-
 .detalle-pedido__contenedor {
   max-width: var(--ancho-maximo);
   margin: 0 auto;
   padding: var(--espacio-lg) var(--margen-sm) var(--espacio-xxl);
 }
 
+/* ===== Estados de carga y error ===== */
+.detalle-pedido__cargando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-lg);
+}
+
+.detalle-pedido__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-xxl) var(--espacio-md);
+}
+
+.detalle-pedido__error h2 {
+  font-size: var(--tam-headline-sm);
+}
+
+.detalle-pedido__error p {
+  color: var(--color-en-superficie-variante);
+  margin-bottom: var(--espacio-sm);
+}
+
+.detalle-pedido__error button {
+  padding: var(--espacio-sm) var(--espacio-xl);
+  border-radius: var(--radio-full);
+  background-color: var(--color-primario);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: var(--sombra-suave);
+  transition: background-color 0.2s ease;
+}
+
+.detalle-pedido__error button:hover {
+  background-color: var(--color-primario-contenedor);
+}
+
+/* ===== Encabezado ===== */
 .detalle-pedido__volver {
   display: inline-flex;
   align-items: center;
   gap: var(--espacio-xs);
   color: var(--color-en-superficie-variante);
   margin-bottom: var(--espacio-md);
+  font-weight: 600;
+  font-size: var(--tam-body-sm);
+  transition: color 0.2s ease;
 }
 
 .detalle-pedido__volver:hover {
@@ -41,58 +78,92 @@
   margin-bottom: var(--espacio-lg);
 }
 
-.detalle-pedido__id {
-  font-size: var(--tam-label-caps);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-en-superficie-variante);
-  display: block;
+.detalle-pedido__encabezado h1 {
+  font-size: var(--tam-headline-sm);
   margin-bottom: 2px;
 }
 
-.detalle-pedido__encabezado h1 {
-  font-size: var(--tam-headline-sm);
+.detalle-pedido__encabezado p {
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
 }
 
-.detalle-pedido__badge {
+/* Chip de estado del pedido. Por defecto usa un tono neutro; cada
+   modificador (--pendiente, --confirmado, etc.) coincide con los valores
+   reales de "estadoPedido" en tu pedidoModel. */
+.detalle-pedido__estado {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 7px 16px;
   border-radius: var(--radio-full);
   font-size: var(--tam-label-caps);
-  background-color: var(--color-primario-fijo);
-  color: var(--color-en-primario-fijo);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background-color: var(--color-superficie-contenedor-alto);
+  color: var(--color-en-superficie);
+  white-space: nowrap;
 }
 
-.detalle-pedido__badge--cancelado {
-  background-color: var(--color-secundario-fijo);
-  color: var(--color-en-secundario-fijo);
-}
-
-.detalle-pedido__badge--entregado {
+.detalle-pedido__estado--pendiente {
   background-color: var(--color-superficie-contenedor-alto);
   color: var(--color-en-superficie);
 }
 
-.detalle-pedido__layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--espacio-lg);
-  align-items: start;
+.detalle-pedido__estado--pendiente_cotizacion {
+  background-color: var(--color-secundario-fijo);
+  color: var(--color-en-secundario-fijo);
 }
 
-.detalle-pedido__principal {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-md);
+.detalle-pedido__estado--confirmado,
+.detalle-pedido__estado--en_preparacion {
+  background-color: var(--color-primario-fijo);
+  color: var(--color-en-primario-fijo);
 }
 
+.detalle-pedido__estado--listo_entrega {
+  background-color: var(--color-terciario-fijo);
+  color: var(--color-en-terciario-fijo);
+}
+
+.detalle-pedido__estado--entregado {
+  background-color: var(--color-superficie-contenedor-alto);
+  color: var(--color-en-superficie);
+}
+
+.detalle-pedido__estado--cancelado {
+  background-color: var(--color-secundario-fijo);
+  color: var(--color-error);
+}
+
+/* ===== Mensajes de aviso ===== */
+.detalle-pedido__mensaje {
+  padding: var(--espacio-md);
+  border-radius: var(--radio-md);
+  background-color: var(--color-terciario-fijo);
+  color: var(--color-en-terciario-fijo);
+  font-size: var(--tam-body-sm);
+  margin-bottom: var(--espacio-md);
+  line-height: 1.6;
+}
+
+.detalle-pedido__error-pago {
+  padding: var(--espacio-md);
+  border-radius: var(--radio-md);
+  background-color: var(--color-secundario-fijo);
+  color: var(--color-error);
+  font-size: var(--tam-body-sm);
+  margin-bottom: var(--espacio-md);
+  line-height: 1.6;
+}
+
+/* ===== Tarjetas de sección (Productos, Resumen, Entrega, Pago...) ===== */
 .detalle-pedido__tarjeta {
   background-color: var(--color-superficie-contenedor-mas-bajo);
   border-radius: var(--radio-lg);
-  padding: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
   box-shadow: var(--sombra-suave);
+  margin-bottom: var(--espacio-md);
 }
 
 .detalle-pedido__tarjeta h2 {
@@ -100,81 +171,290 @@
   margin-bottom: var(--espacio-sm);
 }
 
-.detalle-pedido__productos li {
+/* ===== Productos del pedido ===== */
+.detalle-pedido__productos {
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-pedido__producto {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--espacio-xs) 0;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-sm) 0;
   border-bottom: 1px solid var(--color-borde-variante);
 }
 
-.detalle-pedido__productos li:last-child {
+.detalle-pedido__producto:last-child {
   border-bottom: none;
 }
 
-.detalle-pedido__referencia {
+.detalle-pedido__producto strong {
+  display: block;
+  font-size: var(--tam-body-md);
+}
+
+.detalle-pedido__producto span {
   font-size: var(--tam-body-sm);
   color: var(--color-en-superficie-variante);
-  margin-top: 4px;
 }
 
-.detalle-pedido__historial {
+.detalle-pedido__producto > div:last-child {
+  text-align: right;
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-sm);
+  gap: 2px;
 }
 
-.detalle-pedido__historial li {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--espacio-sm);
-}
-
-.detalle-pedido__historial .material-symbols-outlined {
+.detalle-pedido__producto > div:last-child strong {
   color: var(--color-primario);
-  font-size: 18px;
-  margin-top: 2px;
+  font-size: var(--tam-title-md);
 }
 
-.detalle-pedido__historial p {
+/* ===== Resumen financiero ===== */
+.detalle-pedido__resumen {
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-pedido__resumen > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-md);
+}
+
+.detalle-pedido__resumen > div strong {
+  color: var(--color-en-superficie);
   font-weight: 600;
 }
 
-.detalle-pedido__historial span {
+.detalle-pedido__total {
+  display: flex !important;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: var(--espacio-sm) !important;
+  margin-top: var(--espacio-xs);
+  border-top: 1px solid var(--color-borde-variante);
+}
+
+.detalle-pedido__total span {
+  font-weight: 700 !important;
+  font-size: var(--tam-title-md);
+  color: var(--color-en-superficie) !important;
+}
+
+.detalle-pedido__total strong {
+  font-family: var(--fuente-titulos);
+  font-size: var(--tam-headline-sm);
+  color: var(--color-primario) !important;
+}
+
+/* ===== Dirección de entrega ===== */
+.detalle-pedido__direccion {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-md);
+  line-height: 1.7;
+}
+
+.detalle-pedido__direccion strong {
+  color: var(--color-en-superficie);
+  font-size: var(--tam-body-lg);
+  margin-bottom: 4px;
+}
+
+/* ===== Aviso de cotización pendiente ===== */
+.detalle-pedido__cotizacion {
+  display: flex;
+  gap: var(--espacio-sm);
+  align-items: flex-start;
+  padding: var(--espacio-sm);
+  border-radius: var(--radio-md);
+  background-color: var(--color-secundario-fijo);
+}
+
+.detalle-pedido__cotizacion .material-symbols-outlined {
+  color: var(--color-en-secundario-fijo);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.detalle-pedido__cotizacion strong {
+  display: block;
+  color: var(--color-en-secundario-fijo);
+  margin-bottom: 2px;
+}
+
+.detalle-pedido__cotizacion p {
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-secundario-fijo);
+  opacity: 0.85;
+}
+
+/* ===== Pago pendiente actual ===== */
+.detalle-pedido__pago-actual {
+  background-color: var(--color-superficie-contenedor-bajo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-sm) var(--espacio-md);
+  margin-bottom: var(--espacio-sm);
+}
+
+.detalle-pedido__pago-actual > p {
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+  margin-bottom: var(--espacio-xs);
+}
+
+.detalle-pedido__pago-actual > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
   font-size: var(--tam-body-sm);
   color: var(--color-en-superficie-variante);
 }
 
-.detalle-pedido__comentario {
-  font-weight: 400 !important;
+.detalle-pedido__pago-actual strong {
+  color: var(--color-en-superficie);
+}
+
+/* ===== Botones de método de pago ===== */
+.detalle-pedido__metodos-pago {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-sm);
+}
+
+.detalle-pedido__metodos-pago button {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background-color: var(--color-superficie-contenedor-bajo);
+  transition: background-color 0.2s ease;
+  text-align: left;
+}
+
+.detalle-pedido__metodos-pago button:hover:not(:disabled) {
+  background-color: var(--color-superficie-contenedor);
+}
+
+.detalle-pedido__metodos-pago button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.detalle-pedido__metodos-pago .material-symbols-outlined {
+  color: var(--color-primario);
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.detalle-pedido__metodos-pago strong {
+  display: block;
+  font-size: var(--tam-body-md);
+}
+
+.detalle-pedido__metodos-pago small {
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+}
+
+.detalle-pedido__procesando {
+  margin-top: var(--espacio-sm);
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+  text-align: center;
+}
+
+/* ===== Pago confirmado ===== */
+.detalle-pedido__pago-confirmado {
+  display: flex;
+  gap: var(--espacio-sm);
+  align-items: flex-start;
+  padding: var(--espacio-sm);
+  border-radius: var(--radio-md);
+  background-color: var(--color-terciario-fijo);
+}
+
+.detalle-pedido__pago-confirmado .material-symbols-outlined {
+  color: var(--color-en-terciario-fijo);
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.detalle-pedido__pago-confirmado strong {
+  display: block;
+  color: var(--color-en-terciario-fijo);
+  margin-bottom: 2px;
+}
+
+.detalle-pedido__pago-confirmado p {
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-terciario-fijo);
+  opacity: 0.85;
+}
+
+/* ===== Historial del pedido (timeline) ===== */
+.detalle-pedido__historial {
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-pedido__historial-item {
+  display: flex;
+  gap: var(--espacio-sm);
+  position: relative;
+  padding-bottom: var(--espacio-md);
+}
+
+/* Línea vertical que conecta cada punto con el siguiente */
+.detalle-pedido__historial-item:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 22px;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--color-borde-variante);
+}
+
+.detalle-pedido__historial-punto {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-primario);
+  flex-shrink: 0;
+  margin-top: 4px;
+  box-shadow: 0 0 0 3px var(--color-primario-fijo);
+  z-index: 1;
+}
+
+.detalle-pedido__historial-item strong {
+  display: block;
+  font-size: var(--tam-body-md);
+}
+
+.detalle-pedido__historial-item span {
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
+}
+
+.detalle-pedido__historial-item p {
   font-size: var(--tam-body-sm);
   color: var(--color-en-superficie-variante);
   margin-top: 2px;
+  font-weight: 400;
 }
 
-.detalle-pedido__resumen-fila {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 0;
-  color: var(--color-en-superficie-variante);
-}
-
-.detalle-pedido__resumen-total {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: var(--espacio-sm);
-  margin-top: var(--espacio-sm);
-  border-top: 1px solid var(--color-borde-variante);
-  font-weight: 700;
-  font-size: var(--tam-title-md);
-  color: var(--color-primario);
-}
-
-@media (min-width: 1024px) {
-  .detalle-pedido__layout {
-    grid-template-columns: 7fr 5fr;
-    gap: var(--espacio-xl);
+@media (min-width: 600px) {
+  .detalle-pedido__metodos-pago {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

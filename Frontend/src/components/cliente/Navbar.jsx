@@ -4,14 +4,15 @@ import { useCarrito } from "../../hooks/useCarrito.js";
 import { useAuth } from "../../hooks/useAuth.js";
 import "./Navbar.css";
 
+// El menú cambia según si hay sesión iniciada (useAuth -> usuario):
+// - Sin sesión: "Inicio" + "Sobre nosotros" y un botón para iniciar sesión.
+//   (El catálogo sigue siendo público, solo que ya no está en el menú:
+//   se llega a él desde los botones del Home, como "Ver catálogo".)
+// - Con sesión: "Inicio", "Catálogo", "Mis pedidos", carrito y avatar.
 function Navbar() {
   const { cantidadTotal } = useCarrito();
   const { usuario } = useAuth();
 
-  // NavLink (a diferencia de Link) sabe si SU propia ruta coincide con la
-  // URL actual y nos deja armar la clase CSS según eso — así "Inicio" solo
-  // se marca activo cuando estás en "/", y "Catálogo" cuando estás en
-  // "/catalogo", sin que tengamos que calcularlo nosotros a mano.
   const claseEnlace = ({ isActive }) =>
     isActive ? "navbar__enlace navbar__enlace--activo" : "navbar__enlace";
 
@@ -27,12 +28,21 @@ function Navbar() {
           <NavLink to="/" end className={claseEnlace}>
             Inicio
           </NavLink>
-          <NavLink to="/catalogo" className={claseEnlace}>
-            Catálogo
-          </NavLink>
-          <NavLink to="/mis-pedidos" className={claseEnlace}>
-            Mis pedidos
-          </NavLink>
+
+          {usuario ? (
+            <>
+              <NavLink to="/catalogo" className={claseEnlace}>
+                Catálogo
+              </NavLink>
+              <NavLink to="/mis-pedidos" className={claseEnlace}>
+                Mis pedidos
+              </NavLink>
+            </>
+          ) : (
+            <Link to="/#sobre-nosotros" className="navbar__enlace">
+              Sobre nosotros
+            </Link>
+          )}
         </nav>
 
         <div className="navbar__acciones">
@@ -41,17 +51,19 @@ function Navbar() {
             {cantidadTotal > 0 && <span className="navbar__badge">{cantidadTotal}</span>}
           </Link>
 
-          {/* Si no hay sesión, "Perfil" manda a /login en vez de /perfil —
-              evita un salto en falso por PrivateRoute (Navbar ya sabe la
-              respuesta sin tener que esperar la redirección). */}
-          <Link
-            to={usuario ? "/perfil" : "/login"}
-            className="navbar__perfil"
-            aria-label={usuario ? "Mi perfil" : "Iniciar sesión"}
-          >
-            <span className="material-symbols-outlined">account_circle</span>
-            <span className="navbar__perfil-texto">{usuario ? usuario.nombre : "Iniciar sesión"}</span>
-          </Link>
+          {usuario ? (
+            <Link to="/perfil" className="navbar__perfil" aria-label="Mi perfil">
+              <span className="navbar__avatar">
+                {usuario.nombre?.[0]?.toUpperCase() || "?"}
+              </span>
+              <span className="navbar__perfil-texto">{usuario.nombre}</span>
+            </Link>
+          ) : (
+            <Link to="/login" className="navbar__cta">
+              <span className="material-symbols-outlined">login</span>
+              <span>Iniciar sesión</span>
+            </Link>
+          )}
         </div>
       </div>
     </header>

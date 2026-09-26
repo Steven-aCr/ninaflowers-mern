@@ -1,6 +1,6 @@
 .footer {
   width: 100%;
-  background-color: var(--color-primario);
+  background-color: var(--color-en-superficie);
   margin-top: var(--espacio-xxl);
 }
 
@@ -39,27 +39,30 @@
 
 .footer__descripcion {
   max-width: 24rem;
-  color: rgba(250, 246, 238, 0.75);
+  color: rgba(250, 246, 238, 0.7);
+  line-height: 1.6;
 }
 
 .footer__horario {
   display: flex;
   align-items: center;
   gap: var(--espacio-xs);
-  color: rgba(250, 246, 238, 0.75);
+  color: rgba(250, 246, 238, 0.7);
   font-size: var(--tam-body-sm);
 }
 
 .footer__horario .material-symbols-outlined {
-  font-size: 20px;
+  font-size: 18px;
   color: var(--color-primario-fijo);
 }
 
 .footer__titulo {
   font-family: var(--fuente-texto);
-  font-size: var(--tam-title-md);
-  font-weight: 600;
+  font-size: var(--tam-label-lg);
+  font-weight: 700;
   color: var(--color-superficie);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .footer__lista {
@@ -69,17 +72,19 @@
 }
 
 .footer__lista a {
-  color: rgba(250, 246, 238, 0.75);
+  color: rgba(250, 246, 238, 0.7);
+  font-size: var(--tam-body-md);
   transition: color 0.2s ease;
 }
 
 .footer__lista a:hover {
-  color: var(--color-primario-fijo);
+  color: #ffffff;
 }
 
 .footer__texto-secundario {
   font-size: var(--tam-body-sm);
-  color: rgba(250, 246, 238, 0.75);
+  color: rgba(250, 246, 238, 0.7);
+  line-height: 1.6;
 }
 
 .footer__linea {
@@ -90,9 +95,9 @@
   flex-direction: column;
   align-items: center;
   gap: var(--espacio-md);
-  border-top: 1px solid rgba(250, 246, 238, 0.2);
+  border-top: 1px solid rgba(250, 246, 238, 0.15);
   font-size: var(--tam-body-sm);
-  color: rgba(250, 246, 238, 0.75);
+  color: rgba(250, 246, 238, 0.6);
 }
 
 .footer__etiqueta {

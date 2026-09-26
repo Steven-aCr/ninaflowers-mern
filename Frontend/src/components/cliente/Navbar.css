@@ -136,3 +136,41 @@
     display: inline;
   }
 }
+
+/* Avatar con inicial del nombre — reemplaza el ícono genérico cuando hay sesión */
+.navbar__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: var(--color-secundario-fijo);
+  color: var(--color-en-secundario-fijo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Botón "Iniciar sesión" para visitantes sin cuenta */
+.navbar__cta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px 9px 14px;
+  border-radius: var(--radio-full);
+  background-color: var(--color-primario);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: var(--sombra-suave);
+  transition: background-color 0.2s ease;
+}
+
+.navbar__cta:hover {
+  background-color: var(--color-primario-contenedor);
+}
+
+.navbar__cta .material-symbols-outlined {
+  font-size: 18px;
+}

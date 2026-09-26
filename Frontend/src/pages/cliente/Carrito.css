@@ -89,13 +89,16 @@
   display: flex;
   align-items: center;
   gap: var(--espacio-xs);
+  padding: 6px 14px;
+  border-radius: var(--radio-full);
   font-size: var(--tam-label-md);
   color: var(--color-en-superficie-variante);
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .carrito__vaciar:hover {
   color: var(--color-error);
+  background-color: var(--color-superficie-contenedor);
 }
 
 .carrito__vaciar .material-symbols-outlined {

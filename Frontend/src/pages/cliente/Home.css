@@ -4,20 +4,99 @@
   background-color: var(--color-superficie);
 }
 
-/* ===== Hero ===== */
+/* ===== Hero / Carrusel =====
+   Antes el hero era un grid de 2 columnas (texto + tarjeta decorativa).
+   Ahora el hero ES el carrusel: no necesita padding propio porque cada
+   slide ocupa el 100% del ancho y alto de .home__carrusel. */
 .home__hero {
-  padding: var(--espacio-xl) var(--margen-sm) var(--espacio-xxl);
+  padding: 0;
 }
 
-.home__hero-contenedor {
+.home__carrusel {
+  position: relative;
+  width: 100%;
+  height: min(74vh, 620px);
+  min-height: 440px;
+  overflow: hidden;
+}
+
+/* Cada slide se apila uno sobre otro (position: absolute) y se cambia
+   de opacidad con JS agregando/quitando la clase "home__slide--activa".
+   CAMBIO: agregamos background-size/position aquí porque el slide 1
+   recibe su imagen como "background-image" inline (style) desde Home.jsx. */
+.home__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 1s ease;
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+}
+
+.home__slide--activa {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Fondo de color detrás del texto de cada slide (gradientes con los
+   mismos 3 colores de marca: primario, secundario y terciario). */
+.home__slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* CAMBIO: el slide 1 ahora trae una foto real (NinaFlowersPet) como fondo
+   inline en el propio .home__slide. El ::before de este slide ya NO pinta
+   un gradiente sólido (eso taparía la foto por completo, porque ::before
+   se dibuja encima del background-image del elemento) — en vez de eso,
+   pinta un overlay oscuro semitransparente, solo para que el texto blanco
+   siga leyéndose bien encima de la foto. */
+.home__slide--1::before {
+  background: linear-gradient(
+    90deg,
+    rgba(45, 55, 72, 0.65) 0%,
+    rgba(45, 55, 72, 0.35) 55%,
+    rgba(45, 55, 72, 0.1) 85%
+  );
+}
+
+.home__slide--2::before {
+  background: linear-gradient(
+    90deg,
+    rgba(45, 55, 72, 0.6) 0%,
+    rgba(45, 55, 72, 0.3) 55%,
+    rgba(45, 55, 72, 0.05) 85%
+  );
+}
+
+.home__slide--3::before {
+  background: linear-gradient(
+    90deg,
+    rgba(45, 55, 72, 0.6) 0%,
+    rgba(45, 55, 72, 0.3) 55%,
+    rgba(45, 55, 72, 0.05) 85%
+  );
+}
+
+.home__slide-contenido {
+  position: relative;
+  z-index: 2;
   max-width: var(--ancho-maximo);
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--espacio-xl);
-  align-items: center;
+  padding: 0 var(--margen-sm);
+  width: 100%;
+  color: #ffffff;
 }
 
+/* ===== Textos reutilizables (eyebrow, título, subtítulo, botones) =====
+   Son los mismos que tenías antes en el hero de texto; ahora viven
+   dentro de cada slide, por eso las variantes de abajo los sobrescriben
+   a blanco/semitransparente para que se lean sobre el fondo de color. */
 .home__eyebrow {
   display: inline-flex;
   align-items: center;
@@ -37,11 +116,23 @@
   font-size: 14px;
 }
 
+.home__slide .home__eyebrow {
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  backdrop-filter: blur(6px);
+}
+
 .home__titulo {
   font-size: var(--tam-headline-lg);
   line-height: 1.1;
   margin-bottom: var(--espacio-md);
   max-width: 20ch;
+}
+
+.home__slide .home__titulo {
+  color: #ffffff;
+  max-width: 22ch;
 }
 
 .home__subtitulo {
@@ -50,6 +141,10 @@
   max-width: 36rem;
   line-height: 1.6;
   margin-bottom: var(--espacio-xl);
+}
+
+.home__slide .home__subtitulo {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .home__hero-acciones {
@@ -66,15 +161,14 @@
   gap: var(--espacio-xs);
   padding: 0.9rem 2rem;
   border-radius: var(--radio-full);
-  background-color: var(--color-primario);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: var(--sombra-media);
+  background-color: #ffffff;
+  color: var(--color-primario-contenedor);
+  font-weight: 700;
+  box-shadow: var(--sombra-fuerte);
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .home__boton-primario:hover {
-  background-color: var(--color-primario-contenedor);
   transform: translateY(-2px);
 }
 
@@ -96,11 +190,86 @@
   background-color: var(--color-secundario-fijo);
 }
 
+.home__slide .home__boton-secundario {
+  background-color: rgba(255, 255, 255, 0.14);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  color: #ffffff;
+}
+
+.home__slide .home__boton-secundario:hover {
+  background-color: rgba(255, 255, 255, 0.26);
+}
+
+/* ===== Flechas y puntos del carrusel ===== */
+.home__flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radio-full);
+  background-color: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.home__flecha:hover {
+  background-color: rgba(255, 255, 255, 0.32);
+}
+
+.home__flecha--izq {
+  left: var(--margen-sm);
+}
+
+.home__flecha--der {
+  right: var(--margen-sm);
+}
+
+.home__puntos {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.home__punto {
+  width: 28px;
+  height: 5px;
+  border-radius: var(--radio-full);
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.home__punto--activo {
+  background-color: #ffffff;
+  width: 40px;
+}
+
+/* ===== Franja de pilares (debajo del carrusel) =====
+   Antes vivían dentro del grid del hero; ahora son una franja aparte
+   con fondo propio, justo debajo del carrusel. */
+.home__pilares-franja {
+  background-color: var(--color-superficie-contenedor-mas-bajo);
+  border-top: 1px solid var(--color-borde-variante);
+}
+
 .home__pilares {
+  max-width: var(--ancho-maximo);
+  margin: 0 auto;
+  padding: var(--espacio-lg) var(--margen-sm);
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--espacio-md);
-  padding-top: var(--espacio-lg);
 }
 
 .home__pilar {
@@ -146,42 +315,6 @@
 .home__pilar-texto {
   font-size: var(--tam-body-sm);
   color: var(--color-en-superficie-variante);
-}
-
-.home__hero-visual {
-  display: flex;
-  justify-content: center;
-}
-
-.home__hero-tarjeta {
-  width: 100%;
-  max-width: 420px;
-  aspect-ratio: 4 / 5;
-  border-radius: var(--radio-lg);
-  background: linear-gradient(
-    160deg,
-    var(--color-terciario-fijo) 0%,
-    var(--color-secundario-fijo) 100%
-  );
-  box-shadow: var(--sombra-fuerte);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: var(--espacio-lg);
-}
-
-.home__hero-tarjeta-eyebrow {
-  font-size: var(--tam-label-caps);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-secundario);
-  margin-bottom: var(--espacio-xs);
-}
-
-.home__hero-tarjeta-texto {
-  font-family: var(--fuente-titulos);
-  font-size: var(--tam-title-md);
-  color: var(--color-en-superficie);
 }
 
 /* ===== Productos destacados ===== */
@@ -252,7 +385,7 @@
   padding: var(--espacio-xl) 0;
 }
 
-/* ===== Cómo funciona ===== */
+/* ===== Cómo funciona / Sobre nosotros ===== */
 .home__proceso {
   padding: var(--espacio-xxl) 0;
 }
@@ -461,11 +594,6 @@
 }
 
 @media (min-width: 1024px) {
-  .home__hero-contenedor {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--espacio-xxl);
-  }
-
   .home__grid-productos {
     grid-template-columns: repeat(4, 1fr);
   }

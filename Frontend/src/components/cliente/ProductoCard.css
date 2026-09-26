@@ -5,11 +5,12 @@
   border-radius: var(--radio-lg);
   overflow: hidden;
   box-shadow: var(--sombra-suave);
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .producto-card:hover {
   box-shadow: var(--sombra-fuerte);
+  transform: translateY(-4px);
 }
 
 .producto-card__imagen-contenedor {
@@ -77,28 +78,73 @@
   font-family: var(--fuente-titulos);
   font-size: var(--tam-headline-sm);
   line-height: 1.3;
-  margin-bottom: var(--espacio-xs);
 }
 
 .producto-card__precio {
-  display: block;
   font-size: var(--tam-title-md);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-primario);
 }
 
+/* Fila inferior: precio a la izquierda, acción(es) a la derecha.
+   La usan tanto el modo "Home" (un botón de texto) como el modo
+   "Catalogo" (dos botones circulares de ícono). */
 .producto-card__pie {
-  padding-top: var(--espacio-xs);
-}
-
-/* Contenedor de dos botones (usado en Catalogo) */
-.producto-card__acciones {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--espacio-sm);
   padding-top: var(--espacio-xs);
+  margin-top: auto;
 }
 
+.producto-card__acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+/* Botón circular de ícono (usado en Catalogo: ver detalles / agregar) */
+.producto-card__icobtn {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: var(--radio-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.producto-card__icobtn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.producto-card__icobtn:active {
+  transform: scale(0.94);
+}
+
+.producto-card__icobtn--secundario {
+  background-color: var(--color-secundario-fijo);
+  color: var(--color-en-secundario-fijo);
+}
+
+.producto-card__icobtn--secundario:hover {
+  background-color: var(--color-secundario);
+  color: #ffffff;
+}
+
+.producto-card__icobtn--primario {
+  background-color: var(--color-primario);
+  color: #ffffff;
+  box-shadow: var(--sombra-suave);
+}
+
+.producto-card__icobtn--primario:hover {
+  background-color: var(--color-primario-contenedor);
+}
+
+/* Botón de texto (usado solo en Home, modo de una sola acción) */
 .producto-card__boton {
   display: inline-flex;
   align-items: center;
@@ -112,13 +158,7 @@
   white-space: nowrap;
 }
 
-.producto-card__boton .material-symbols-outlined {
-  font-size: 16px;
-}
-
-/* Botón "Ver detalles": usado tanto en Home (solo) como en Catalogo (dupla) */
 .producto-card__boton--secundario {
-  width: 100%;
   background-color: var(--color-secundario-fijo);
   color: var(--color-en-secundario-fijo);
   box-shadow: var(--sombra-suave);
@@ -127,15 +167,4 @@
 .producto-card__boton--secundario:hover {
   background-color: var(--color-secundario);
   color: #ffffff;
-}
-
-/* Botón "Agregar al carrito": solo aparece en Catalogo */
-.producto-card__boton--primario {
-  background-color: var(--color-primario);
-  color: #ffffff;
-  box-shadow: var(--sombra-suave);
-}
-
-.producto-card__boton--primario:hover {
-  background-color: var(--color-primario-contenedor);
 }

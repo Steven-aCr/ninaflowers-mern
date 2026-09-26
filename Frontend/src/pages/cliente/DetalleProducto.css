@@ -171,13 +171,13 @@
   overflow: hidden;
   background-color: var(--color-superficie-contenedor-mas-bajo);
   box-shadow: var(--sombra-suave);
-  opacity: 0.7;
-  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0.65;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   padding: 2px;
 }
 
 .detalle-producto__miniatura:hover {
-  opacity: 1;
+  transform: translateY(-2px);
 }
 
 .detalle-producto__miniatura--activa {
@@ -202,8 +202,8 @@
   font-size: var(--tam-label-caps);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-secundario);
-  font-weight: 600;
+  color: var(--color-secundario-contenedor);
+  font-weight: 700;
   margin-bottom: var(--espacio-xs);
 }
 
@@ -221,7 +221,7 @@
 
 .detalle-producto__precio {
   font-family: var(--fuente-titulos);
-  font-size: var(--tam-headline-md);
+  font-size: 32px;
   color: var(--color-primario);
 }
 

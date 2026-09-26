@@ -30,7 +30,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<ClienteLayout />}>
-        <Route path="/" element={<Home productosDestacados={[]} />} />
+        <Route path="/" element={<Home />} />
         <Route path="/catalogo" element={<Catalogo productos={[]} categorias={[]} />} />
         <Route path="/producto/:id" element={<DetalleProducto producto={null} />} />
         <Route path="/carrito" element={<Carrito />} />

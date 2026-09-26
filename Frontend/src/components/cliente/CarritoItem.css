@@ -6,6 +6,12 @@
   border-radius: var(--radio-lg);
   padding: var(--espacio-md);
   box-shadow: var(--sombra-suave);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.carrito-item:hover {
+  box-shadow: var(--sombra-media);
+  transform: translateY(-2px);
 }
 
 .carrito-item__imagen {
@@ -117,7 +123,7 @@
 }
 
 .carrito-item__subtotal {
-  font-size: var(--tam-title-md);
+  font-size: var(--tam-headline-sm);
   font-weight: 700;
   color: var(--color-primario);
 }
