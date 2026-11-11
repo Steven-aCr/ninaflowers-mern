@@ -95,7 +95,7 @@
 .catalogo__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--espacio-lg);
+  gap: var(--espacio-md); /* antes --espacio-lg */
   margin-bottom: var(--espacio-xl);
 }
 
@@ -193,7 +193,7 @@
   height: 48px;
   flex-shrink: 0;
   border-radius: var(--radio-full);
-  background-color: rgba(54, 86, 70, 0.1);
+  background-color: rgba(107, 91, 149, 0.1);
   color: var(--color-primario);
   display: flex;
   align-items: center;
@@ -255,5 +255,11 @@
 @media (min-width: 1024px) {
   .catalogo__grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .catalogo__grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

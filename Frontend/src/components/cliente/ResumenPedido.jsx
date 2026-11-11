@@ -5,9 +5,14 @@ import "./ResumenPedido.css";
 // solo suma para mostrar el total. Así la regla de negocio de cuánto
 // cobrar de envío/impuesto vive en un solo lugar (la página que la use),
 // no duplicada dentro de este componente.
+//
+// "textoEnvio" es opcional: si la página lo manda (ej. "Gratis" o
+// "A cotizar"), se muestra tal cual en la fila de envío. Si no, se usa el
+// comportamiento de siempre ($X.XX o "A calcular"), así Carrito no cambia.
 function ResumenPedido({
   subtotal,
   envio = 0,
+  textoEnvio,
   impuesto = 0,
   textoBoton = "Continuar",
   onContinuar,
@@ -26,7 +31,7 @@ function ResumenPedido({
         </div>
         <div className="resumen-pedido__fila">
           <span>Costo de envío</span>
-          <span>{envio > 0 ? `$${envio.toFixed(2)}` : "A calcular"}</span>
+          <span>{textoEnvio ?? (envio > 0 ? `$${envio.toFixed(2)}` : "A calcular")}</span>
         </div>
         <div className="resumen-pedido__fila">
           <span>Impuesto</span>

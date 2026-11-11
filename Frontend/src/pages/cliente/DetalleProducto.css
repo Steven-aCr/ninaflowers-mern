@@ -111,7 +111,8 @@
 .detalle-producto__imagen-principal {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1; /* antes 4 / 5 */
+  max-height: 520px; /* tope para pantallas grandes */
   border-radius: var(--radio-lg);
   overflow: hidden;
   background-color: var(--color-superficie-contenedor-mas-bajo);
@@ -161,23 +162,23 @@
 
 .detalle-producto__miniaturas {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* antes 4 */
   gap: var(--espacio-sm);
 }
 
 .detalle-producto__miniatura {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1; /* antes 4 / 5 */
   border-radius: var(--radio-md);
   overflow: hidden;
   background-color: var(--color-superficie-contenedor-mas-bajo);
   box-shadow: var(--sombra-suave);
-  opacity: 0.65;
-  transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
   padding: 2px;
 }
 
 .detalle-producto__miniatura:hover {
-  transform: translateY(-2px);
+  opacity: 1;
 }
 
 .detalle-producto__miniatura--activa {
@@ -202,13 +203,13 @@
   font-size: var(--tam-label-caps);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-secundario-contenedor);
-  font-weight: 700;
+  color: var(--color-secundario);
+  font-weight: 600;
   margin-bottom: var(--espacio-xs);
 }
 
 .detalle-producto__titulo {
-  font-size: var(--tam-headline-lg);
+  font-size: 32px; /* antes --tam-headline-lg (40px) */
   margin-bottom: var(--espacio-sm);
 }
 
@@ -221,7 +222,7 @@
 
 .detalle-producto__precio {
   font-family: var(--fuente-titulos);
-  font-size: 32px;
+  font-size: var(--tam-headline-sm); /* antes --tam-headline-md */
   color: var(--color-primario);
 }
 
@@ -465,7 +466,12 @@
 
 @media (min-width: 1024px) {
   .detalle-producto__layout {
-    grid-template-columns: 7fr 5fr;
-    gap: var(--espacio-xxl);
+    grid-template-columns: minmax(0, 480px) 1fr; /* antes 7fr 5fr */
+    gap: var(--espacio-xl); /* antes --espacio-xxl */
+  }
+
+  .detalle-producto__galeria {
+    position: sticky; /* la foto se queda visible mientras lees la info */
+    top: 100px;
   }
 }

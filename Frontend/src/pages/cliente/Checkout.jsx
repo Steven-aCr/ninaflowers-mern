@@ -1,30 +1,50 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DatePicker, { registerLocale } from "react-datepicker";
-import es from "date-fns/locale/es";
-import "react-datepicker/dist/react-datepicker.css";
 import * as pedidoService from "../../services/pedidoService.js";
 import * as pagoService from "../../services/pagoService.js";
 import * as stripeService from "../../services/stripeService.js";
 import ResumenPedido from "../../components/cliente/ResumenPedido.jsx";
-import Boton from "../../components/common/Boton.jsx";
 import { useCarrito } from "../../hooks/useCarrito.js";
 import "./Checkout.css";
-
-registerLocale("es", es);
 
 const COSTOS_ENVIO = {
   retiro_tienda: 0,
   zona_cubierta: 2,
-  fuera_zona: 0
+  fuera_zona: 0,
 };
 
-const formatearFechaLocal = (fecha) => {
-  const pad = (numero) => String(numero).padStart(2, "0");
-  return `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())}T${pad(
-    fecha.getHours()
-  )}:${pad(fecha.getMinutes())}`;
-};
+const OPCIONES_ENVIO = [
+  { valor: "retiro_tienda", icono: "storefront", titulo: "Retiro en tienda", detalle: "Sin costo de envío." },
+  { valor: "zona_cubierta", icono: "local_shipping", titulo: "Zona cubierta", detalle: "Envío $2.00." },
+  { valor: "fuera_zona", icono: "map", titulo: "Fuera de zona", detalle: "Te cotizamos el costo del envío." },
+];
+
+const OPCIONES_PAGO = [
+  { valor: "tarjeta", icono: "credit_card", titulo: "Tarjeta", detalle: "Pago seguro con Stripe." },
+  { valor: "efectivo", icono: "payments", titulo: "Efectivo", detalle: "Lo confirmamos cuando recibamos el pago." },
+  { valor: "transferencia", icono: "account_balance", titulo: "Transferencia", detalle: "Queda pendiente hasta validarla." },
+];
+
+// Una opción seleccionable (radio con apariencia de tarjeta).
+function Opcion({ name, opcion, seleccionado, onSeleccionar }) {
+  return (
+    <label className={`checkout__opcion ${seleccionado ? "checkout__opcion--activa" : ""}`}>
+      <input
+        type="radio"
+        name={name}
+        value={opcion.valor}
+        checked={seleccionado}
+        onChange={() => onSeleccionar(opcion.valor)}
+      />
+      <span className="material-symbols-outlined checkout__opcion-icono">{opcion.icono}</span>
+      <span className="checkout__opcion-texto">
+        <strong>{opcion.titulo}</strong>
+        <small>{opcion.detalle}</small>
+      </span>
+      <span className="material-symbols-outlined checkout__opcion-check">check_circle</span>
+    </label>
+  );
+}
 
 function Checkout() {
   const { items, subtotal, vaciarCarrito } = useCarrito();
@@ -35,17 +55,26 @@ function Checkout() {
     linea1: "",
     linea2: "",
     ciudad: "",
-    referencia: ""
+    referencia: "",
   });
 
   const [tipoEnvio, setTipoEnvio] = useState("zona_cubierta");
   const [metodoPago, setMetodoPago] = useState("tarjeta");
-  const [fechaEntrega, setFechaEntrega] = useState(null);
+  const [fechaEntrega, setFechaEntrega] = useState("");
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
 
   const envio = COSTOS_ENVIO[tipoEnvio];
   const impuesto = 0;
+
+  // Texto del envío en el resumen (así "retiro en tienda" no dice "A calcular").
+  const textoEnvio =
+    tipoEnvio === "retiro_tienda" ? "Gratis" : tipoEnvio === "fuera_zona" ? "A cotizar" : undefined;
+
+  // Fecha mínima para el selector: ahora mismo, en hora local.
+  const ahora = new Date();
+  ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
+  const fechaMinima = ahora.toISOString().slice(0, 16);
 
   const actualizarCampo = (campo) => (evento) => {
     setDireccion((actual) => ({ ...actual, [campo]: evento.target.value }));
@@ -67,17 +96,25 @@ function Checkout() {
       return;
     }
 
+    if (new Date(fechaEntrega) < new Date()) {
+      setError("La fecha de entrega no puede estar en el pasado.");
+      return;
+    }
+
     setEnviando(true);
     setError("");
+
+    let pedidoId = null;
 
     try {
       const resultado = await pedidoService.crearPedidoDesdeCarrito({
         tipoEnvio,
         direccionEntrega: direccion,
-        fechaEntregaEstimada: fechaEntrega
+        fechaEntregaEstimada: fechaEntrega,
       });
 
       const pedido = resultado.pedido;
+      pedidoId = pedido._id;
 
       // El backend ya vacía el carrito; esto solo sincroniza el contexto local.
       await vaciarCarrito();
@@ -85,237 +122,211 @@ function Checkout() {
       // Fuera de zona: todavía no se crea el pago porque el total final
       // depende de la cotización de envío que hará el administrador.
       if (tipoEnvio === "fuera_zona") {
-        navigate(`/mis-pedidos/${pedido._id}`, {
+        navigate(`/mis-pedidos/${pedidoId}`, {
           state: {
-            mensaje: "Tu pedido fue enviado para cotización. Cuando el administrador establezca el costo del envío podrás realizar el pago."
-          }
+            mensaje:
+              "Tu pedido fue enviado para cotización. Cuando el administrador establezca el costo del envío podrás realizar el pago.",
+          },
         });
         return;
       }
 
       if (metodoPago === "tarjeta") {
-        const sesion = await stripeService.crearSesionCheckout(pedido._id);
+        const sesion = await stripeService.crearSesionCheckout(pedidoId);
         window.location.href = sesion.url;
         return;
       }
 
       // Efectivo o transferencia quedan pendientes de confirmación manual.
-      await pagoService.crearPago(pedido._id, metodoPago);
+      await pagoService.crearPago(pedidoId, metodoPago);
 
-      navigate(`/mis-pedidos/${pedido._id}`, {
+      navigate(`/mis-pedidos/${pedidoId}`, {
         state: {
-          mensaje: metodoPago === "efectivo"
-            ? "Pedido creado. El pago en efectivo está pendiente de confirmación."
-            : "Pedido creado. La transferencia está pendiente de confirmación."
-        }
+          mensaje:
+            metodoPago === "efectivo"
+              ? "Pedido creado. El pago en efectivo está pendiente de confirmación."
+              : "Pedido creado. La transferencia está pendiente de confirmación.",
+        },
       });
     } catch (e) {
       console.error(e);
-      setError(e.response?.data?.error || e.response?.data?.mensaje || "No se pudo completar el pedido.");
+
+      // Si el pedido ya se creó pero falló el pago, no lo dejamos aquí:
+      // lo llevamos al detalle, donde puede pagar de nuevo.
+      if (pedidoId) {
+        navigate(`/mis-pedidos/${pedidoId}`, {
+          state: {
+            mensaje:
+              "Tu pedido se creó, pero no pudimos iniciar el pago. Puedes pagarlo desde aquí.",
+          },
+        });
+        return;
+      }
+
+      setError(
+        e.response?.data?.error || e.response?.data?.mensaje || "No se pudo completar el pedido."
+      );
     } finally {
       setEnviando(false);
     }
   };
+
+  // El método de pago ya se elige arriba, así que el botón no lo repite.
+  const textoBoton = enviando
+    ? "Procesando..."
+    : tipoEnvio === "fuera_zona"
+      ? "Solicitar cotización"
+      : "Confirmar pedido";
 
   return (
     <main className="checkout">
       <div className="checkout__contenedor">
         <header className="checkout__encabezado">
           <h1>Entrega y pago</h1>
-          <p>Confirma los datos de entrega y selecciona cómo deseas pagar.</p>
+          <p>Confirma los datos de entrega y elige cómo deseas pagar.</p>
         </header>
 
         <div className="checkout__layout">
           <section className="checkout__formulario">
+            {/* --- 1. Dirección y fecha --- */}
             <div className="checkout__bloque">
-              <h2><span className="material-symbols-outlined">pin_drop</span>Dirección de entrega</h2>
+              <h2>
+                <span className="material-symbols-outlined">pin_drop</span>
+                Dirección y fecha de entrega
+              </h2>
 
               <div className="checkout__campo">
-                <label>Calle y número</label>
+                <label htmlFor="checkout-linea1">Calle y número</label>
                 <input
+                  id="checkout-linea1"
                   type="text"
                   value={direccion.linea1}
                   onChange={actualizarCampo("linea1")}
                   placeholder="Av. Las Rosas 412"
+                  autoComplete="street-address"
                 />
               </div>
 
               <div className="checkout__fila">
                 <div className="checkout__campo">
-                  <label>Interior / Depto</label>
+                  <label htmlFor="checkout-linea2">Interior / Depto (opcional)</label>
                   <input
+                    id="checkout-linea2"
                     type="text"
                     value={direccion.linea2}
                     onChange={actualizarCampo("linea2")}
-                    placeholder="Opcional"
                   />
                 </div>
 
                 <div className="checkout__campo">
-                  <label>Ciudad</label>
+                  <label htmlFor="checkout-ciudad">Ciudad</label>
                   <input
+                    id="checkout-ciudad"
                     type="text"
                     value={direccion.ciudad}
                     onChange={actualizarCampo("ciudad")}
-                    placeholder="San Salvador"
+                    placeholder="Sonsonate"
                   />
                 </div>
               </div>
 
               <div className="checkout__campo">
-                <label>Referencia</label>
+                <label htmlFor="checkout-referencia">Referencia (opcional)</label>
                 <textarea
+                  id="checkout-referencia"
+                  rows={2}
                   value={direccion.referencia}
                   onChange={actualizarCampo("referencia")}
-                  placeholder="Indicaciones adicionales..."
+                  placeholder="Ej. Casa blanca, portón negro"
+                />
+              </div>
+
+              <div className="checkout__campo">
+                <label htmlFor="checkout-fecha">Fecha y hora de entrega</label>
+                <input
+                  id="checkout-fecha"
+                  type="datetime-local"
+                  min={fechaMinima}
+                  value={fechaEntrega}
+                  onChange={(e) => setFechaEntrega(e.target.value)}
                 />
               </div>
             </div>
 
+            {/* --- 2. Tipo de entrega --- */}
             <div className="checkout__bloque">
-              <h2><span className="material-symbols-outlined">local_shipping</span>Método de entrega</h2>
+              <h2>
+                <span className="material-symbols-outlined">local_shipping</span>
+                Tipo de entrega
+              </h2>
 
-              + <label className={`checkout__opcion ${tipoEnvio === "retiro_tienda" ? "checkout__opcion--activa" : ""}`}>
-                <input
-                  type="radio"
-                  name="envio"
-                  value="retiro_tienda"
-                  checked={tipoEnvio === "retiro_tienda"}
-                  onChange={(e) => setTipoEnvio(e.target.value)}
-                />
-                <div>
-                  <strong>Retiro en tienda</strong>
-                  <p>Sin costo de envío.</p>
-                </div>
-              </label>
-
-              <label className={`checkout__opcion ${tipoEnvio === "zona_cubierta" ? "checkout__opcion--activa" : ""}`}>
-                <input
-                  type="radio"
-                  name="envio"
-                  value="zona_cubierta"
-                  checked={tipoEnvio === "zona_cubierta"}
-                  onChange={(e) => setTipoEnvio(e.target.value)}
-                />
-                <div>
-                  <strong>Zona cubierta</strong>
-                  <p>Envío $2.00.</p>
-                </div>
-              </label>
-
-             <label className={`checkout__opcion ${tipoEnvio === "fuera_zona" ? "checkout__opcion--activa" : ""}`}>
-                <input
-                  type="radio"
-                  name="envio"
-                  value="fuera_zona"
-                  checked={tipoEnvio === "fuera_zona"}
-                  onChange={(e) => setTipoEnvio(e.target.value)}
-                />
-                <div>
-                  <strong>Fuera de zona</strong>
-                  <p>El administrador cotizará el costo.</p>
-                </div>
-              </label>
-            </div>
-
-             <div className="checkout__bloque">
-              <h2><span className="material-symbols-outlined">calendar_month</span>Fecha de entrega</h2>
-              {/* CAMBIO: antes <input type="datetime-local">. El calendario que
-                  se veía era del navegador (no era CSS tuyo) y no se podía
-                  restylear. Ahora es <DatePicker>, un componente de React que
-                  sí se puede pintar con las variables de marca (ver Checkout.css). */}
-              <div className="checkout__campo checkout__campo--fecha">
-                <DatePicker
-                  selected={fechaEntrega}
-                  onChange={(fecha) => setFechaEntrega(fecha)}
-                  showTimeSelect
-                  timeIntervals={30}
-                  timeCaption="Hora"
-                  dateFormat="dd/MM/yyyy h:mm aa"
-                  locale="es"
-                  placeholderText="Selecciona fecha y hora"
-                  className="checkout__input-fecha"
-                  calendarClassName="checkout__calendario"
-                />
+              <div className="checkout__opciones">
+                {OPCIONES_ENVIO.map((opcion) => (
+                  <Opcion
+                    key={opcion.valor}
+                    name="envio"
+                    opcion={opcion}
+                    seleccionado={tipoEnvio === opcion.valor}
+                    onSeleccionar={setTipoEnvio}
+                  />
+                ))}
               </div>
             </div>
- 
+
+            {/* --- 3. Pago --- */}
             <div className="checkout__bloque">
-              <h2><span className="material-symbols-outlined">payments</span>Método de pago</h2>
- 
+              <h2>
+                <span className="material-symbols-outlined">payments</span>
+                Método de pago
+              </h2>
+
               {tipoEnvio === "fuera_zona" ? (
                 <div className="checkout__aviso">
-                  Primero necesitamos cotizar el costo del envío.
-                  Cuando el administrador lo establezca podrás seleccionar y realizar
-                  el pago desde el detalle de tu pedido.
+                  <span className="material-symbols-outlined">info</span>
+                  <p>
+                    Primero cotizamos el envío. Cuando el administrador lo establezca, podrás
+                    pagar desde el detalle de tu pedido.
+                  </p>
                 </div>
               ) : (
-                <>
-                  <label className="checkout__opcion">
-                    <input
-                      type="radio"
+                <div className="checkout__opciones">
+                  {OPCIONES_PAGO.map((opcion) => (
+                    <Opcion
+                      key={opcion.valor}
                       name="pago"
-                      value="tarjeta"
-                      checked={metodoPago === "tarjeta"}
-                      onChange={(e) => setMetodoPago(e.target.value)}
+                      opcion={opcion}
+                      seleccionado={metodoPago === opcion.valor}
+                      onSeleccionar={setMetodoPago}
                     />
-                    <div>
-                      <strong>Tarjeta</strong>
-                      <p>Pago seguro mediante Stripe.</p>
-                    </div>
-                  </label>
- 
-                  <label className="checkout__opcion">
-                    <input
-                      type="radio"
-                      name="pago"
-                      value="efectivo"
-                      checked={metodoPago === "efectivo"}
-                      onChange={(e) => setMetodoPago(e.target.value)}
-                    />
-                    <div>
-                      <strong>Efectivo</strong>
-                      <p>El administrador confirmará el pago cuando sea recibido.</p>
-                    </div>
-                  </label>
- 
-                  <label className="checkout__opcion">
-                    <input
-                      type="radio"
-                      name="pago"
-                      value="transferencia"
-                      checked={metodoPago === "transferencia"}
-                      onChange={(e) => setMetodoPago(e.target.value)}
-                    />
-                    <div>
-                      <strong>Transferencia</strong>
-                      <p>Quedará pendiente hasta su validación.</p>
-                    </div>
-                  </label>
-                </>
+                  ))}
+                </div>
               )}
             </div>
- 
-            {error && <div className="checkout__error">{error}</div>}
- 
-            <Boton onClick={manejarConfirmar} disabled={enviando || !items.length}>
-              {enviando
-                ? "Procesando..."
-                : tipoEnvio === "fuera_zona"
-                  ? "Solicitar cotización"
-                  : metodoPago === "tarjeta"
-                    ? "Continuar con Stripe"
-                    : "Confirmar pedido"}
-            </Boton>
+
+            {error && (
+              <div className="checkout__error" role="alert">
+                <span className="material-symbols-outlined">error</span>
+                <p>{error}</p>
+              </div>
+            )}
           </section>
- 
-          <aside>
-            <ResumenPedido items={items} subtotal={subtotal} envio={envio} impuesto={impuesto} />
+
+          {/* El único botón de acción vive en el resumen. */}
+          <aside className="checkout__resumen">
+            <ResumenPedido
+              subtotal={subtotal}
+              envio={envio}
+              textoEnvio={textoEnvio}
+              impuesto={impuesto}
+              textoBoton={textoBoton}
+              deshabilitado={enviando || !items.length}
+              onContinuar={manejarConfirmar}
+            />
           </aside>
         </div>
       </div>
     </main>
   );
 }
- 
+
 export default Checkout;

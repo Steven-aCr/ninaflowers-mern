@@ -37,3 +37,22 @@ h3 {
   -webkit-font-smoothing: antialiased;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
+
+/* ==========================================================================
+   Contenedor de tablas del panel admin.
+   Envuelve cada <table>: si la tabla es más ancha que la pantalla, aparece
+   un scroll horizontal DENTRO de este contenedor en vez de cortarse.
+   ========================================================================== */
+
+.tabla-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radio-md);
+  box-shadow: var(--sombra-suave);
+  background: var(--color-superficie-contenedor-mas-bajo);
+}
+
+/* La sombra la pone el contenedor, no la tabla (evita sombra doble). */
+.tabla-scroll > table {
+  box-shadow: none;
+}

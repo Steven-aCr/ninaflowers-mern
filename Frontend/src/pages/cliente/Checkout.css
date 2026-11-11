@@ -6,17 +6,17 @@
 }
 
 .checkout__contenedor {
-  max-width: var(--ancho-maximo);
+  max-width: 1100px;
   margin: 0 auto;
   padding: var(--espacio-lg) var(--margen-sm) var(--espacio-xxl);
 }
 
 .checkout__encabezado {
-  margin-bottom: var(--espacio-xl);
+  margin-bottom: var(--espacio-lg);
 }
 
 .checkout__encabezado h1 {
-  font-size: var(--tam-headline-lg);
+  font-size: var(--tam-headline-md);
   margin-bottom: var(--espacio-xs);
 }
 
@@ -31,15 +31,22 @@
   align-items: start;
 }
 
+.checkout__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-md);
+}
+
+/* ===== Bloques ===== */
 .checkout__bloque {
   background-color: var(--color-superficie-contenedor-mas-bajo);
+  border: 1px solid var(--color-borde-variante);
   border-radius: var(--radio-lg);
-  padding: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
   box-shadow: var(--sombra-suave);
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-sm);
-  margin-bottom: var(--espacio-md);
+  gap: var(--espacio-md);
 }
 
 .checkout__bloque h2 {
@@ -47,6 +54,8 @@
   align-items: center;
   gap: var(--espacio-xs);
   font-size: var(--tam-title-md);
+  padding-bottom: var(--espacio-sm);
+  border-bottom: 1px solid var(--color-borde-variante);
 }
 
 .checkout__bloque h2 .material-symbols-outlined {
@@ -54,6 +63,7 @@
   font-size: 20px;
 }
 
+/* ===== Campos ===== */
 .checkout__campo {
   display: flex;
   flex-direction: column;
@@ -62,218 +72,73 @@
 
 .checkout__campo label {
   font-size: var(--tam-label-md);
+  font-weight: 600;
   color: var(--color-en-superficie-variante);
 }
 
-.checkout__campo input {
+.checkout__campo input,
+.checkout__campo textarea {
   padding: var(--espacio-sm) var(--espacio-md);
   border-radius: var(--radio-md);
   background-color: var(--color-superficie-contenedor-bajo);
-  border: none;
+  border: 1px solid transparent;
   font-size: var(--tam-body-md);
   color: var(--color-en-superficie);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.checkout__campo input:focus {
-  outline: 2px solid var(--color-primario-fijo-oscuro);
+.checkout__campo textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+.checkout__campo input:focus,
+.checkout__campo textarea:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  background-color: var(--color-superficie-contenedor-mas-bajo);
 }
 
 .checkout__fila {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--espacio-sm);
+  gap: var(--espacio-md);
 }
 
-.checkout__metodos {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--espacio-sm);
-}
-
-.checkout__metodo {
+/* ===== Opciones seleccionables (envío y pago) ===== */
+.checkout__opciones {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: var(--espacio-sm);
-  border-radius: var(--radio-md);
-  background-color: var(--color-superficie-contenedor-bajo);
-  color: var(--color-en-superficie-variante);
-  font-size: var(--tam-label-md);
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.checkout__metodo:hover {
-  background-color: var(--color-superficie-contenedor);
-}
-
-.checkout__metodo--activo {
-  background-color: var(--color-primario);
-  color: #ffffff;
-}
-
-.checkout__error {
-  color: var(--color-error);
-  font-size: var(--tam-body-sm);
-}
-
-.checkout__nota {
-  margin-top: var(--espacio-sm);
-}
-
-@media (min-width: 1024px) {
-  .checkout__layout {
-    grid-template-columns: 7fr 5fr;
-    gap: var(--espacio-xl);
-  }
-
-  .checkout__fila {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.checkout__campo--fecha .react-datepicker-wrapper {
-  width: 100%;
-}
-
-.checkout__input-fecha {
-  width: 100%;
-  padding: var(--espacio-sm) var(--espacio-md);
-  border-radius: var(--radio-md);
-  background-color: var(--color-superficie-contenedor-bajo);
-  border: none;
-  font-size: var(--tam-body-md);
-  color: var(--color-en-superficie);
-  cursor: pointer;
-}
- 
-.checkout__input-fecha:focus {
-  outline: 2px solid var(--color-primario-fijo-oscuro);
-}
- 
-.checkout__input-fecha::placeholder {
-  color: var(--color-en-superficie-variante);
-}
- 
-.react-datepicker-popper {
-  z-index: 20;
-}
- 
-.react-datepicker {
-  font-family: var(--fuente-texto);
-  border: none;
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-media);
-  overflow: hidden;
-}
- 
-.react-datepicker__triangle {
-  display: none;
-}
- 
-.react-datepicker__header {
-  background-color: var(--color-primario);
-  border-bottom: none;
-  padding-top: var(--espacio-md);
-}
- 
-.react-datepicker__current-month,
-.react-datepicker-time__header {
-  font-family: var(--fuente-titulos);
-  color: #ffffff;
-  font-size: var(--tam-title-md);
-}
- 
-.react-datepicker__day-name {
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 600;
-}
- 
-.react-datepicker__navigation-icon::before {
-  border-color: #ffffff;
-}
- 
-.react-datepicker__month {
-  margin: var(--espacio-sm);
-}
- 
-.react-datepicker__day {
-  border-radius: var(--radio-full);
-  color: var(--color-en-superficie);
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
- 
-.react-datepicker__day:hover {
-  background-color: var(--color-superficie-contenedor);
-}
- 
-.react-datepicker__day--selected,
-.react-datepicker__day--keyboard-selected {
-  background-color: var(--color-primario) !important;
-  color: #ffffff !important;
-}
- 
-.react-datepicker__day--outside-month {
-  color: var(--color-borde-variante);
-}
- 
-.react-datepicker__day--disabled {
-  color: var(--color-borde-variante);
-  cursor: not-allowed;
-}
- 
-.react-datepicker__time-container {
-  border-left: 1px solid var(--color-borde-variante);
-}
- 
-.react-datepicker__time-list-item {
-  font-size: var(--tam-body-sm) !important;
-}
- 
-.react-datepicker__time-list-item:hover {
-  background-color: var(--color-superficie-contenedor) !important;
-}
- 
-.react-datepicker__time-list-item--selected {
-  background-color: var(--color-primario) !important;
-  color: #ffffff !important;
-  font-weight: 600;
+  gap: var(--espacio-sm);
 }
 
 .checkout__opcion {
+  position: relative;
   display: flex;
-  gap: var(--espacio-sm);
-  align-items: flex-start;
+  align-items: center;
+  gap: var(--espacio-md);
   padding: var(--espacio-md);
-  border-radius: var(--radio-md);
   border: 1.5px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+  background-color: var(--color-superficie-contenedor-mas-bajo);
   cursor: pointer;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.checkout__opcion:not(:last-child) {
-  margin-bottom: var(--espacio-sm);
+/* El radio real queda oculto pero sigue siendo accesible con teclado */
+.checkout__opcion input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .checkout__opcion:hover {
-  background-color: var(--color-superficie-contenedor-bajo);
+  border-color: var(--color-primario-fijo-oscuro);
 }
 
-.checkout__opcion input[type="radio"] {
-  margin-top: 3px;
-  accent-color: var(--color-primario);
-  flex-shrink: 0;
-}
-
-.checkout__opcion strong {
-  display: block;
-  font-size: var(--tam-body-md);
-  margin-bottom: 2px;
-}
-
-.checkout__opcion p {
-  font-size: var(--tam-body-sm);
-  color: var(--color-en-superficie-variante);
+.checkout__opcion:focus-within {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
 }
 
 .checkout__opcion--activa {
@@ -281,30 +146,103 @@
   background-color: var(--color-primario-fijo);
 }
 
-/* ===== Textarea de referencia =====
-   Antes solo el <input> tenía estilo; el <textarea> se veía sin diseño. */
-.checkout__campo textarea {
-  padding: var(--espacio-sm) var(--espacio-md);
-  border-radius: var(--radio-md);
-  background-color: var(--color-superficie-contenedor-bajo);
-  border: none;
+.checkout__opcion-icono {
+  font-size: 24px;
+  color: var(--color-en-superficie-variante);
+  flex-shrink: 0;
+}
+
+.checkout__opcion--activa .checkout__opcion-icono {
+  color: var(--color-primario);
+}
+
+.checkout__opcion-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.checkout__opcion-texto strong {
   font-size: var(--tam-body-md);
-  color: var(--color-en-superficie);
-  resize: vertical;
-  min-height: 72px;
-  font-family: inherit;
+  font-weight: 600;
 }
 
-.checkout__campo textarea:focus {
-  outline: 2px solid var(--color-primario-fijo-oscuro);
+.checkout__opcion-texto small {
+  font-size: var(--tam-body-sm);
+  color: var(--color-en-superficie-variante);
 }
 
-/* ===== Aviso (ej. "fuera de zona, cotización pendiente") ===== */
+.checkout__opcion-check {
+  margin-left: auto;
+  font-size: 22px;
+  color: var(--color-primario);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.checkout__opcion--activa .checkout__opcion-check {
+  opacity: 1;
+}
+
+/* ===== Aviso (fuera de zona) ===== */
 .checkout__aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-sm);
   padding: var(--espacio-md);
   border-radius: var(--radio-md);
   background-color: var(--color-secundario-fijo);
   color: var(--color-en-secundario-fijo);
-  font-size: var(--tam-body-sm);
-  line-height: 1.6;
+}
+
+.checkout__aviso .material-symbols-outlined {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.checkout__aviso p {
+  font-size: var(--tam-body-md);
+  line-height: 1.5;
+}
+
+/* ===== Error ===== */
+.checkout__error {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background-color: color-mix(in srgb, var(--color-error) 12%, var(--color-superficie));
+  color: var(--color-error);
+  font-size: var(--tam-body-md);
+}
+
+.checkout__error .material-symbols-outlined {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* ===== Resumen ===== */
+.checkout__resumen {
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .checkout__fila {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .checkout__layout {
+    grid-template-columns: 7fr 4fr;
+    gap: var(--espacio-xl);
+  }
+
+  /* El resumen y su botón se quedan visibles mientras llenas el formulario */
+  .checkout__resumen {
+    position: sticky;
+    top: 100px;
+  }
 }
