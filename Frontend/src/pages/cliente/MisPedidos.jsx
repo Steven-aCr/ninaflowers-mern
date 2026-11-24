@@ -55,6 +55,15 @@ function MisPedidos() {
     return resultado;
   }, [pedidos, tab, busqueda]);
 
+  // Pedido en curso más reciente, para el bloque destacado (solo presentación).
+  const destacado = useMemo(
+    () =>
+      [...pedidos]
+        .filter((p) => ESTADOS_EN_CURSO.includes(p.estadoPedido))
+        .sort((a, b) => new Date(b.fechaPedido) - new Date(a.fechaPedido))[0] || null,
+    [pedidos]
+  );
+
   return (
     <main className="mis-pedidos">
       <div className="mis-pedidos__contenedor">
@@ -84,6 +93,19 @@ function MisPedidos() {
             <Buscador valor={busqueda} onChange={setBusqueda} placeholder="Buscar por N° o flor..." />
           </div>
         </div>
+
+        {!cargando && destacado && (tab === "todos" || tab === "en_curso") && busqueda.trim() === "" && (
+          <section className="mis-pedidos__destacado">
+            <span className="mis-pedidos__destacado-etiqueta">Pedido en curso</span>
+            <h2>Pedido #{destacado._id.slice(-6).toUpperCase()}</h2>
+            <p>
+              {destacado.productos.map((i) => `${i.cantidad}× ${i.nombreProducto}`).join(" · ")}
+            </p>
+            <Link to={`/mis-pedidos/${destacado._id}`} className="ui-btn">
+              Ver detalle
+            </Link>
+          </section>
+        )}
 
         {cargando ? <Loader texto="Cargando tus pedidos..." /> : pedidosFiltrados.length > 0 ? (
           <div className="mis-pedidos__lista">

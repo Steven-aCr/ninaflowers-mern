@@ -1,6 +1,5 @@
-// CAMBIO: ya no importamos "useMemo". Antes se usaba para filtrar y ordenar los productos
-// en el navegador; ahora eso lo hace el backend, así que no hace falta.
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Buscador from "../../components/common/Buscador.jsx";
 import Paginacion from "../../components/common/Paginacion.jsx";
 import Toast from "../../components/common/Toast.jsx";
@@ -23,6 +22,7 @@ const PRODUCTOS_POR_PAGINA = 6;
 // Por eso ya no recibe props: ella misma carga sus datos.
 function Catalogo() {
   const { agregarItem } = useCarrito();
+  const location = useLocation();
 
   // NUEVO: datos que vienen de la API.
   const [productos, setProductos] = useState([]);
@@ -35,7 +35,7 @@ function Catalogo() {
 
   // (sin cambios) filtros que elige el usuario.
   const [busqueda, setBusqueda] = useState("");
-  const [categoriaActiva, setCategoriaActiva] = useState("todos");
+  const [categoriaActiva, setCategoriaActiva] = useState(location.state?.categoriaId ?? "todos");
   const [orden, setOrden] = useState("nombre-asc");
   const [paginaActual, setPaginaActual] = useState(1);
   const [mensajeToast, setMensajeToast] = useState("");

@@ -1,0 +1,48 @@
+.pago-estado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 40px 24px 0;
+}
+
+.pago-estado__tarjeta {
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 48px 32px;
+  text-align: center;
+  background: #fff;
+  border-radius: 40px;
+  box-shadow: var(--sombra-card);
+}
+
+.pago-estado__tarjeta h1 {
+  font-size: clamp(28px, 4vw, 38px);
+}
+
+.pago-estado__tarjeta p {
+  color: var(--mu);
+}
+
+.pago-estado__tarjeta .ui-btn {
+  margin-top: 14px;
+}
+
+.pago-estado__icono {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  font-size: 44px;
+}
+
+.pago-estado__icono--ok { background: var(--p3); }
+.pago-estado__icono--espera { background: var(--p5); }
+.pago-estado__icono--error { background: var(--p1); }

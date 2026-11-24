@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Boton from "../../components/common/Boton.jsx";
 import { useAuth } from "../../hooks/useAuth.js";
 import * as usuarioService from "../../services/usuarioService.js";
 import "./Perfil.css";
@@ -50,7 +49,7 @@ function Perfil() {
 
         <form className="perfil__tarjeta" onSubmit={manejarGuardar}>
           <div className="perfil__avatar">
-            <span className="material-symbols-outlined">account_circle</span>
+            <span className="perfil__inicial" aria-hidden="true">{(usuario.nombre || "?").charAt(0).toUpperCase()}</span>
             <div>
               <p className="perfil__avatar-nombre">
                 {usuario.nombre} {usuario.apellido || ""}
@@ -60,22 +59,22 @@ function Perfil() {
           </div>
 
           <div className="perfil__fila">
-            <label className="perfil__campo">
+            <label className="perfil__campo ui-campo">
               <span>Nombre</span>
               <input value={datos.nombre} disabled={!editando} onChange={actualizarCampo("nombre")} />
             </label>
-            <label className="perfil__campo">
+            <label className="perfil__campo ui-campo">
               <span>Apellido</span>
               <input value={datos.apellido} disabled={!editando} onChange={actualizarCampo("apellido")} />
             </label>
           </div>
 
-          <label className="perfil__campo">
+          <label className="perfil__campo ui-campo">
             <span>Correo</span>
             <input value={usuario.correo} disabled />
           </label>
 
-          <label className="perfil__campo">
+          <label className="perfil__campo ui-campo">
             <span>Teléfono</span>
             <input value={datos.telefono} disabled={!editando} onChange={actualizarCampo("telefono")} />
           </label>
@@ -84,17 +83,18 @@ function Perfil() {
 
           <div className="perfil__acciones">
             {editando ? (
-              <Boton key="guardar" type="submit" disabled={guardando}>
+              <button key="guardar" type="submit" className="ui-btn" disabled={guardando}>
                 {guardando ? "Guardando..." : "Guardar cambios"}
-              </Boton>
+              </button>
             ) : (
-              <Boton key="editar" type="button" onClick={() => setEditando(true)}>
+              <button key="editar" type="button" className="ui-btn" onClick={() => setEditando(true)}>
                 Editar perfil
-              </Boton>
+              </button>
             )}
-            <Boton type="button" variante="fantasma" onClick={manejarCerrarSesion} icono="logout">
+            <button type="button" className="ui-btn ui-btn--rosa" onClick={manejarCerrarSesion}>
+              <span className="material-symbols-outlined">logout</span>
               Cerrar sesión
-            </Boton>
+            </button>
           </div>
         </form>
       </div>

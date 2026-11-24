@@ -1,137 +1,151 @@
 .carrito {
   width: 100%;
-  padding-top: 80px;
-  min-height: calc(100vh - 80px);
-  background-color: var(--color-superficie);
 }
 
 .carrito__contenedor {
-  max-width: var(--ancho-maximo);
+  max-width: var(--ancho-pagina);
   margin: 0 auto;
-  padding: var(--espacio-lg) var(--margen-sm) var(--espacio-xxl);
+  padding: 48px 24px 0;
 }
 
-/* ===== Estado vacío ===== */
+/* ===== Vacío ===== */
 .carrito--vacio {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  min-height: 60vh;
+  padding: 40px 24px;
   text-align: center;
-  gap: var(--espacio-sm);
-  min-height: calc(100vh - 80px);
-  padding: var(--espacio-xl);
 }
 
-.carrito--vacio .material-symbols-outlined {
-  font-size: 48px;
-  color: var(--color-borde-variante);
+.carrito--vacio > .material-symbols-outlined {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: var(--p1);
+  font-size: 42px;
 }
 
 .carrito--vacio h1 {
-  font-size: var(--tam-headline-sm);
+  font-size: 34px;
 }
 
 .carrito--vacio p {
-  color: var(--color-en-superficie-variante);
   max-width: 24rem;
-  margin-bottom: var(--espacio-sm);
+  margin-bottom: 12px;
+  color: var(--mu);
 }
 
 .carrito__boton-vacio {
   display: inline-flex;
   align-items: center;
-  gap: var(--espacio-xs);
-  padding: var(--espacio-sm) var(--espacio-xl);
-  border-radius: var(--radio-full);
-  background-color: var(--color-primario);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: var(--sombra-suave);
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 30px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 800;
 }
 
 /* ===== Encabezado ===== */
 .carrito__encabezado {
-  margin-bottom: var(--espacio-lg);
+  margin-bottom: 32px;
 }
 
 .carrito__encabezado h1 {
-  font-size: var(--tam-headline-lg);
-  margin-bottom: var(--espacio-xs);
+  margin-bottom: 8px;
+  font-size: clamp(38px, 6vw, 64px);
 }
 
 .carrito__encabezado p {
-  color: var(--color-en-superficie-variante);
+  color: var(--mu);
 }
 
 /* ===== Layout ===== */
 .carrito__layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--espacio-xl);
+  gap: 32px;
   align-items: start;
 }
 
 .carrito__items {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-md);
+  gap: 20px;
 }
 
 .carrito__items-barra {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  font-size: var(--tam-title-md);
+  gap: 12px;
+}
+
+.carrito__items-barra > span {
+  padding: 4px 16px;
+  border-radius: 999px;
+  background: var(--p3);
+  font-weight: 800;
+  font-size: 14px;
 }
 
 .carrito__vaciar {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--espacio-xs);
-  padding: 6px 14px;
-  border-radius: var(--radio-full);
-  font-size: var(--tam-label-md);
-  color: var(--color-en-superficie-variante);
-  transition: color 0.2s ease, background-color 0.2s ease;
+  gap: 6px;
+  padding: 6px 16px 6px 10px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--mu);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .carrito__vaciar:hover {
+  background: var(--p1);
   color: var(--color-error);
-  background-color: var(--color-superficie-contenedor);
 }
 
 .carrito__vaciar .material-symbols-outlined {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .carrito__lista {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-md);
+  gap: 18px;
 }
 
 .carrito__seguir {
   display: inline-flex;
   align-items: center;
-  gap: var(--espacio-xs);
-  color: var(--color-primario);
-  font-weight: 600;
+  gap: 8px;
   align-self: flex-start;
-}
-
-.carrito__seguir:hover {
-  color: var(--color-primario-contenedor);
+  min-height: 48px;
+  padding: 0 24px 0 18px;
+  border-radius: 999px;
+  background: var(--p2);
+  font-weight: 800;
 }
 
 @media (min-width: 1024px) {
   .carrito__layout {
-    grid-template-columns: 7fr 5fr;
-    gap: var(--espacio-xxl);
+    grid-template-columns: 7fr 4fr;
+    gap: 40px;
   }
 
   .carrito__resumen {
     position: sticky;
-    top: 100px;
+    top: 110px;
   }
 }

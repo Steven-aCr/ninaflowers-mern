@@ -1,36 +1,90 @@
+/* Fila única de categorías: se desplaza horizontalmente (flechas en escritorio,
+   deslizar con el dedo en móvil). */
 .categoria-filtro {
   display: flex;
   align-items: center;
-  gap: var(--espacio-sm);
+  gap: 10px;
+}
+
+.categoria-filtro__pista {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 10px;
+  padding: 4px 16px; /* aire a los lados para el degradado de bordes */
   overflow-x: auto;
-  padding-bottom: var(--espacio-xs);
+  scroll-snap-type: x proximity;
+  scrollbar-width: none; /* Firefox */
+  -webkit-overflow-scrolling: touch;
+  /* difumina los bordes para indicar que hay más contenido */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
 }
 
-.categoria-filtro::-webkit-scrollbar {
-  display: none;
+.categoria-filtro__pista::-webkit-scrollbar {
+  display: none; /* Chrome / Edge / Safari */
 }
 
+/* Todos los pills iguales (blancos): más ordenado. La activa se marca en oscuro. */
 .categoria-filtro__pill {
-  padding: 0.65rem var(--espacio-lg);
-  border-radius: var(--radio-full);
-  font-size: var(--tam-label-lg);
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid var(--ln);
+  color: var(--ink);
+  font: 700 15px var(--fuente-texto);
   white-space: nowrap;
-  background-color: var(--color-superficie-contenedor-bajo);
-  color: var(--color-en-superficie-variante);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
 .categoria-filtro__pill:hover {
-  background-color: var(--color-superficie-contenedor);
-  color: var(--color-en-superficie);
+  background: var(--p2);
+  transform: translateY(-2px);
 }
 
-.categoria-filtro__pill--activo {
-  background-color: var(--color-primario);
-  color: #ffffff;
-  box-shadow: var(--sombra-suave);
-}
-
+.categoria-filtro__pill--activo,
 .categoria-filtro__pill--activo:hover {
-  background-color: var(--color-primario);
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+  transform: none;
+}
+
+.categoria-filtro__flecha {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--ln);
+  color: var(--ink);
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.categoria-filtro__flecha:hover:not(:disabled) {
+  background: var(--p2);
+}
+
+.categoria-filtro__flecha:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* En móvil se desliza con el dedo: las flechas sobran */
+@media (max-width: 639px) {
+  .categoria-filtro__flecha {
+    display: none;
+  }
+
+  .categoria-filtro__pista {
+    padding: 4px 4px;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 import { rutaInicialPorRol } from "../../utils/rutasPorRol.js";
-import Boton from "../../components/common/Boton.jsx";
 import { useAuth } from "../../hooks/useAuth.js";
-import "./Login.css";
+import "./Auth.css";
 
 function Login() {
   const [correo, setCorreo] = useState("");
@@ -37,49 +37,57 @@ function Login() {
   };
 
   return (
-    <main className="login">
-      <div className="login__tarjeta">
-        <div className="login__encabezado">
-          <span className="material-symbols-outlined">local_florist</span>
-          <h1>Inicia sesión</h1>
-          <p>Accede a tu cuenta de NinaFlowers</p>
-        </div>
-
-        <form className="login__form" onSubmit={manejarSubmit}>
-          <div className="login__campo">
-            <label htmlFor="login-correo">Correo electrónico</label>
-            <input
-              id="login-correo"
-              type="email"
-              value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
-              placeholder="tucorreo@ejemplo.com"
-              autoComplete="email"
-            />
+    <main className="auth">
+      <div className="auth__tarjeta">
+        <aside className="auth__panel">
+          <img src={logo} alt="Logo NinaFlowers" className="auth__logo" />
+          <div>
+            <h1>Hola de nuevo</h1>
+            <p>Revisa el estado de tus pedidos y sigue cada entrega floral desde tu cuenta.</p>
           </div>
+          <span className="auth__adorno" aria-hidden="true" />
+        </aside>
 
-          <div className="login__campo">
-            <label htmlFor="login-password">Contraseña</label>
-            <input
-              id="login-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </div>
+        <section className="auth__contenido">
+          <form className="auth__form" onSubmit={manejarSubmit}>
+            <h2>Inicia sesión</h2>
+            <p className="auth__subtitulo">Accede a tu cuenta de NinaFlowers</p>
 
-          {error && <p className="login__error">{error}</p>}
+            <div className="ui-campo">
+              <label htmlFor="login-correo">Correo electrónico</label>
+              <input
+                id="login-correo"
+                type="email"
+                value={correo}
+                onChange={(e) => setCorreo(e.target.value)}
+                placeholder="tucorreo@ejemplo.com"
+                autoComplete="email"
+              />
+            </div>
 
-          <Boton type="submit" variante="primario" disabled={enviando}>
-            {enviando ? "Ingresando..." : "Iniciar sesión"}
-          </Boton>
-        </form>
+            <div className="ui-campo">
+              <label htmlFor="login-password">Contraseña</label>
+              <input
+                id="login-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+              />
+            </div>
 
-        <p className="login__pie">
-          ¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link>
-        </p>
+            {error && <p className="ui-error" role="alert">{error}</p>}
+
+            <button type="submit" className="ui-btn ui-btn--full" disabled={enviando}>
+              {enviando ? "Ingresando..." : "Iniciar sesión"}
+            </button>
+
+            <p className="auth__pie">
+              ¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link>
+            </p>
+          </form>
+        </section>
       </div>
     </main>
   );

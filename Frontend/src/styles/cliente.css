@@ -1,0 +1,192 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap");
+
+/* ==========================================================================
+   cliente.css
+   Identidad visual de la tienda (vistas cliente). TODO vive bajo
+   .cliente-layout, así el panel admin no se ve afectado.
+   ========================================================================== */
+
+.cliente-layout {
+  /* Paleta */
+  --ink: #3b2f45;
+  --mu: #6a5f75;
+  --bg: #fff8fb;
+  --ac: #a63d74;
+  --ln: #eadff0;
+  --p1: #f9d5e5; /* rosa */
+  --p2: #e4daf7; /* lila */
+  --p3: #d3f0e2; /* menta */
+  --p4: #ffe3cf; /* durazno */
+  --p5: #fff3c4; /* crema */
+  --p6: #d8ecf8; /* celeste */
+
+  --sombra-card: 0 10px 30px rgba(59, 47, 69, 0.08);
+  --ancho-pagina: 1232px;
+
+  /* Tipografía */
+  --fuente-titulos: "Nunito", sans-serif;
+  --fuente-texto: "Nunito", sans-serif;
+
+  /* Re-mapeo de los tokens globales SOLO dentro de la tienda, para que los
+     componentes comunes (Buscador, Paginacion, Toast, Loader…) se vean
+     coherentes sin tocarlos. */
+  --color-primario: var(--ink);
+  --color-primario-contenedor: #2a2133;
+  --color-primario-fijo: var(--p2);
+  --color-primario-fijo-oscuro: var(--ink);
+  --color-en-primario: #ffffff;
+  --color-secundario: var(--p1);
+  --color-fondo: var(--bg);
+  --color-superficie: var(--bg);
+  --color-superficie-contenedor-mas-bajo: #ffffff;
+  --color-superficie-contenedor-bajo: #ffffff;
+  --color-superficie-contenedor: var(--p2);
+  --color-en-superficie: var(--ink);
+  --color-en-superficie-variante: var(--mu);
+  --color-borde-variante: var(--ln);
+  --color-error: #b3261e;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: var(--fuente-texto);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--bg);
+  overflow-x: clip;
+}
+
+.cliente-layout__contenido {
+  flex: 1;
+  width: 100%;
+}
+
+.cliente-layout h1,
+.cliente-layout h2,
+.cliente-layout h3,
+.cliente-layout h4 {
+  font-family: var(--fuente-titulos);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.cliente-layout :focus-visible {
+  outline: 3px solid var(--ac);
+  outline-offset: 2px;
+}
+
+/* ===== Botones ===== */
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 30px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font: 800 16px var(--fuente-texto);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.ui-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 47, 69, 0.18);
+}
+
+.ui-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ui-btn--rosa {
+  background: var(--p1);
+  color: var(--ink);
+}
+
+.ui-btn--blanco {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 6px 20px rgba(59, 47, 69, 0.1);
+}
+
+.ui-btn--full {
+  width: 100%;
+}
+
+.ui-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* ===== Badge / píldora de precio ===== */
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: var(--p5);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* ===== Campos de formulario ===== */
+.ui-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ui-campo > label,
+.ui-campo > span {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.ui-campo input,
+.ui-campo select,
+.ui-campo textarea {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 2px solid var(--ln);
+  border-radius: 16px;
+  background: #fff;
+  font: inherit;
+  color: var(--ink);
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.ui-campo textarea {
+  min-height: 100px;
+  padding: 14px 16px;
+  resize: vertical;
+}
+
+.ui-campo input:focus,
+.ui-campo select:focus,
+.ui-campo textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.ui-campo input:disabled {
+  background: var(--bg);
+  color: var(--mu);
+  cursor: not-allowed;
+}
+
+.ui-error {
+  color: var(--color-error);
+  font-size: 14px;
+  font-weight: 700;
+}

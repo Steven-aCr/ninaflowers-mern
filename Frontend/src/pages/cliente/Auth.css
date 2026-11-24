@@ -1,0 +1,111 @@
+/* Estilos compartidos de Login y Registro (reemplaza Login.css y Registro.css) */
+
+.auth {
+  max-width: var(--ancho-pagina);
+  margin: 0 auto;
+  padding: 40px 24px 0;
+}
+
+.auth__tarjeta {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 40px;
+  box-shadow: var(--sombra-card);
+}
+
+.auth__panel {
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 40px 36px;
+  background: var(--p1);
+}
+
+.auth__panel--lila {
+  background: var(--p2);
+}
+
+.auth__logo {
+  width: 112px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 24px;
+  box-shadow: 0 10px 24px rgba(59, 47, 69, 0.12);
+}
+
+.auth__panel h1 {
+  font-size: clamp(34px, 4.5vw, 48px);
+}
+
+.auth__panel p {
+  max-width: 22rem;
+  margin-top: 14px;
+  font-size: 18px;
+}
+
+.auth__adorno {
+  align-self: flex-start;
+  width: 160px;
+  height: 160px;
+  border-radius: 999px 999px 32px 32px;
+  background: var(--p5);
+}
+
+.auth__contenido {
+  flex: 2 1 420px;
+  padding: 40px 32px;
+  box-sizing: border-box;
+}
+
+.auth__form {
+  max-width: 460px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth__form h2 {
+  font-size: 32px;
+}
+
+.auth__subtitulo {
+  margin-top: -10px;
+  color: var(--mu);
+}
+
+.auth__fila {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.auth__pie {
+  text-align: center;
+  font-size: 14px;
+  color: var(--mu);
+}
+
+.auth__pie a {
+  color: var(--ac);
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+@media (min-width: 560px) {
+  .auth__fila {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 900px) {
+  .auth__contenido {
+    padding: 56px 48px;
+  }
+}

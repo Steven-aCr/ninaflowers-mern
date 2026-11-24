@@ -1,29 +1,28 @@
 .catalogo {
   width: 100%;
-  padding-top: 80px; /* alto del navbar fijo */
-  background-color: var(--color-superficie);
 }
 
 .catalogo__contenedor {
-  max-width: var(--ancho-maximo);
+  max-width: var(--ancho-pagina);
   margin: 0 auto;
-  padding: 0 var(--margen-sm) var(--espacio-xxl);
+  padding: 48px 24px 0;
 }
 
 /* ===== Encabezado ===== */
 .catalogo__encabezado {
-  padding: var(--espacio-xl) 0 var(--espacio-lg);
+  margin-bottom: 28px;
 }
 
 .catalogo__eyebrow {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--espacio-xs);
-  color: var(--color-primario);
-  font-size: var(--tam-label-caps);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: var(--espacio-xs);
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 4px 16px 4px 12px;
+  border-radius: 999px;
+  background: var(--p2);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .catalogo__eyebrow .material-symbols-outlined {
@@ -31,46 +30,65 @@
 }
 
 .catalogo__titulo {
-  font-size: var(--tam-headline-lg);
-  margin-bottom: var(--espacio-xs);
+  font-size: clamp(38px, 6vw, 68px);
 }
 
 .catalogo__subtitulo {
-  font-size: var(--tam-body-lg);
-  color: var(--color-en-superficie-variante);
+  margin-top: 8px;
+  color: var(--mu);
 }
 
-/* ===== Controles: búsqueda + orden + categorías ===== */
+/* ===== Controles ===== */
 .catalogo__controles {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-lg);
-  margin-bottom: var(--espacio-xl);
+  gap: 20px;
+  margin-bottom: 36px;
 }
 
 .catalogo__fila-controles {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-md);
+  gap: 12px;
+  padding: 12px;
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: var(--sombra-card);
 }
 
 .catalogo__buscador {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Buscador es un componente común: se estiliza desde aquí sin tocarlo */
+.catalogo__buscador input {
   width: 100%;
+  min-height: 52px;
+  padding: 0 20px 0 52px; /* deja espacio a la lupa, que antes se encimaba con el texto */
+  border: 2px solid var(--ln);
+  border-radius: 999px;
+  background: var(--bg);
+  font: inherit;
+  color: var(--ink);
+}
+
+.catalogo__buscador input:focus {
+  outline: none;
+  border-color: var(--ink);
 }
 
 .catalogo__orden {
   display: flex;
   align-items: center;
-  gap: var(--espacio-xs);
-  padding: 0.7rem var(--espacio-md);
-  border-radius: var(--radio-full);
-  background-color: var(--color-superficie-contenedor-mas-bajo);
-  box-shadow: var(--sombra-suave);
-  color: var(--color-en-superficie-variante);
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--p2);
 }
 
 .catalogo__orden-label {
-  /* Visualmente oculto, pero accesible para lectores de pantalla */
   position: absolute;
   width: 1px;
   height: 1px;
@@ -82,8 +100,8 @@
   flex: 1;
   background: transparent;
   border: none;
-  font-size: var(--tam-label-lg);
-  color: var(--color-en-superficie);
+  font: 800 15px var(--fuente-texto);
+  color: var(--ink);
   cursor: pointer;
 }
 
@@ -91,134 +109,159 @@
   outline: none;
 }
 
-/* ===== Grid de productos ===== */
+/* ===== Grid ===== */
 .catalogo__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--espacio-md); /* antes --espacio-lg */
-  margin-bottom: var(--espacio-xl);
+  gap: 24px;
+  margin-bottom: 40px;
 }
 
-/* ===== Estado vacío ===== */
+/* ===== Vacío / error ===== */
 .catalogo__vacio {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: var(--espacio-xxl) 0;
+  padding: 56px 24px;
+  margin-bottom: 40px;
+  background: #fff;
+  border-radius: 40px;
+  box-shadow: var(--sombra-card);
 }
 
 .catalogo__vacio-icono {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radio-full);
-  background-color: var(--color-superficie-contenedor);
-  color: var(--color-en-superficie-variante);
+  width: 72px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--espacio-md);
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: var(--p1);
 }
 
 .catalogo__vacio-icono .material-symbols-outlined {
-  font-size: 32px;
+  font-size: 34px;
 }
 
 .catalogo__vacio-titulo {
-  font-size: var(--tam-headline-sm);
-  margin-bottom: var(--espacio-xs);
+  margin-bottom: 8px;
+  font-size: 26px;
 }
 
 .catalogo__vacio-texto {
-  color: var(--color-en-superficie-variante);
   max-width: 28rem;
-  margin-bottom: var(--espacio-lg);
+  margin-bottom: 24px;
+  color: var(--mu);
 }
 
 .catalogo__vacio-boton {
-  padding: var(--espacio-md) var(--espacio-xl);
-  border-radius: var(--radio-full);
-  background-color: var(--color-primario);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: var(--sombra-suave);
-  transition: background-color 0.2s ease;
+  min-height: 52px;
+  padding: 0 30px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font: 800 16px var(--fuente-texto);
 }
 
-.catalogo__vacio-boton:hover {
-  background-color: var(--color-primario-contenedor);
-}
-
-/* ===== Pie: contador + paginación ===== */
+/* ===== Pie ===== */
 .catalogo__pie {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--espacio-md);
-  padding-top: var(--espacio-xl);
+  gap: 16px;
 }
 
 .catalogo__pie-contador {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--espacio-sm);
-  color: var(--color-en-superficie-variante);
+  gap: 8px;
+  padding: 6px 18px 6px 12px;
+  border-radius: 999px;
+  background: var(--p3);
+  font-weight: 800;
+  font-size: 14px;
 }
 
 .catalogo__pie-contador .material-symbols-outlined {
   font-size: 18px;
-  color: var(--color-primario);
 }
 
-/* ===== Banner de compromiso ===== */
+/* Paginacion es común: estilos genéricos para sus botones */
+.catalogo__pie button {
+  min-width: 44px;
+  height: 44px;
+  padding: 0 14px;
+  border: 2px solid var(--ln);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.catalogo__pie button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.catalogo__pie button[aria-current],
+.catalogo__pie button[class*="activ"],
+.catalogo__pie button[class*="active"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* ===== Banner ===== */
 .catalogo__banner {
-  margin-top: var(--espacio-xl);
-  padding: var(--espacio-lg);
-  border-radius: var(--radio-lg);
-  background-color: var(--color-superficie-contenedor-bajo);
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-md);
+  gap: 16px;
   align-items: flex-start;
+  margin-top: 64px;
+  padding: 32px;
+  background: var(--p5);
+  border-radius: 40px;
 }
 
 .catalogo__banner-info {
   display: flex;
   align-items: center;
-  gap: var(--espacio-md);
+  gap: 16px;
 }
 
 .catalogo__banner-icono {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
-  border-radius: var(--radio-full);
-  background-color: rgba(107, 91, 149, 0.1);
-  color: var(--color-primario);
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+  background: #fff;
 }
 
 .catalogo__banner-titulo {
-  font-size: var(--tam-title-md);
-  font-weight: 600;
+  font-size: 20px;
 }
 
 .catalogo__banner-texto {
-  font-size: var(--tam-body-sm);
-  color: var(--color-en-superficie-variante);
   max-width: 40rem;
+  font-size: 14px;
+  color: var(--mu);
 }
 
 .catalogo__banner-etiqueta {
-  font-size: var(--tam-label-caps);
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-terciario);
 }
 
-/* ===== Breakpoints ===== */
 @media (min-width: 640px) {
   .catalogo__grid {
     grid-template-columns: repeat(2, 1fr);
@@ -229,15 +272,12 @@
   .catalogo__fila-controles {
     flex-direction: row;
     align-items: center;
-  }
-
-  .catalogo__buscador {
-    flex: 1;
+    padding: 10px 12px 10px 20px;
+    border-radius: 999px;
   }
 
   .catalogo__orden {
-    width: auto;
-    min-width: 240px;
+    min-width: 260px;
   }
 
   .catalogo__pie {
@@ -255,11 +295,5 @@
 @media (min-width: 1024px) {
   .catalogo__grid {
     grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 1280px) {
-  .catalogo__grid {
-    grid-template-columns: repeat(4, 1fr);
   }
 }

@@ -1,4 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
+import "./PagoEstado.css";
 
 function PagoCancelado() {
   const navigate = useNavigate();
@@ -6,11 +7,12 @@ function PagoCancelado() {
   const pedidoId = params.get("pedido");
 
   return (
-    <main style={{ minHeight: "60vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <div style={{ maxWidth: "520px", padding: "32px", textAlign: "center", background: "#fff", borderRadius: "12px" }}>
+    <main className="pago-estado">
+      <div className="pago-estado__tarjeta">
+        <span className="material-symbols-outlined pago-estado__icono pago-estado__icono--error">cancel</span>
         <h1>Pago cancelado</h1>
         <p>No se realizó ningún cobro. Tu pedido continúa pendiente y puedes intentar pagarlo nuevamente.</p>
-        <button onClick={() => navigate(`/mis-pedidos/${pedidoId}`)}>Volver al pedido</button>
+        <button className="ui-btn" onClick={() => navigate(`/mis-pedidos/${pedidoId}`)}>Volver al pedido</button>
       </div>
     </main>
   );

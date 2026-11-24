@@ -8,7 +8,12 @@ import "./Navbar.css";
 // - Sin sesión: "Inicio" + "Sobre nosotros" y un botón para iniciar sesión.
 //   (El catálogo sigue siendo público, solo que ya no está en el menú:
 //   se llega a él desde los botones del Home, como "Ver catálogo".)
-// - Con sesión: "Inicio", "Catálogo", "Mis pedidos", carrito y avatar.
+// - Con sesión: "Inicio", "Catálogo", "Mis pedidos", carrito y perfil.
+//
+// CAMBIO (solo visual): el botón de la derecha (perfil / iniciar sesión)
+// ahora usa la clase "navbar__perfil" de Navbar.css, con un ícono y un texto.
+// Antes usaba "navbar__avatar" y "navbar__cta", clases que ya no existen en
+// el diseño nuevo. La lógica (usuario ? ... : ...) es exactamente la misma.
 function Navbar() {
   const { cantidadTotal } = useCarrito();
   const { usuario } = useAuth();
@@ -53,15 +58,13 @@ function Navbar() {
 
           {usuario ? (
             <Link to="/perfil" className="navbar__perfil" aria-label="Mi perfil">
-              <span className="navbar__avatar">
-                {usuario.nombre?.[0]?.toUpperCase() || "?"}
-              </span>
+              <span className="material-symbols-outlined">account_circle</span>
               <span className="navbar__perfil-texto">{usuario.nombre}</span>
             </Link>
           ) : (
-            <Link to="/login" className="navbar__cta">
+            <Link to="/login" className="navbar__perfil" aria-label="Iniciar sesión">
               <span className="material-symbols-outlined">login</span>
-              <span>Iniciar sesión</span>
+              <span className="navbar__perfil-texto">Iniciar sesión</span>
             </Link>
           )}
         </div>

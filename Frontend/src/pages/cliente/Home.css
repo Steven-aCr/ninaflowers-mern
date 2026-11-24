@@ -1,600 +1,647 @@
 .home {
   width: 100%;
-  padding-top: 80px; /* alto del navbar fijo */
-  background-color: var(--color-superficie);
 }
 
-/* ===== Hero / Carrusel =====
-   Antes el hero era un grid de 2 columnas (texto + tarjeta decorativa).
-   Ahora el hero ES el carrusel: no necesita padding propio porque cada
-   slide ocupa el 100% del ancho y alto de .home__carrusel. */
+.home__hero,
+.home__seccion {
+  max-width: var(--ancho-pagina);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
 .home__hero {
-  padding: 0;
+  padding-top: 28px;
 }
 
+.home__seccion {
+  padding-top: 88px;
+}
+
+/* ===== Carrusel =====
+   Foto a pantalla completa + texto a la izquierda + miniaturas de los siguientes
+   slides a la derecha. Al cambiar: el fondo hace un zoom suave, el texto sube y
+   aparece, y las miniaturas se deslizan hacia la izquierda. */
 .home__carrusel {
+  --mini-w: 96px;
+  --mini-h: 132px;
+  --mini-gap: 12px;
+
   position: relative;
-  width: 100%;
-  height: min(74vh, 620px);
-  min-height: 440px;
   overflow: hidden;
+  height: clamp(520px, 76vh, 660px);
+  border-radius: 40px;
+  background: var(--ink); /* respaldo mientras cargan las fotos */
+  box-shadow: var(--sombra-card);
 }
 
-/* Cada slide se apila uno sobre otro (position: absolute) y se cambia
-   de opacidad con JS agregando/quitando la clase "home__slide--activa".
-   CAMBIO: agregamos background-size/position aquí porque el slide 1
-   recibe su imagen como "background-image" inline (style) desde Home.jsx. */
-.home__slide {
+/* ----- Fondos ----- */
+.home__fondo {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  z-index: 0;
-  transition: opacity 1s ease;
-  display: flex;
-  align-items: center;
   background-size: cover;
-  background-position: center;
+  opacity: 0;
+  transform: scale(1.12);
+  transition: opacity 1s ease, transform 6s ease-out;
+}
+
+.home__fondo--activo {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Capa oscura suave para que el texto blanco se lea sobre cualquier foto */
+.home__sombra {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(59, 47, 69, 0.78) 0%,
+    rgba(59, 47, 69, 0.4) 50%,
+    rgba(59, 47, 69, 0.05) 85%
+  );
+}
+
+/* ----- Contador ----- */
+.home__contador {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font: 800 15px var(--fuente-titulos);
+  letter-spacing: 0.04em;
+}
+
+.home__contador-punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--p1);
+}
+
+/* ----- Textos ----- */
+.home__slides-texto {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid; /* todos los textos en la misma celda */
+  padding: 0 28px 100px;
+}
+
+.home__slide {
+  grid-area: 1 / 1;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 34rem;
+  color: #fff;
+  opacity: 0;
+  visibility: hidden; /* los botones de slides ocultos no reciben foco con Tab */
+  transform: translateY(28px);
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s linear 0.5s;
 }
 
 .home__slide--activa {
   opacity: 1;
-  z-index: 1;
+  visibility: visible;
+  transform: translateY(0);
+  /* entra un poquito después del fondo */
+  transition-delay: 0.35s, 0.35s, 0s;
 }
 
-/* Fondo de color detrás del texto de cada slide (gradientes con los
-   mismos 3 colores de marca: primario, secundario y terciario). */
-.home__slide::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-/* CAMBIO: el slide 1 ahora trae una foto real (NinaFlowersPet) como fondo
-   inline en el propio .home__slide. El ::before de este slide ya NO pinta
-   un gradiente sólido (eso taparía la foto por completo, porque ::before
-   se dibuja encima del background-image del elemento) — en vez de eso,
-   pinta un overlay oscuro semitransparente, solo para que el texto blanco
-   siga leyéndose bien encima de la foto. */
-.home__slide--1::before {
-  background: linear-gradient(
-    90deg,
-    rgba(45, 55, 72, 0.65) 0%,
-    rgba(45, 55, 72, 0.35) 55%,
-    rgba(45, 55, 72, 0.1) 85%
-  );
-}
-
-.home__slide--2::before {
-  background: linear-gradient(
-    90deg,
-    rgba(45, 55, 72, 0.6) 0%,
-    rgba(45, 55, 72, 0.3) 55%,
-    rgba(45, 55, 72, 0.05) 85%
-  );
-}
-
-.home__slide--3::before {
-  background: linear-gradient(
-    90deg,
-    rgba(45, 55, 72, 0.6) 0%,
-    rgba(45, 55, 72, 0.3) 55%,
-    rgba(45, 55, 72, 0.05) 85%
-  );
-}
-
-.home__slide-contenido {
-  position: relative;
-  z-index: 2;
-  max-width: var(--ancho-maximo);
-  margin: 0 auto;
-  padding: 0 var(--margen-sm);
-  width: 100%;
-  color: #ffffff;
-}
-
-/* ===== Textos reutilizables (eyebrow, título, subtítulo, botones) =====
-   Son los mismos que tenías antes en el hero de texto; ahora viven
-   dentro de cada slide, por eso las variantes de abajo los sobrescriben
-   a blanco/semitransparente para que se lean sobre el fondo de color. */
 .home__eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: var(--espacio-xs);
-  padding: var(--espacio-xs) var(--espacio-md);
-  border-radius: var(--radio-full);
-  background-color: var(--color-secundario-fijo);
-  color: var(--color-en-secundario-fijo);
-  font-size: var(--tam-label-caps);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: var(--espacio-md);
-  box-shadow: var(--sombra-suave);
+  gap: 6px;
+  padding: 4px 16px 4px 12px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .home__eyebrow .material-symbols-outlined {
-  font-size: 14px;
-}
-
-.home__slide .home__eyebrow {
-  background-color: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #ffffff;
-  backdrop-filter: blur(6px);
+  font-size: 18px;
 }
 
 .home__titulo {
-  font-size: var(--tam-headline-lg);
-  line-height: 1.1;
-  margin-bottom: var(--espacio-md);
-  max-width: 20ch;
-}
-
-.home__slide .home__titulo {
-  color: #ffffff;
-  max-width: 22ch;
+  margin: 18px 0 14px;
+  font-size: clamp(32px, 4.8vw, 58px);
+  color: #fff !important; /* pisa el color de h1 definido en cliente.css */
 }
 
 .home__subtitulo {
-  font-size: var(--tam-body-lg);
-  color: var(--color-en-superficie-variante);
-  max-width: 36rem;
-  line-height: 1.6;
-  margin-bottom: var(--espacio-xl);
-}
-
-.home__slide .home__subtitulo {
+  max-width: 30rem;
+  margin-bottom: 26px;
+  font-size: 17px;
   color: rgba(255, 255, 255, 0.92);
 }
 
 .home__hero-acciones {
   display: flex;
-  flex-direction: column;
-  gap: var(--espacio-md);
-  margin-bottom: var(--espacio-xxl);
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.home__boton-primario {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--espacio-xs);
-  padding: 0.9rem 2rem;
-  border-radius: var(--radio-full);
-  background-color: #ffffff;
-  color: var(--color-primario-contenedor);
-  font-weight: 700;
-  box-shadow: var(--sombra-fuerte);
-  transition: background-color 0.2s ease, transform 0.2s ease;
+/* Botón translúcido para fondos con foto */
+.home__boton-vidrio {
+  background: rgba(255, 255, 255, 0.14);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  color: #fff;
+  backdrop-filter: blur(6px);
 }
 
-.home__boton-primario:hover {
-  transform: translateY(-2px);
-}
-
-.home__boton-secundario {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--espacio-xs);
-  padding: 0.9rem 2rem;
-  border-radius: var(--radio-full);
-  background-color: var(--color-superficie-contenedor-mas-bajo);
-  color: var(--color-terciario);
-  font-weight: 600;
-  box-shadow: var(--sombra-suave);
-  transition: background-color 0.2s ease;
-}
-
-.home__boton-secundario:hover {
-  background-color: var(--color-secundario-fijo);
-}
-
-.home__slide .home__boton-secundario {
-  background-color: rgba(255, 255, 255, 0.14);
-  border: 1.5px solid rgba(255, 255, 255, 0.55);
-  color: #ffffff;
-}
-
-.home__slide .home__boton-secundario:hover {
-  background-color: rgba(255, 255, 255, 0.26);
-}
-
-/* ===== Flechas y puntos del carrusel ===== */
-.home__flecha {
+/* ----- Miniaturas ----- */
+.home__miniaturas {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 28px;
+  bottom: 28px;
   z-index: 3;
+  display: none; /* en móvil no hay espacio */
+  height: var(--mini-h);
+  /* ancho = (n - 1) miniaturas + sus separaciones */
+  width: calc((var(--n) - 1) * var(--mini-w) + (var(--n) - 2) * var(--mini-gap));
+}
+
+.home__miniatura {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--mini-w);
+  height: var(--mini-h);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  background: var(--p2);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+  transform: translateX(calc((var(--pos) - 1) * (var(--mini-w) + var(--mini-gap))));
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.2s ease 0.5s;
+}
+
+.home__miniatura:hover {
+  border-color: #fff;
+}
+
+.home__miniatura img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* La miniatura del slide activo se va hacia la izquierda y desaparece */
+.home__miniatura--oculta {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(calc(-1 * (var(--mini-w) + var(--mini-gap)))) scale(0.8);
+}
+
+/* ----- Controles ----- */
+.home__controles {
+  position: absolute;
+  left: 28px;
+  bottom: 28px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.home__flecha {
   width: 44px;
   height: 44px;
-  border-radius: var(--radio-full);
-  background-color: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(6px);
-  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  transition: transform 0.15s ease;
 }
 
 .home__flecha:hover {
-  background-color: rgba(255, 255, 255, 0.32);
-}
-
-.home__flecha--izq {
-  left: var(--margen-sm);
-}
-
-.home__flecha--der {
-  right: var(--margen-sm);
+  transform: scale(1.08);
 }
 
 .home__puntos {
-  position: absolute;
-  bottom: 24px;
-  left: 0;
-  right: 0;
-  z-index: 3;
   display: flex;
-  justify-content: center;
+  align-items: center;
   gap: 8px;
 }
 
 .home__punto {
-  width: 28px;
-  height: 5px;
-  border-radius: var(--radio-full);
-  background-color: rgba(255, 255, 255, 0.4);
-  transition: all 0.3s ease;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  transition: width 0.3s ease, background-color 0.3s ease;
 }
 
 .home__punto--activo {
-  background-color: #ffffff;
-  width: 40px;
+  width: 32px;
+  background: #fff;
 }
 
-/* ===== Franja de pilares (debajo del carrusel) =====
-   Antes vivían dentro del grid del hero; ahora son una franja aparte
-   con fondo propio, justo debajo del carrusel. */
-.home__pilares-franja {
-  background-color: var(--color-superficie-contenedor-mas-bajo);
-  border-top: 1px solid var(--color-borde-variante);
+@media (min-width: 640px) {
+  .home__miniaturas {
+    display: block;
+  }
+
+  .home__slides-texto {
+    padding: 0 40px 100px;
+  }
+
+  .home__controles {
+    left: 40px;
+  }
+
+  .home__contador {
+    left: 40px;
+  }
+
+  .home__miniaturas {
+    right: 40px;
+    bottom: 36px;
+  }
 }
 
+@media (min-width: 900px) {
+  .home__carrusel {
+    --mini-w: 140px;
+    --mini-h: 196px;
+  }
+
+  .home__slides-texto {
+    padding: 0 56px 110px;
+  }
+
+  .home__controles,
+  .home__contador {
+    left: 56px;
+  }
+
+  .home__miniaturas {
+    right: 56px;
+    bottom: 44px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .home__carrusel {
+    --mini-w: 164px;
+    --mini-h: 228px;
+  }
+}
+
+/* En móvil el degradado va de arriba (claro) a abajo (oscuro), donde está el texto */
+@media (max-width: 639px) {
+  .home__sombra {
+    background: linear-gradient(
+      180deg,
+      rgba(59, 47, 69, 0.15) 0%,
+      rgba(59, 47, 69, 0.85) 100%
+    );
+  }
+
+  .home__controles {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .home__flecha {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home__fondo,
+  .home__slide,
+  .home__miniatura {
+    transition: none;
+  }
+}
+
+/* ===== Pilares (debajo del carrusel) =====
+   Una sola barra blanca con los 3 pilares separados por líneas finas. */
 .home__pilares {
-  max-width: var(--ancho-maximo);
-  margin: 0 auto;
-  padding: var(--espacio-lg) var(--margen-sm);
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--espacio-md);
+  margin-top: 20px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: var(--sombra-card);
 }
 
 .home__pilar {
   display: flex;
-  align-items: flex-start;
-  gap: var(--espacio-sm);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+}
+
+.home__pilar + .home__pilar {
+  border-top: 2px solid var(--ln);
 }
 
 .home__pilar-icono {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
-  border-radius: var(--radio-full);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.home__pilar-icono--verde {
-  background-color: var(--color-terciario-fijo);
-  color: var(--color-en-terciario-fijo);
-}
-
-.home__pilar-icono--rosa {
-  background-color: var(--color-secundario-fijo);
-  color: var(--color-en-secundario-fijo);
-}
-
-.home__pilar-icono--neutro {
-  background-color: var(--color-superficie-contenedor-alto);
-  color: var(--color-primario);
+  border-radius: 50%;
 }
 
 .home__pilar-icono .material-symbols-outlined {
-  font-size: 18px;
+  font-size: 22px;
 }
 
+.home__pilar-icono--1 { background: var(--p3); }
+.home__pilar-icono--2 { background: var(--p1); }
+.home__pilar-icono--3 { background: var(--p5); }
+
 .home__pilar-titulo {
-  font-size: var(--tam-label-lg);
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .home__pilar-texto {
-  font-size: var(--tam-body-sm);
-  color: var(--color-en-superficie-variante);
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--mu);
 }
 
-/* ===== Productos destacados ===== */
-.home__productos {
-  background-color: rgba(240, 243, 255, 0.6);
-  padding: var(--espacio-xxl) 0;
-}
-
-.home__productos-contenedor {
-  max-width: var(--ancho-maximo);
-  margin: 0 auto;
-  padding: 0 var(--margen-sm);
-}
-
-.home__productos-encabezado {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-md);
-  margin-bottom: var(--espacio-xl);
-}
-
-.home__eyebrow-simple {
-  display: block;
-  font-size: var(--tam-label-caps);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-primario);
-  margin-bottom: var(--espacio-xs);
-}
-
-.home__eyebrow-simple--rosa {
-  color: var(--color-secundario);
+/* ===== Encabezados de sección (todas iguales: etiqueta + título + subtítulo) ===== */
+.home__encabezado {
+  margin-bottom: 32px;
 }
 
 .home__seccion-titulo {
-  font-size: var(--tam-headline-lg);
-  margin-bottom: var(--espacio-xs);
+  margin-top: 12px;
+  font-size: clamp(28px, 4vw, 44px);
 }
 
 .home__seccion-subtitulo {
-  font-size: var(--tam-body-lg);
-  color: var(--color-en-superficie-variante);
   max-width: 36rem;
+  margin-top: 8px;
+  color: var(--mu);
 }
 
-.home__enlace-explorar {
-  display: inline-flex;
+.home__eyebrow-simple {
+  background: var(--p2);
+}
+
+/* ===== Categorías ===== */
+.home__categorias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.home__categoria {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  min-height: 170px;
+  padding: 18px;
+  border-radius: 32px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home__categoria:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-card);
+}
+
+.home__categoria--1 { background: var(--p1); }
+.home__categoria--2 { background: var(--p2); }
+.home__categoria--3 { background: var(--p3); }
+.home__categoria--4 { background: var(--p4); }
+.home__categoria--5 { background: var(--p6); }
+
+.home__categoria-icono {
+  width: 52px;
+  height: 52px;
+  display: flex;
   align-items: center;
-  gap: var(--espacio-xs);
-  font-weight: 600;
-  color: var(--color-primario);
-  align-self: flex-start;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff;
 }
 
-.home__enlace-explorar:hover {
-  color: var(--color-primario-contenedor);
+.home__categoria-icono .material-symbols-outlined {
+  font-size: 26px;
+}
+
+.home__categoria-nombre {
+  font: 800 19px var(--fuente-titulos);
+  line-height: 1.2;
+}
+
+/* Flecha que aparece al pasar el mouse */
+.home__categoria-flecha {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.home__categoria-flecha .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.home__categoria:hover .home__categoria-flecha,
+.home__categoria:focus-visible .home__categoria-flecha {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===== Productos ===== */
+.home__productos-encabezado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 32px;
 }
 
 .home__grid-productos {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--espacio-lg);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
 }
 
 .home__sin-productos {
-  color: var(--color-en-superficie-variante);
+  padding: 40px 0;
   text-align: center;
-  padding: var(--espacio-xl) 0;
+  color: var(--mu);
 }
 
-/* ===== Cómo funciona / Sobre nosotros ===== */
+/* ===== Cómo funciona =====
+   Panel oscuro (el mismo tono del texto de marca) que hace eco al carrusel;
+   las tarjetas pastel resaltan encima. Los números sí van porque es una secuencia. */
 .home__proceso {
-  padding: var(--espacio-xxl) 0;
+  position: relative;
+  overflow: hidden;
+  padding: 48px 20px;
+  border-radius: 40px;
+  background: var(--ink);
 }
 
-.home__proceso-contenedor {
-  max-width: var(--ancho-maximo);
-  margin: 0 auto;
-  padding: 0 var(--margen-sm);
+.home__proceso::before,
+.home__proceso::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.home__proceso::before {
+  top: -90px;
+  left: -70px;
+  width: 260px;
+  height: 260px;
+  background: rgba(249, 213, 229, 0.1);
+}
+
+.home__proceso::after {
+  right: -80px;
+  bottom: -100px;
+  width: 280px;
+  height: 280px;
+  background: rgba(228, 218, 247, 0.1);
+}
+
+.home__proceso > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home__proceso-encabezado {
-  text-align: center;
   max-width: 40rem;
-  margin: 0 auto var(--espacio-xxl);
+  margin: 0 auto 36px;
+  text-align: center;
+}
+
+.home__proceso .home__seccion-titulo {
+  color: #fff;
+}
+
+.home__proceso .home__seccion-subtitulo {
+  margin-left: auto;
+  margin-right: auto;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .home__pasos {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--espacio-xl);
+  gap: 20px;
 }
 
 .home__paso {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: var(--espacio-xl);
-  border-radius: var(--radio-lg);
-  background-color: var(--color-superficie-contenedor-mas-bajo);
-  box-shadow: var(--sombra-suave);
-  transition: box-shadow 0.2s ease;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 28px;
+  border-radius: 32px;
 }
 
-.home__paso:hover {
-  box-shadow: var(--sombra-media);
-}
+.home__paso--1 { background: var(--p3); }
+.home__paso--2 { background: var(--p4); }
+.home__paso--3 { background: var(--p6); }
 
-.home__paso-icono {
-  position: relative;
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radio-full);
+.home__paso > .material-symbols-outlined {
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--espacio-lg);
-}
-
-.home__paso-icono .material-symbols-outlined {
-  font-size: 32px;
-}
-
-.home__paso-icono--verde {
-  background-color: var(--color-primario-fijo);
-  color: var(--color-en-primario-fijo);
-}
-
-.home__paso-icono--rosa {
-  background-color: var(--color-secundario-fijo);
-  color: var(--color-en-secundario-fijo);
-}
-
-.home__paso-icono--neutro {
-  background-color: var(--color-terciario-fijo);
-  color: var(--color-en-terciario-fijo);
+  border-radius: 50%;
+  background: #fff;
+  font-size: 28px;
 }
 
 .home__paso-numero {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radio-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--tam-label-caps);
-  font-weight: 700;
-}
-
-.home__paso-numero--verde {
-  background-color: var(--color-primario);
-  color: #ffffff;
-}
-
-.home__paso-numero--rosa {
-  background-color: var(--color-secundario);
-  color: #ffffff;
-}
-
-.home__paso-numero--neutro {
-  background-color: var(--color-terciario);
-  color: #ffffff;
+  top: 22px;
+  right: 26px;
+  font: 800 48px var(--fuente-titulos);
+  opacity: 0.18;
 }
 
 .home__paso-titulo {
-  font-size: var(--tam-headline-sm);
-  margin-bottom: var(--espacio-xs);
+  font-size: 21px;
 }
 
 .home__paso-texto {
-  color: var(--color-en-superficie-variante);
-  line-height: 1.6;
+  color: var(--mu);
 }
 
-.home__banner {
-  margin-top: var(--espacio-xxl);
-  padding: var(--espacio-xl);
-  border-radius: var(--radio-lg);
-  background: linear-gradient(
-    90deg,
-    var(--color-superficie-contenedor) 0%,
-    rgba(255, 217, 222, 0.3) 100%
-  );
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-lg);
-  align-items: flex-start;
-}
-
-.home__banner-info {
-  display: flex;
-  align-items: center;
-  gap: var(--espacio-md);
-}
-
-.home__banner-icono {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  border-radius: var(--radio-full);
-  background-color: var(--color-superficie-contenedor-mas-bajo);
-  color: var(--color-primario);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--sombra-suave);
-}
-
-.home__banner-titulo {
-  font-family: var(--fuente-texto);
-  font-size: var(--tam-title-md);
-  font-weight: 600;
-}
-
-.home__banner-texto {
-  font-size: var(--tam-body-sm);
-  color: var(--color-en-superficie-variante);
-}
-
-.home__banner-boton {
-  display: inline-flex;
-  align-self: stretch;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 2rem;
-  border-radius: var(--radio-full);
-  background-color: var(--color-primario);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: var(--sombra-suave);
-  transition: background-color 0.2s ease;
-}
-
-.home__banner-boton:hover {
-  background-color: var(--color-primario-contenedor);
-}
-
-/* ===== Breakpoints ===== */
+/* ===== Responsive ===== */
 @media (min-width: 640px) {
-  .home__grid-productos {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .home__hero-acciones {
-    flex-direction: row;
+  .home__categorias {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 }
 
 @media (min-width: 768px) {
   .home__pilares {
     grid-template-columns: repeat(3, 1fr);
+    border-radius: 999px;
+  }
+
+  .home__pilar {
+    justify-content: center;
+    padding: 12px 20px;
+  }
+
+  .home__pilar + .home__pilar {
+    border-top: 0;
+    border-left: 2px solid var(--ln);
   }
 
   .home__pasos {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .home__proceso {
+    padding: 64px 48px;
+    border-radius: 48px;
+  }
+
   .home__productos-encabezado {
     flex-direction: row;
     align-items: flex-end;
     justify-content: space-between;
-  }
-
-  .home__banner {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .home__banner-boton {
-    align-self: center;
-  }
-}
-
-@media (min-width: 1024px) {
-  .home__grid-productos {
-    grid-template-columns: repeat(4, 1fr);
   }
 }

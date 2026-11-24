@@ -140,7 +140,7 @@ function DetallePedido() {
           <div className="detalle-pedido__error">
             <h2>No pudimos cargar el pedido</h2>
             <p>{error || "Pedido no encontrado."}</p>
-            <button onClick={() => navigate("/mis-pedidos")}>Volver a mis pedidos</button>
+            <button className="ui-btn" onClick={() => navigate("/mis-pedidos")}>Volver a mis pedidos</button>
           </div>
         </div>
       </main>
