@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./FormularioProducto.css";
+import ModalAdmin from "./ModalAdmin.jsx";
 
 const ESTADO_INICIAL = {
   sku: "", nombre: "", descripcion: "", categoriaId: "",
@@ -82,107 +82,113 @@ function FormularioProducto({ producto, categorias, productosDisponibles, onGuar
   };
 
   return (
-    <div className="formulario-producto__overlay">
-      <form className="formulario-producto" onSubmit={manejarSubmit}>
-        <h2>{producto ? "Editar producto" : "Nuevo producto"}</h2>
-
-        <div className="formulario-producto__fila">
-          <label className="formulario-producto__campo">
-            SKU
-            <input type="text" value={form.sku} onChange={manejarCambio("sku")} required />
-          </label>
-          <label className="formulario-producto__campo">
-            Nombre
-            <input type="text" value={form.nombre} onChange={manejarCambio("nombre")} required />
-          </label>
-        </div>
-
-        <label className="formulario-producto__campo">
-          Descripción
-          <textarea rows={2} value={form.descripcion} onChange={manejarCambio("descripcion")} />
+    <ModalAdmin
+      ancho
+      titulo={producto ? "Editar producto" : "Nuevo producto"}
+      onCerrar={onCancelar}
+      cerrarBloqueado={guardando}
+      onSubmit={manejarSubmit}
+    >
+      <div className="admin-modal__fila">
+        <label className="admin-modal__campo">
+          SKU
+          <input type="text" value={form.sku} onChange={manejarCambio("sku")} required />
         </label>
+        <label className="admin-modal__campo">
+          Nombre
+          <input type="text" value={form.nombre} onChange={manejarCambio("nombre")} required />
+        </label>
+      </div>
 
-        <div className="formulario-producto__fila">
-          <label className="formulario-producto__campo">
-            Categoría
-            <select value={form.categoriaId} onChange={manejarCambio("categoriaId")} required>
-              <option value="">Selecciona una categoría</option>
-              {categorias.map((c) => (
-                <option key={c._id} value={c._id}>{c.nombre}</option>
-              ))}
-            </select>
-          </label>
-          <label className="formulario-producto__campo">
-            Tipo
-            <select value={form.tipoProducto} onChange={manejarCambio("tipoProducto")}>
-              <option value="simple">Simple</option>
-              <option value="compuesto">Compuesto</option>
-            </select>
-          </label>
-        </div>
+      <label className="admin-modal__campo">
+        Descripción
+        <textarea rows={2} value={form.descripcion} onChange={manejarCambio("descripcion")} />
+      </label>
 
-        <div className="formulario-producto__fila">
-          <label className="formulario-producto__campo">
-            Precio
-            <input type="number" min="0" step="0.01" value={form.precio} onChange={manejarCambio("precio")} required />
-          </label>
-          <label className="formulario-producto__campo">
-            Costo (opcional)
-            <input type="number" min="0" step="0.01" value={form.costo} onChange={manejarCambio("costo")} />
-          </label>
-        </div>
+      <div className="admin-modal__fila">
+        <label className="admin-modal__campo">
+          Categoría
+          <select value={form.categoriaId} onChange={manejarCambio("categoriaId")} required>
+            <option value="">Selecciona una categoría</option>
+            {categorias.map((c) => (
+              <option key={c._id} value={c._id}>{c.nombre}</option>
+            ))}
+          </select>
+        </label>
+        <label className="admin-modal__campo">
+          Tipo
+          <select value={form.tipoProducto} onChange={manejarCambio("tipoProducto")}>
+            <option value="simple">Simple</option>
+            <option value="compuesto">Compuesto</option>
+          </select>
+        </label>
+      </div>
 
-        {form.tipoProducto === "compuesto" && (
-          <div className="formulario-producto__componentes">
-            <div className="formulario-producto__componentes-titulo">
-              <span>Componentes</span>
-              <button type="button" onClick={agregarComponente}>+ Agregar</button>
+      <div className="admin-modal__fila">
+        <label className="admin-modal__campo">
+          Precio
+          <input type="number" min="0" step="0.01" value={form.precio} onChange={manejarCambio("precio")} required />
+        </label>
+        <label className="admin-modal__campo">
+          Costo (opcional)
+          <input type="number" min="0" step="0.01" value={form.costo} onChange={manejarCambio("costo")} />
+        </label>
+      </div>
+
+      {form.tipoProducto === "compuesto" && (
+        <div className="admin-modal__componentes">
+          <div className="admin-modal__componentes-titulo">
+            <span>Componentes</span>
+            <button type="button" onClick={agregarComponente}>+ Agregar</button>
+          </div>
+
+          {componentes.map((comp, indice) => (
+            <div className="admin-modal__componente-fila" key={indice}>
+              <select
+                value={comp.productoId}
+                onChange={(e) => actualizarComponente(indice, "productoId", e.target.value)}
+              >
+                <option value="">Selecciona un producto</option>
+                {productosDisponibles.map((p) => (
+                  <option key={p._id} value={p._id}>{p.nombre} ({p.sku})</option>
+                ))}
+              </select>
+              <input
+                type="number"
+                min="1"
+                value={comp.cantidad}
+                onChange={(e) => actualizarComponente(indice, "cantidad", e.target.value)}
+              />
+              <button type="button" onClick={() => quitarComponente(indice)}>Quitar</button>
             </div>
-
-            {componentes.map((comp, indice) => (
-              <div className="formulario-producto__componente-fila" key={indice}>
-                <select
-                  value={comp.productoId}
-                  onChange={(e) => actualizarComponente(indice, "productoId", e.target.value)}
-                >
-                  <option value="">Selecciona un producto</option>
-                  {productosDisponibles.map((p) => (
-                    <option key={p._id} value={p._id}>{p.nombre} ({p.sku})</option>
-                  ))}
-                </select>
-                <input
-                  type="number"
-                  min="1"
-                  value={comp.cantidad}
-                  onChange={(e) => actualizarComponente(indice, "cantidad", e.target.value)}
-                />
-                <button type="button" onClick={() => quitarComponente(indice)}>Quitar</button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <label className="formulario-producto__campo">
-          Imágenes (máximo 5 — si subes nuevas, reemplazan a las anteriores)
-          <input type="file" accept="image/*" multiple onChange={manejarArchivos} />
-        </label>
-
-        {producto?.imagenes?.length > 0 && archivos.length === 0 && (
-          <div className="formulario-producto__previews">
-            {producto.imagenes.map((img) => (
-              <img key={img.publicId} src={img.url} alt={form.nombre} />
-            ))}
-          </div>
-        )}
-
-        {error && <p className="formulario-producto__error">{error}</p>}
-
-        <div className="formulario-producto__acciones">
-          <button type="button" onClick={onCancelar} disabled={guardando}>Cancelar</button>
-          <button type="submit" disabled={guardando}>{guardando ? "Guardando..." : "Guardar"}</button>
+          ))}
         </div>
-      </form>
-    </div>
+      )}
+
+      <label className="admin-modal__campo">
+        Imágenes (máximo 5 — si subes nuevas, reemplazan a las anteriores)
+        <input type="file" accept="image/*" multiple onChange={manejarArchivos} />
+      </label>
+
+      {producto?.imagenes?.length > 0 && archivos.length === 0 && (
+        <div className="admin-modal__previews">
+          {producto.imagenes.map((img) => (
+            <img key={img.publicId} src={img.url} alt={form.nombre} />
+          ))}
+        </div>
+      )}
+
+      {error && <p className="admin-modal__error">{error}</p>}
+
+      <div className="admin-modal__acciones">
+        <button type="button" className="admin-btn admin-btn--borde" onClick={onCancelar} disabled={guardando}>
+          Cancelar
+        </button>
+        <button type="submit" className="admin-btn" disabled={guardando}>
+          {guardando ? "Guardando..." : "Guardar"}
+        </button>
+      </div>
+    </ModalAdmin>
   );
 }
 

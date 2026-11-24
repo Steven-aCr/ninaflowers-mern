@@ -1,18 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
 import * as pagoService from "../../services/pagoService.js";
 import TablaPagos from "../../components/admin/TablaPagos.jsx";
+import ModalAdmin from "../../components/admin/ModalAdmin.jsx";
+import TarjetaMetrica from "../../components/admin/TarjetaMetrica.jsx";
+import TabsEstado from "../../components/admin/TabsEstado.jsx";
 import Paginacion from "../../components/common/Paginacion.jsx";
 import Loader from "../../components/common/Loader.jsx";
 import Toast from "../../components/common/Toast.jsx";
-import "./Pedidos.css";
+import { formatearPrecio } from "../../utils/formatearPrecio.js";
+import { idCorto } from "../../utils/formatosAdmin.js";
 
-const ESTADOS = ["pendiente", "completado", "fallido", "reembolsado"];
+const ESTADOS = [
+  { valor: "completado", etiqueta: "Completados" },
+  { valor: "pendiente", etiqueta: "Pendientes" },
+  { valor: "fallido", etiqueta: "Fallidos" },
+  { valor: "reembolsado", etiqueta: "Reembolsados" },
+];
 
 function Pagos() {
   const [pagos, setPagos] = useState([]);
   const [pagina, setPagina] = useState(1);
   const [total, setTotal] = useState(1);
   const [estado, setEstado] = useState("");
+  const [reporte, setReporte] = useState(null); // resumen de /pago/reporte (alimenta tarjetas y pestañas)
   const [cargando, setCargando] = useState(true);
   const [procesando, setProcesando] = useState(false);
   const [confirmando, setConfirmando] = useState(null);
@@ -26,7 +36,7 @@ function Pagos() {
       const resultado = await pagoService.listarPagos({
         page: pagina,
         limite: 10,
-        estado: estado || undefined
+        estado: estado || undefined,
       });
 
       setPagos(resultado.datos || []);
@@ -38,11 +48,31 @@ function Pagos() {
     }
   }, [pagina, estado]);
 
+  // Si el reporte falla, las tarjetas muestran "—" y la tabla sigue funcionando.
+  const cargarReporte = useCallback(async () => {
+    try {
+      setReporte(await pagoService.obtenerReportePagos());
+    } catch {
+      setReporte(null);
+    }
+  }, []);
+
   useEffect(() => { cargar(); }, [cargar]);
+  useEffect(() => { cargarReporte(); }, [cargarReporte]);
+
+  const actualizarTodo = () => {
+    cargar();
+    cargarReporte();
+  };
 
   const abrirConfirmacion = (pago) => {
     setConfirmando(pago);
     setReferencia(pago.referenciaTransaccion || "");
+  };
+
+  const cerrarConfirmacion = () => {
+    setConfirmando(null);
+    setReferencia("");
   };
 
   const confirmarPago = async () => {
@@ -50,18 +80,15 @@ function Pagos() {
     try {
       setProcesando(true);
       await pagoService.confirmarPago(confirmando._id, referencia);
-      setConfirmando(null);
-      setReferencia("");
+      cerrarConfirmacion();
       setToast("Pago confirmado. La venta y el movimiento de inventario fueron procesados.");
-      await cargar();
+      await Promise.all([cargar(), cargarReporte()]);
     } catch (error) {
       setToast(error.response?.data?.error || "No se pudo confirmar el pago.");
     } finally {
       setProcesando(false);
     }
   };
-
-  const abrirReembolso = (pago) => setReembolsando(pago);
 
   const confirmarReembolso = async () => {
     if (!reembolsando) return;
@@ -70,7 +97,7 @@ function Pagos() {
       await pagoService.reembolsarPago(reembolsando._id);
       setReembolsando(null);
       setToast("Reembolso procesado correctamente.");
-      await cargar();
+      await Promise.all([cargar(), cargarReporte()]);
     } catch (error) {
       setToast(error.response?.data?.error || "No se pudo procesar el reembolso.");
     } finally {
@@ -78,124 +105,128 @@ function Pagos() {
     }
   };
 
+  const cambiarPestana = (valor) => {
+    setEstado(valor);
+    setPagina(1);
+  };
+
+  // ---- Datos del reporte para tarjetas y pestañas ----
+  const porEstado = Object.fromEntries((reporte?.porEstado || []).map((e) => [e.estado, e]));
+  const cantidadEstado = (valor) => (reporte ? porEstado[valor]?.cantidad ?? 0 : undefined);
+  const montoEstado = (valor) => (reporte ? formatearPrecio(porEstado[valor]?.monto ?? 0) : "—");
+  const tarjeta = reporte?.porMetodo?.find((m) => m.metodo === "tarjeta");
+  const totalPagos = reporte ? reporte.porEstado.reduce((suma, e) => suma + e.cantidad, 0) : undefined;
+
+  const opciones = [
+    { valor: "", etiqueta: "Todos", cantidad: totalPagos },
+    ...ESTADOS.map((e) => ({ ...e, cantidad: cantidadEstado(e.valor) })),
+  ];
+
   return (
-    <div className="gestion-page">
-      <header className="gestion-header">
-        <div>
-          <p className="gestion-eyebrow">Finanzas</p>
-          <h1>Pagos</h1>
-          <p>Consulta el historial de transacciones y administra únicamente las acciones permitidas.</p>
+    <>
+      <section className="admin-stats" aria-label="Resumen de pagos">
+        <TarjetaMetrica
+          etiqueta="Total cobrado"
+          valor={reporte ? formatearPrecio(reporte.totalRecaudado) : "—"}
+          nota={reporte ? `${reporte.pagosCompletados} pagos completados` : undefined}
+        />
+        <TarjetaMetrica etiqueta="Pagos pendientes" valor={montoEstado("pendiente")} nota="Por confirmar o cobrar" />
+        <TarjetaMetrica etiqueta="Reembolsos" valor={montoEstado("reembolsado")} nota="Devueltos a clientes" />
+        <TarjetaMetrica
+          etiqueta="Pagos con tarjeta"
+          valor={reporte ? formatearPrecio(tarjeta?.monto ?? 0) : "—"}
+          nota={<span className="admin-pill admin-pill--lila">Stripe</span>}
+        />
+      </section>
+
+      <section className="admin-panel">
+        <div className="admin-panel__head">
+          <div>
+            <h2 className="admin-panel__titulo">Historial de pagos</h2>
+            <p className="admin-panel__sub">Consulta las transacciones y administra solo las acciones permitidas.</p>
+          </div>
+          <div className="admin-panel__acciones">
+            <button type="button" className="admin-btn admin-btn--claro" onClick={actualizarTodo}>
+              <span className="material-symbols-outlined">refresh</span>
+              Actualizar
+            </button>
+          </div>
         </div>
-      </header>
 
-      <div className="gestion-filtros">
-        <label>
-          Estado
-          <select
-            value={estado}
-            onChange={(e) => { setEstado(e.target.value); setPagina(1); }}
-          >
-            <option value="">Todos</option>
-            {ESTADOS.map((item) => (
-              <option key={item} value={item}>{item}</option>
-            ))}
-          </select>
-        </label>
+        <div className="admin-toolbar">
+          <TabsEstado opciones={opciones} activo={estado} onCambiar={cambiarPestana} />
+        </div>
 
-        <button type="button" onClick={cargar}>Actualizar</button>
-      </div>
-
-      {cargando ? (
-        <Loader texto="Cargando pagos..." />
-      ) : (
-        <>
-          <TablaPagos pagos={pagos} onConfirmar={abrirConfirmacion} onReembolsar={abrirReembolso} />
-          <Paginacion paginaActual={pagina} totalPaginas={total} onCambiarPagina={setPagina} />
-        </>
-      )}
+        {cargando ? (
+          <Loader texto="Cargando pagos..." />
+        ) : (
+          <>
+            <TablaPagos pagos={pagos} onConfirmar={abrirConfirmacion} onReembolsar={setReembolsando} />
+            <Paginacion paginaActual={pagina} totalPaginas={total} onCambiarPagina={setPagina} />
+          </>
+        )}
+      </section>
 
       {confirmando && (
-        <div
-          className="gestion-overlay"
-          onMouseDown={(e) => e.target === e.currentTarget && !procesando && setConfirmando(null)}
-        >
-          <section className="gestion-modal">
-            <div className="gestion-modal__head">
-              <div>
-                <p className="gestion-eyebrow">Pago #{confirmando._id.slice(-6).toUpperCase()}</p>
-                <h2>Confirmar recepción</h2>
-              </div>
-              <button className="gestion-cerrar" disabled={procesando} onClick={() => setConfirmando(null)}>×</button>
-            </div>
+        <ModalAdmin titulo="Confirmar recepción" onCerrar={cerrarConfirmacion} cerrarBloqueado={procesando}>
+          <div className="admin-modal__resumen">
+            <strong>Pago {idCorto(confirmando._id)}</strong>
+            <span>
+              {confirmando.metodo} · {formatearPrecio(confirmando.monto)}
+            </span>
+          </div>
 
-            <div className="gestion-card">
-              <p>Vas a confirmar que el pago por <strong>{confirmando.metodo}</strong> fue recibido.</p>
-              <p>
-                Al confirmar, el sistema marcará el pago como completado, confirmará el pedido,
-                descontará las existencias y registrará las salidas por venta.
-              </p>
+          <p className="admin-modal__aviso">
+            Al confirmar, el sistema marcará el pago como completado, confirmará el pedido,
+            descontará las existencias y registrará las salidas por venta.
+          </p>
 
-              {confirmando.metodo === "transferencia" && (
-                <div className="gestion-form-row">
-                  <input
-                    value={referencia}
-                    onChange={(e) => setReferencia(e.target.value)}
-                    placeholder="Referencia de transferencia"
-                  />
-                </div>
-              )}
+          {confirmando.metodo === "transferencia" && (
+            <label className="admin-modal__campo">
+              Referencia de transferencia
+              <input value={referencia} onChange={(e) => setReferencia(e.target.value)} placeholder="Número de comprobante" />
+            </label>
+          )}
 
-              <div className="gestion-form-row">
-                <button type="button" disabled={procesando} onClick={confirmarPago}>
-                  {procesando ? "Procesando..." : "Confirmar pago recibido"}
-                </button>
-                <button type="button" disabled={procesando} onClick={() => setConfirmando(null)}>
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          </section>
-        </div>
+          <div className="admin-modal__acciones">
+            <button type="button" className="admin-btn admin-btn--borde" disabled={procesando} onClick={cerrarConfirmacion}>
+              Cancelar
+            </button>
+            <button type="button" className="admin-btn" disabled={procesando} onClick={confirmarPago}>
+              {procesando ? "Procesando..." : "Confirmar pago recibido"}
+            </button>
+          </div>
+        </ModalAdmin>
       )}
 
       {reembolsando && (
-        <div
-          className="gestion-overlay"
-          onMouseDown={(e) => e.target === e.currentTarget && !procesando && setReembolsando(null)}
-        >
-          <section className="gestion-modal">
-            <div className="gestion-modal__head">
-              <div>
-                <p className="gestion-eyebrow">Pago #{reembolsando._id.slice(-6).toUpperCase()}</p>
-                <h2>Reembolsar pago</h2>
-              </div>
-              <button className="gestion-cerrar" disabled={procesando} onClick={() => setReembolsando(null)}>×</button>
-            </div>
+        <ModalAdmin titulo="Reembolsar pago" onCerrar={() => setReembolsando(null)} cerrarBloqueado={procesando}>
+          <div className="admin-modal__resumen">
+            <strong>Pago {idCorto(reembolsando._id)}</strong>
+            <span>
+              {reembolsando.metodo} · {formatearPrecio(reembolsando.monto)}
+            </span>
+          </div>
 
-            <div className="gestion-card">
-              <p>¿Deseas procesar el reembolso de esta transacción?</p>
+          <p className="admin-modal__aviso">
+            ¿Deseas procesar el reembolso de esta transacción?
+            {reembolsando.metodo === "tarjeta" && " El reembolso se solicitará a Stripe."}
+            {" "}El reembolso financiero no devolverá automáticamente los productos al inventario.
+          </p>
 
-              {reembolsando.metodo === "tarjeta" && (
-                <p>El reembolso se solicitará a Stripe.</p>
-              )}
-
-              <p>El reembolso financiero no devolverá automáticamente productos al inventario.</p>
-
-              <div className="gestion-form-row">
-                <button type="button" disabled={procesando} onClick={confirmarReembolso}>
-                  {procesando ? "Procesando..." : "Confirmar reembolso"}
-                </button>
-                <button type="button" disabled={procesando} onClick={() => setReembolsando(null)}>
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          </section>
-        </div>
+          <div className="admin-modal__acciones">
+            <button type="button" className="admin-btn admin-btn--borde" disabled={procesando} onClick={() => setReembolsando(null)}>
+              Cancelar
+            </button>
+            <button type="button" className="admin-btn" disabled={procesando} onClick={confirmarReembolso}>
+              {procesando ? "Procesando..." : "Confirmar reembolso"}
+            </button>
+          </div>
+        </ModalAdmin>
       )}
 
       <Toast mensaje={toast} onCerrar={() => setToast("")} />
-    </div>
+    </>
   );
 }
 

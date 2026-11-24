@@ -1,125 +1,76 @@
-.inventario-page__encabezado {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--espacio-md);
-  margin-bottom: var(--espacio-md);
+/* ==========================================================================
+   Inventario.css
+   Solo lo propio de la vista: la rejilla "tabla + movimientos recientes".
+   Todo lo demás (paneles, tarjetas, tabs, tablas, pills, botones y modales)
+   viene de styles/admin.css.
+   ========================================================================== */
+
+.inventario-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr);
+  gap: var(--espacio-lg);
+  align-items: start;
 }
 
-.inventario-page__encabezado h1 {
-  margin: 0;
-}
-
-.inventario-page__encabezado button {
-  background: var(--color-primario);
-  color: var(--color-en-primario);
-  padding: var(--espacio-sm) var(--espacio-lg);
-  border-radius: var(--radio-full);
-  box-shadow: var(--sombra-suave);
-  font-weight: 600;
-  transition: filter 0.15s ease, transform 0.08s ease;
-}
-
-.inventario-page__encabezado button:hover {
-  filter: brightness(1.07);
-}
-
-.inventario-page__encabezado button:active {
-  transform: scale(0.97);
-}
-
-/* Filtros */
-
-.inventario-page__filtros {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--espacio-md);
-  margin-bottom: var(--espacio-md);
-}
-
-.inventario-page__filtros select {
-  padding: var(--espacio-sm) var(--espacio-md);
-  border: 1px solid var(--color-borde-variante);
-  border-radius: var(--radio-md);
-  background: var(--color-superficie-contenedor-mas-bajo);
-  color: var(--color-en-superficie);
-  font-size: var(--tam-body-sm);
-  outline: none;
-}
-
-.inventario-page__filtros select:focus {
-  border-color: var(--color-primario);
-}
-
-.inventario-page__filtro {
-  display: flex;
-  align-items: center;
-  gap: var(--espacio-xs);
+.inventario-layout .admin-panel {
   margin-bottom: 0;
+}
+
+.inventario-recientes__ver {
+  color: var(--color-primario);
   font-size: var(--tam-body-sm);
-  color: var(--color-en-superficie-variante);
-  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
 }
 
-.inventario-page__filtro input {
-  cursor: pointer;
+.inventario-recientes__ver:hover {
+  text-decoration: underline;
 }
 
-/* Producción */
-
-.inventario-produccion {
-  max-width: 480px;
+.inventario-recientes__lista {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.inventario-produccion__producto {
+.inventario-recientes__item {
   display: flex;
   flex-direction: column;
   gap: var(--espacio-xs);
-  padding: var(--espacio-md);
-  margin-bottom: var(--espacio-md);
-  border-radius: var(--radio-md);
-  background: var(--color-superficie-contenedor);
-  color: var(--color-en-superficie);
+  padding: var(--espacio-md) 0;
+  border-bottom: 1px solid var(--color-borde-suave);
 }
 
-.inventario-produccion__producto strong {
-  font-size: var(--tam-body-lg);
+.inventario-recientes__item:first-child {
+  padding-top: 0;
 }
 
-.inventario-produccion__producto span {
-  color: var(--color-en-superficie-variante);
+.inventario-recientes__item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.inventario-recientes__linea {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
   font-size: var(--tam-body-sm);
+  font-weight: 600;
 }
 
-.inventario-produccion__aviso {
-  margin: var(--espacio-md) 0;
-  padding: var(--espacio-sm) var(--espacio-md);
-  border-radius: var(--radio-md);
-  background: var(--color-superficie-contenedor);
+.inventario-recientes__nota {
   color: var(--color-en-superficie-variante);
-  font-size: var(--tam-body-sm);
-  line-height: 1.5;
+  font-size: var(--tam-label-caps);
 }
 
-/* Responsive */
-
-@media (max-width: 700px) {
-  .inventario-page__encabezado {
-    align-items: stretch;
-    flex-direction: column;
+@media (max-width: 1100px) {
+  .inventario-layout {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .inventario-page__encabezado button {
-    width: 100%;
-  }
-
-  .inventario-page__filtros {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .inventario-page__filtros select {
-    width: 100%;
+  .inventario-layout .admin-panel {
+    margin-bottom: var(--espacio-lg);
   }
 }

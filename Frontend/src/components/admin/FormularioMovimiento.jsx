@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./FormularioMovimiento.css";
+import ModalAdmin from "./ModalAdmin.jsx";
 
 const MOTIVOS_POR_TIPO = {
   entrada: [
@@ -57,64 +57,69 @@ function FormularioMovimiento({ productos, proveedores, onGuardar, onCancelar, g
   };
 
   return (
-    <div className="formulario-movimiento__overlay">
-      <form className="formulario-movimiento" onSubmit={manejarSubmit}>
-        <h2>Nuevo movimiento de inventario</h2>
+    <ModalAdmin
+      titulo="Nuevo movimiento de inventario"
+      onCerrar={onCancelar}
+      cerrarBloqueado={guardando}
+      onSubmit={manejarSubmit}
+    >
+      <label className="admin-modal__campo">
+        Producto
+        <select value={form.productoId} onChange={manejarCambio("productoId")} required>
+          <option value="">Selecciona un producto</option>
+          {productos.map((p) => (
+            <option key={p._id} value={p._id}>{p.nombre} ({p.sku}) — stock: {p.stock}</option>
+          ))}
+        </select>
+      </label>
 
-        <label className="formulario-movimiento__campo">
-          Producto
-          <select value={form.productoId} onChange={manejarCambio("productoId")} required>
-            <option value="">Selecciona un producto</option>
-            {productos.map((p) => (
-              <option key={p._id} value={p._id}>{p.nombre} ({p.sku}) — stock: {p.stock}</option>
-            ))}
+      <div className="admin-modal__fila">
+        <label className="admin-modal__campo">
+          Tipo
+          <select value={form.tipo} onChange={manejarCambio("tipo")}>
+            <option value="entrada">Entrada</option>
+            <option value="salida">Salida</option>
           </select>
         </label>
 
-        <div className="formulario-movimiento__fila">
-          <label className="formulario-movimiento__campo">
-            Tipo
-            <select value={form.tipo} onChange={manejarCambio("tipo")}>
-              <option value="entrada">Entrada</option>
-              <option value="salida">Salida</option>
-            </select>
-          </label>
-
-          <label className="formulario-movimiento__campo">
-            Motivo
-            <select value={form.motivo} onChange={manejarCambio("motivo")}>
-              {MOTIVOS_POR_TIPO[form.tipo].map((m) => (
-                <option key={m.valor} value={m.valor}>{m.etiqueta}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        <label className="formulario-movimiento__campo">
-          Cantidad
-          <input type="number" min="1" value={form.cantidad} onChange={manejarCambio("cantidad")} required />
+        <label className="admin-modal__campo">
+          Motivo
+          <select value={form.motivo} onChange={manejarCambio("motivo")}>
+            {MOTIVOS_POR_TIPO[form.tipo].map((m) => (
+              <option key={m.valor} value={m.valor}>{m.etiqueta}</option>
+            ))}
+          </select>
         </label>
+      </div>
 
-        {form.motivo === "compra" && (
-          <label className="formulario-movimiento__campo">
-            Proveedor
-            <select value={form.proveedorId} onChange={manejarCambio("proveedorId")} required>
-              <option value="">Selecciona un proveedor</option>
-              {proveedores.map((prov) => (
-                <option key={prov._id} value={prov._id}>{prov.nombre}</option>
-              ))}
-            </select>
-          </label>
-        )}
+      <label className="admin-modal__campo">
+        Cantidad
+        <input type="number" min="1" value={form.cantidad} onChange={manejarCambio("cantidad")} required />
+      </label>
 
-        {error && <p className="formulario-movimiento__error">{error}</p>}
+      {form.motivo === "compra" && (
+        <label className="admin-modal__campo">
+          Proveedor
+          <select value={form.proveedorId} onChange={manejarCambio("proveedorId")} required>
+            <option value="">Selecciona un proveedor</option>
+            {proveedores.map((prov) => (
+              <option key={prov._id} value={prov._id}>{prov.nombre}</option>
+            ))}
+          </select>
+        </label>
+      )}
 
-        <div className="formulario-movimiento__acciones">
-          <button type="button" onClick={onCancelar} disabled={guardando}>Cancelar</button>
-          <button type="submit" disabled={guardando}>{guardando ? "Guardando..." : "Guardar"}</button>
-        </div>
-      </form>
-    </div>
+      {error && <p className="admin-modal__error">{error}</p>}
+
+      <div className="admin-modal__acciones">
+        <button type="button" className="admin-btn admin-btn--borde" onClick={onCancelar} disabled={guardando}>
+          Cancelar
+        </button>
+        <button type="submit" className="admin-btn" disabled={guardando}>
+          {guardando ? "Guardando..." : "Guardar"}
+        </button>
+      </div>
+    </ModalAdmin>
   );
 }
 

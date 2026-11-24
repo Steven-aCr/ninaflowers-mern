@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./FormularioProveedor.css";
+import ModalAdmin from "./ModalAdmin.jsx";
 
 const ESTADO_INICIAL = { nombre: "", telefono: "", correo: "", direccion: "" };
 
@@ -10,7 +10,7 @@ function FormularioProveedor({ proveedor, onGuardar, onCancelar, guardando }) {
           nombre: proveedor.nombre,
           telefono: proveedor.telefono,
           correo: proveedor.correo,
-          direccion: proveedor.direccion
+          direccion: proveedor.direccion,
         }
       : ESTADO_INICIAL
   );
@@ -37,38 +37,45 @@ function FormularioProveedor({ proveedor, onGuardar, onCancelar, guardando }) {
   };
 
   return (
-    <div className="formulario-proveedor__overlay">
-      <form className="formulario-proveedor" onSubmit={manejarSubmit}>
-        <h2>{proveedor ? "Editar proveedor" : "Nuevo proveedor"}</h2>
+    <ModalAdmin
+      titulo={proveedor ? "Editar proveedor" : "Nuevo proveedor"}
+      onCerrar={onCancelar}
+      cerrarBloqueado={guardando}
+      onSubmit={manejarSubmit}
+    >
+      <label className="admin-modal__campo">
+        Nombre
+        <input type="text" value={form.nombre} onChange={manejarCambio("nombre")} required />
+      </label>
 
-        <label className="formulario-proveedor__campo">
-          Nombre
-          <input type="text" value={form.nombre} onChange={manejarCambio("nombre")} required />
-        </label>
-
-        <label className="formulario-proveedor__campo">
+      <div className="admin-modal__fila">
+        <label className="admin-modal__campo">
           Teléfono
           <input type="text" value={form.telefono} onChange={manejarCambio("telefono")} required />
         </label>
 
-        <label className="formulario-proveedor__campo">
+        <label className="admin-modal__campo">
           Correo
           <input type="email" value={form.correo} onChange={manejarCambio("correo")} required />
         </label>
+      </div>
 
-        <label className="formulario-proveedor__campo">
-          Dirección
-          <textarea rows={2} value={form.direccion} onChange={manejarCambio("direccion")} required />
-        </label>
+      <label className="admin-modal__campo">
+        Dirección
+        <textarea rows={2} value={form.direccion} onChange={manejarCambio("direccion")} required />
+      </label>
 
-        {error && <p className="formulario-proveedor__error">{error}</p>}
+      {error && <p className="admin-modal__error">{error}</p>}
 
-        <div className="formulario-proveedor__acciones">
-          <button type="button" onClick={onCancelar} disabled={guardando}>Cancelar</button>
-          <button type="submit" disabled={guardando}>{guardando ? "Guardando..." : "Guardar"}</button>
-        </div>
-      </form>
-    </div>
+      <div className="admin-modal__acciones">
+        <button type="button" className="admin-btn admin-btn--borde" onClick={onCancelar} disabled={guardando}>
+          Cancelar
+        </button>
+        <button type="submit" className="admin-btn" disabled={guardando}>
+          {guardando ? "Guardando..." : "Guardar"}
+        </button>
+      </div>
+    </ModalAdmin>
   );
 }
 

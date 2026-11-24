@@ -52,6 +52,22 @@
   --color-borde-variante: #c1c8c2;
   --color-error: #ba1a1a;
 
+  /* --- NUEVO: borde suave ---
+     Para divisores de tablas y bordes de tarjetas/paneles, donde
+     --color-borde-variante resulta demasiado marcado. */
+  --color-borde-suave: #e9e2d6;
+
+  /* --- NUEVO: estados semánticos (pills, badges, alertas) ---
+     La paleta de marca no cubre advertencia, información ni error suave, y
+     cada módulo del panel los estaba inventando con hex sueltos. Son tonos
+     "fijo / en-fijo" en la misma lógica que los de primario/secundario. */
+  --color-advertencia-fijo: #f6e4d8;
+  --color-en-advertencia-fijo: #7a4a33;
+  --color-info-fijo: #dde8f2;
+  --color-en-info-fijo: #3f5d78;
+  --color-error-fijo: #f7dde0;
+  --color-en-error-fijo: #8a2f3c;
+
   /* --- Tipografías --- */
   --fuente-titulos: "Playfair Display", serif;
   --fuente-texto: "Plus Jakarta Sans", sans-serif;

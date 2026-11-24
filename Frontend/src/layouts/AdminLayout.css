@@ -2,68 +2,31 @@
    AdminLayout
    Estructura general del panel administrativo de NinaFlowers.
 
-   IMPORTANTE:
-   Los estilos del Sidebar se encuentran exclusivamente en Sidebar.css.
-   Los estilos del Topbar pueden separarse posteriormente en Topbar.css.
+   - La paleta es la de variables.css (ya no hay paleta local del panel).
+   - Los estilos del Sidebar viven en Sidebar.css.
+   - Las primitivas reutilizables (paneles, tablas, pills, botones, modales)
+     viven en styles/admin.css.
    ========================================================================== */
 
 .admin-layout {
-  /* ========================================================================
-     Paleta local del panel administrativo
-     ======================================================================== */
-
-  --color-primario: #c2185b;
-  --color-primario-contenedor: #9c1350;
-  --color-en-primario: #ffffff;
-  --color-primario-fijo: #f7dce6;
-  --color-primario-fijo-oscuro: #e3a9c0;
-  --color-en-primario-fijo: #6b1235;
-
-  --color-secundario: #a6790a;
-  --color-secundario-contenedor: #8c6608;
-  --color-en-secundario: #ffffff;
-  --color-secundario-fijo: #f2e4c4;
-  --color-en-secundario-fijo: #5c4405;
-
-  --color-terciario: #4e7c50;
-  --color-terciario-contenedor: #3e6740;
-  --color-en-terciario: #ffffff;
-  --color-terciario-fijo: #deeadb;
-  --color-en-terciario-fijo: #23391f;
-
-  /* ========================================================================
-     Layout
-     ======================================================================== */
-
   width: 100%;
   height: 100vh;
-
   display: flex;
-
   margin: 0;
   padding: 0;
-
   background-color: var(--color-fondo);
-
+  color: var(--color-en-superficie);
+  font-family: var(--fuente-texto);
   overflow: hidden;
 }
 
-/* ==========================================================================
-   Columna principal
-   Contiene Topbar + contenido de la página.
-   ========================================================================== */
-
+/* Columna principal: Topbar + contenido de la página. */
 .admin-layout__main {
   flex: 1;
   min-width: 0;
   height: 100vh;
-
   display: flex;
   flex-direction: column;
-
-  margin: 0;
-  padding: 0;
-
   overflow: hidden;
 }
 
@@ -72,66 +35,119 @@
    ========================================================================== */
 
 .admin-topbar {
-  width: 100%;
   flex-shrink: 0;
-
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  padding: var(--espacio-lg) var(--espacio-xl) var(--espacio-md);
+}
 
+.admin-topbar__eyebrow {
   margin: 0;
-  padding: 1rem 1.75rem;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-caps);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
-  background-color: var(--color-superficie-contenedor-mas-bajo);
+.admin-topbar__titulo {
+  margin: var(--espacio-xs) 0 0;
+  font-size: var(--tam-headline-md);
+  line-height: 1.15;
+}
 
-  border-bottom: 1px solid var(--color-borde-variante);
+.admin-topbar__usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
 
+.admin-topbar__nombre {
+  font-size: var(--tam-body-md);
+  font-weight: 600;
+}
+
+.admin-topbar__avatar {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: var(--radio-full);
+  background: var(--color-primario-fijo);
+  color: var(--color-en-primario-fijo);
+  font-weight: 700;
   box-shadow: var(--sombra-suave);
 }
 
-.admin-topbar__saludo {
-  font-weight: 600;
-  color: var(--color-en-superficie);
-}
-
+/* El cierre de sesión vive en el Sidebar; en móvil el Sidebar se vuelve una
+   franja superior y el botón pasa aquí. */
 .admin-topbar__logout {
-  padding: 0.5rem 1rem;
-
-  border: 1px solid var(--color-borde-variante);
-  border-radius: var(--radio-full);
-
-  color: var(--color-en-superficie-variante);
-
-  font-size: var(--tam-body-sm);
-
-  cursor: pointer;
-
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.admin-topbar__logout:hover {
-  background-color: var(--color-superficie-contenedor);
-  color: var(--color-en-superficie);
+  display: none;
 }
 
 /* ==========================================================================
    Contenido principal
-   Esta es la ÚNICA sección del panel que realiza scroll vertical.
+   Es la ÚNICA sección del panel que hace scroll vertical.
    ========================================================================== */
 
 .admin-layout__content {
   flex: 1;
   min-width: 0;
   min-height: 0;
-
-  margin: 0;
-  padding: 1.5rem 1.75rem;
-
-  background-color: var(--color-fondo);
-
+  padding: var(--espacio-sm) var(--espacio-xl) var(--espacio-xl);
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+  .admin-topbar {
+    padding: var(--espacio-lg) var(--espacio-lg) var(--espacio-md);
+  }
+
+  .admin-layout__content {
+    padding: var(--espacio-sm) var(--espacio-lg) var(--espacio-lg);
+  }
+}
+
+/* En móvil el layout deja de ser una pantalla fija y la página hace scroll. */
+@media (max-width: 760px) {
+  .admin-layout {
+    display: block;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .admin-layout__main {
+    height: auto;
+    overflow: visible;
+  }
+
+  .admin-layout__content {
+    padding: var(--espacio-sm) var(--espacio-md) var(--espacio-lg);
+    overflow: visible;
+  }
+
+  .admin-topbar {
+    padding: var(--espacio-md);
+  }
+
+  .admin-topbar__titulo {
+    font-size: var(--tam-headline-sm);
+  }
+
+  .admin-topbar__nombre {
+    display: none;
+  }
+
+  .admin-topbar__logout {
+    display: inline-flex;
+  }
 }

@@ -1,47 +1,87 @@
-import "./TablaUsuarios.css";
 
-function TablaUsuarios({ usuarios, onCambiarEstado }) {
+import { iniciales, nombreCompleto } from "../../utils/formatosAdmin.js";
+
+function TablaUsuarios({ usuarios, seleccionadoId, onVer }) {
   if (usuarios.length === 0) {
-    return <p className="tabla-usuarios__vacio">No hay usuarios registrados.</p>;
+    return (
+      <p className="admin-vacio">
+        No hay usuarios que coincidan con el filtro.
+      </p>
+    );
   }
 
   return (
-    <table className="tabla-usuarios">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Correo</th>
-          <th>Teléfono</th>
-          <th>Rol</th>
-          <th>Estado</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {usuarios.map((u) => (
-          <tr key={u._id}>
-            <td>{u.nombre} {u.apellido}</td>
-            <td>{u.correo}</td>
-            <td>{u.telefono}</td>
-            <td>
-              <span className={`tabla-usuarios__rol tabla-usuarios__rol--${u.rol}`}>
-                {u.rol}
-              </span>
-            </td>
-            <td>
-              <span className={`tabla-usuarios__badge ${u.activo ? "" : "tabla-usuarios__badge--inactivo"}`}>
-                {u.activo ? "Activo" : "Inactivo"}
-              </span>
-            </td>
-            <td>
-              <button type="button" onClick={() => onCambiarEstado(u)}>
-                {u.activo ? "Desactivar" : "Activar"}
-              </button>
-            </td>
+    <div className="admin-tabla-wrap">
+      <table className="admin-tabla">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Correo / Teléfono</th>
+            <th>Estado</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          {usuarios.map((u) => {
+            const seleccionado = u._id === seleccionadoId;
+
+            return (
+              <tr
+                key={u._id}
+                className={
+                  seleccionado ? "usuarios-fila--activa" : ""
+                }
+                onClick={() => onVer(u)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onVer(u);
+                  }
+                }}
+                tabIndex={0}
+                aria-selected={seleccionado}
+                aria-label={`Seleccionar usuario ${nombreCompleto(u)}`}
+              >
+                <td>
+                  <div className="admin-tabla__celda-persona">
+                    <span
+                      className="admin-avatar-mini"
+                      aria-hidden="true"
+                    >
+                      {iniciales(u)}
+                    </span>
+
+                    <span className="admin-tabla__principal">
+                      {nombreCompleto(u)}
+                    </span>
+                  </div>
+                </td>
+
+                <td>
+                  <span className="admin-tabla__principal">
+                    {u.correo}
+                  </span>
+
+                  <span className="admin-tabla__secundario">
+                    {u.telefono || "Sin teléfono"}
+                  </span>
+                </td>
+
+                <td>
+                  <span
+                    className={`admin-pill admin-pill--${
+                      u.activo ? "activo" : "inactivo"
+                    }`}
+                  >
+                    {u.activo ? "Activo" : "Inactivo"}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

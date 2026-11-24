@@ -1,0 +1,793 @@
+/* ==========================================================================
+   admin.css
+   Primitivas visuales compartidas por TODAS las vistas del panel
+   administrativo (paneles, métricas, botones, tablas, pills, tabs, modales).
+
+   - Solo consume variables de variables.css.
+   - Todo vive bajo .admin-layout: la tienda (cliente) no se ve afectada.
+   - Reemplaza los CSS que cada módulo duplicaba (Tabla*.css, Formulario*.css
+     y los CSS de página de Categorías, Productos, Proveedores, Usuarios,
+     Inventario y Movimientos).
+   ========================================================================== */
+
+.admin-layout :focus-visible {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Panel (la "tarjeta" que contiene encabezado + filtros + tabla)
+   ========================================================================== */
+
+.admin-panel {
+  min-width: 0;
+  margin-bottom: var(--espacio-lg);
+  padding: var(--espacio-lg);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-suave);
+}
+
+.admin-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.admin-panel__titulo {
+  margin: 0;
+  font-size: var(--tam-title-md);
+  line-height: 1.2;
+}
+
+.admin-panel__sub {
+  margin: var(--espacio-xs) 0 0;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+}
+
+.admin-panel__acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.admin-resumen {
+  margin: var(--espacio-md) 0 0;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+}
+
+.admin-resumen strong {
+  color: var(--color-en-superficie);
+}
+
+/* ==========================================================================
+   Tarjetas de métricas
+   ========================================================================== */
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.admin-stat {
+  position: relative;
+  min-width: 0;
+  min-height: 7rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+  padding: var(--espacio-md) var(--espacio-lg);
+  overflow: hidden;
+  background: var(--color-superficie-contenedor-mas-bajo);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-suave);
+}
+
+.admin-stat__flor {
+  position: absolute;
+  top: var(--espacio-sm);
+  right: var(--espacio-sm);
+  color: var(--color-primario-fijo);
+  font-size: var(--tam-headline-md);
+  pointer-events: none;
+}
+
+.admin-stat__etiqueta {
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+  font-weight: 600;
+}
+
+.admin-stat__valor {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  font-family: var(--fuente-texto);
+  font-size: var(--tam-headline-md);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.admin-stat__nota {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+}
+
+/* ==========================================================================
+   Botones
+   ========================================================================== */
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-xs);
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-full);
+  background: var(--color-en-primario-fijo);
+  color: var(--color-en-primario);
+  font-size: var(--tam-label-md);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    transform 0.08s ease;
+}
+
+.admin-btn:hover:not(:disabled) {
+  background: var(--color-primario-contenedor);
+}
+
+.admin-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.admin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.admin-btn--claro {
+  background: var(--color-secundario-fijo);
+  color: var(--color-en-primario-fijo);
+}
+
+.admin-btn--claro:hover:not(:disabled) {
+  background: var(--color-secundario);
+  color: var(--color-en-secundario-fijo);
+}
+
+.admin-btn--borde {
+  background: var(--color-superficie-contenedor-mas-bajo);
+  color: var(--color-en-primario-fijo);
+  border: 1px solid var(--color-borde-variante);
+}
+
+.admin-btn--borde:hover:not(:disabled) {
+  background: var(--color-superficie-contenedor-bajo);
+}
+
+.admin-btn--sm {
+  padding: var(--espacio-xs) var(--espacio-md);
+  font-size: var(--tam-body-sm);
+}
+
+.admin-btn--full {
+  width: 100%;
+}
+
+.admin-acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+/* ==========================================================================
+   Barra de filtros, campos y tabs
+   ========================================================================== */
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+}
+
+.admin-toolbar__fin {
+  margin-left: auto;
+}
+
+.admin-campo {
+  min-width: 9rem;
+  padding: var(--espacio-sm) var(--espacio-md);
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-full);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  color: var(--color-en-superficie);
+  font-size: var(--tam-body-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-campo:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-primario-fijo);
+}
+
+.admin-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+  cursor: pointer;
+}
+
+.admin-check input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-primario);
+  cursor: pointer;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+}
+
+.admin-tab {
+  padding: var(--espacio-xs) var(--espacio-md);
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-full);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+  font-weight: 600;
+  text-transform: capitalize;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.admin-tab:hover {
+  background: var(--color-superficie-contenedor-bajo);
+}
+
+.admin-tab--activo,
+.admin-tab--activo:hover {
+  background: var(--color-secundario-fijo);
+  border-color: var(--color-secundario-contenedor);
+  color: var(--color-en-primario-fijo);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Tablas
+   ========================================================================== */
+
+.admin-tabla-wrap {
+  overflow-x: auto;
+}
+
+.admin-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+  font-size: var(--tam-body-sm);
+}
+
+.admin-tabla th {
+  padding: var(--espacio-sm) var(--espacio-md);
+  background: var(--color-secundario-fijo);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-md);
+  font-weight: 700;
+  text-align: left;
+}
+
+.admin-tabla th:first-child {
+  border-top-left-radius: var(--radio-md);
+  border-bottom-left-radius: var(--radio-md);
+}
+
+.admin-tabla th:last-child {
+  border-top-right-radius: var(--radio-md);
+  border-bottom-right-radius: var(--radio-md);
+}
+
+.admin-tabla td {
+  padding: var(--espacio-md);
+  border-bottom: 1px solid var(--color-borde-suave);
+  vertical-align: middle;
+}
+
+.admin-tabla tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.admin-tabla tbody tr:hover {
+  background: color-mix(in srgb, var(--color-secundario-fijo) 45%, var(--color-superficie-contenedor-mas-bajo));
+}
+
+.admin-tabla tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-tabla__num {
+  text-align: right;
+}
+
+.admin-tabla__id {
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.admin-tabla__principal {
+  display: block;
+  font-weight: 600;
+}
+
+.admin-tabla__secundario {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-caps);
+}
+
+.admin-tabla__celda-persona {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.admin-tabla__cantidad--entrada {
+  color: var(--color-terciario-contenedor);
+  font-weight: 700;
+}
+
+.admin-tabla__cantidad--salida {
+  color: var(--color-en-secundario-fijo);
+  font-weight: 700;
+}
+
+.admin-vacio {
+  padding: var(--espacio-xl) var(--espacio-md);
+  color: var(--color-en-superficie-variante);
+  text-align: center;
+}
+
+/* ---------- Elementos de celda ---------- */
+
+.admin-avatar-mini {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: var(--radio-full);
+  background: var(--color-primario-fijo);
+  color: var(--color-en-primario-fijo);
+  font-size: var(--tam-label-caps);
+  font-weight: 700;
+}
+
+.admin-miniatura {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: block;
+  object-fit: cover;
+  border-radius: var(--radio-md);
+  background: var(--color-secundario-fijo);
+}
+
+.admin-miniatura--vacia {
+  display: grid;
+  place-items: center;
+  color: var(--color-secundario-contenedor);
+}
+
+.admin-miniatura--vacia .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* ==========================================================================
+   Pills de estado
+   Una sola definición para todos los módulos. El modificador puede ser un
+   color (--verde, --rosa...) o directamente el estado del dominio
+   (--entregado, --completado, --pendiente...).
+   ========================================================================== */
+
+.admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-xs);
+  padding: var(--espacio-xs) var(--espacio-sm);
+  border-radius: var(--radio-full);
+  background: var(--pill-fondo, var(--color-superficie-contenedor));
+  color: var(--pill-texto, var(--color-en-superficie-variante));
+  font-size: var(--tam-label-md);
+  font-weight: 700;
+  line-height: 1.3;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.admin-pill .material-symbols-outlined {
+  font-size: 14px;
+}
+
+/* Verde salvia */
+.admin-pill--verde,
+.admin-pill--activo,
+.admin-pill--entregado,
+.admin-pill--completado,
+.admin-pill--ok,
+.admin-pill--entrada {
+  --pill-fondo: var(--color-terciario-fijo);
+  --pill-texto: var(--color-en-terciario-fijo);
+}
+
+/* Rosa pálido */
+.admin-pill--rosa,
+.admin-pill--pendiente_cotizacion {
+  --pill-fondo: var(--color-secundario-fijo);
+  --pill-texto: var(--color-en-secundario-fijo);
+}
+
+/* Lavanda */
+.admin-pill--lila,
+.admin-pill--en_preparacion,
+.admin-pill--reembolsado,
+.admin-pill--administrador {
+  --pill-fondo: var(--color-primario-fijo);
+  --pill-texto: var(--color-en-primario-fijo);
+}
+
+/* Lavanda intensa */
+.admin-pill--lavanda,
+.admin-pill--listo_entrega {
+  --pill-fondo: var(--color-primario-fijo-oscuro);
+  --pill-texto: var(--color-en-primario-fijo);
+}
+
+/* Advertencia */
+.admin-pill--durazno,
+.admin-pill--pendiente,
+.admin-pill--alerta,
+.admin-pill--salida {
+  --pill-fondo: var(--color-advertencia-fijo);
+  --pill-texto: var(--color-en-advertencia-fijo);
+}
+
+/* Información */
+.admin-pill--azul,
+.admin-pill--confirmado {
+  --pill-fondo: var(--color-info-fijo);
+  --pill-texto: var(--color-en-info-fijo);
+}
+
+/* Error */
+.admin-pill--rojo,
+.admin-pill--cancelado,
+.admin-pill--fallido {
+  --pill-fondo: var(--color-error-fijo);
+  --pill-texto: var(--color-en-error-fijo);
+}
+
+/* Neutro */
+.admin-pill--gris,
+.admin-pill--inactivo,
+.admin-pill--cliente {
+  --pill-fondo: var(--color-superficie-contenedor);
+  --pill-texto: var(--color-en-superficie-variante);
+}
+
+/* ==========================================================================
+   Modales de formulario
+   ========================================================================== */
+
+@keyframes admin-overlay-entrada {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes admin-modal-entrada {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.admin-modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-md);
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--color-en-primario-fijo) 55%, transparent);
+  backdrop-filter: blur(2px);
+  animation: admin-overlay-entrada 0.18s ease;
+}
+
+.admin-modal {
+  width: min(440px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-md);
+  padding: var(--espacio-lg);
+  overflow-y: auto;
+  background: var(--color-superficie-contenedor-mas-bajo);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-fuerte);
+  animation: admin-modal-entrada 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.admin-modal--ancho {
+  width: min(560px, 100%);
+}
+
+.admin-modal h2 {
+  margin: 0;
+  font-size: var(--tam-headline-sm);
+}
+
+.admin-modal__fila {
+  display: flex;
+  gap: var(--espacio-md);
+}
+
+.admin-modal__fila > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-modal__campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+  font-weight: 600;
+}
+
+.admin-modal__campo input,
+.admin-modal__campo select,
+.admin-modal__campo textarea {
+  padding: var(--espacio-sm) var(--espacio-md);
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  color: var(--color-en-superficie);
+  font-size: var(--tam-body-md);
+  font-weight: 400;
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-modal__campo input:focus,
+.admin-modal__campo select:focus,
+.admin-modal__campo textarea:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-primario-fijo);
+}
+
+.admin-modal__error {
+  margin: 0;
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background: var(--color-error-fijo);
+  color: var(--color-en-error-fijo);
+  font-size: var(--tam-body-sm);
+  font-weight: 600;
+}
+
+.admin-modal__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espacio-sm);
+}
+
+.admin-modal__resumen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie-contenedor-bajo);
+  color: var(--color-en-superficie);
+}
+
+.admin-modal__resumen span {
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+}
+
+.admin-modal__aviso {
+  margin: 0;
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie-contenedor-bajo);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+  line-height: 1.5;
+}
+
+/* ---------- Formulario de producto: componentes e imágenes ---------- */
+
+.admin-modal__componentes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-sm);
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+}
+
+.admin-modal__componentes-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+}
+
+.admin-modal__componentes-titulo button {
+  padding: var(--espacio-xs) var(--espacio-sm);
+  border-radius: var(--radio-full);
+  color: var(--color-primario);
+  font-weight: 700;
+  transition: background-color 0.15s ease;
+}
+
+.admin-modal__componentes-titulo button:hover {
+  background: var(--color-primario-fijo);
+}
+
+.admin-modal__componente-fila {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.admin-modal__componente-fila select,
+.admin-modal__componente-fila input {
+  min-width: 0;
+  padding: var(--espacio-xs) var(--espacio-sm);
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  color: var(--color-en-superficie);
+}
+
+.admin-modal__componente-fila select {
+  flex: 2;
+}
+
+.admin-modal__componente-fila input {
+  flex: 1;
+}
+
+.admin-modal__componente-fila button {
+  padding: var(--espacio-xs) var(--espacio-sm);
+  border-radius: var(--radio-full);
+  color: var(--color-error);
+  font-size: var(--tam-body-sm);
+  transition: background-color 0.15s ease;
+}
+
+.admin-modal__componente-fila button:hover {
+  background: var(--color-error-fijo);
+}
+
+.admin-modal__previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+}
+
+.admin-modal__previews img {
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+}
+
+/* ==========================================================================
+   Ajustes a componentes comunes (solo dentro del panel)
+   ========================================================================== */
+
+.admin-layout .buscador {
+  max-width: 20rem;
+  background: var(--color-superficie-contenedor-mas-bajo);
+  border: 1px solid var(--color-borde-variante);
+  box-shadow: none;
+}
+
+.admin-layout .buscador:focus-within {
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-primario-fijo);
+}
+
+.admin-layout .buscador__input {
+  padding-block: var(--espacio-sm);
+  font-size: var(--tam-body-sm);
+}
+
+.admin-layout .paginacion {
+  margin-top: var(--espacio-md);
+}
+
+.admin-layout .paginacion__boton--activo {
+  background-color: var(--color-en-primario-fijo);
+  color: var(--color-en-primario);
+}
+
+.admin-layout .paginacion__boton--activo:hover:not(:disabled) {
+  background-color: var(--color-primario-contenedor);
+  color: var(--color-en-primario);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+  .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-panel {
+    padding: var(--espacio-md);
+  }
+
+  .admin-panel__head {
+    align-items: flex-start;
+  }
+
+  .admin-toolbar__fin {
+    margin-left: 0;
+  }
+
+  .admin-layout .buscador {
+    max-width: none;
+  }
+
+  .admin-modal__fila {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-modal__overlay,
+  .admin-modal {
+    animation: none;
+  }
+}

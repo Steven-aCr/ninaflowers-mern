@@ -1,13 +1,92 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth.js";
 import { listarProductos } from "../../services/productoService.js";
 import { listarInventarioBajoMinimo } from "../../services/inventarioService.js";
 import { listarUsuarios } from "../../services/usuarioService.js";
+import { obtenerReportePagos } from "../../services/pagoService.js";
 import * as pedidoService from "../../services/pedidoService.js";
 
+import TarjetaMetrica from "../../components/admin/TarjetaMetrica.jsx";
+import Loader from "../../components/common/Loader.jsx";
+import { ESTADOS_PEDIDO, ESTADOS_EN_CURSO } from "../../utils/constantes.js";
+import { etiquetaEstado, formatearFechaCorta, idCorto, nombreCompleto } from "../../utils/formatosAdmin.js";
+
 import "./Dashboard.css";
+
+const VALORES_ESTADO = ESTADOS_PEDIDO.map((e) => e.valor);
+const DIAS_SEMANA = ["D", "L", "M", "M", "J", "V", "S"];
+
+const ACCESOS = [
+  { ruta: "/admin/productos", icono: "local_florist", texto: "Productos" },
+  { ruta: "/admin/pedidos", icono: "receipt_long", texto: "Pedidos" },
+  { ruta: "/admin/inventario", icono: "inventory_2", texto: "Inventario" },
+  { ruta: "/admin/usuarios", icono: "group", texto: "Usuarios" },
+  { ruta: "/admin/pagos", icono: "credit_card", texto: "Pagos" },
+  { ruta: "/admin/envios", icono: "local_shipping", texto: "Envíos" },
+];
+
+// "2026-11-05" para el filtro de fechas del reporte de pagos (AAAA-MM-DD, hora local).
+const aFechaISO = (fecha) =>
+  `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, "0")}-${String(fecha.getDate()).padStart(2, "0")}`;
+
+const formatearMoneda = (cantidad) =>
+  new Intl.NumberFormat("es-SV", { style: "currency", currency: "USD" }).format(cantidad || 0);
+
+// Calendario del mes actual. Marca los días con entregas programadas de pedidos
+// que siguen en curso (a partir de fechaEntregaEstimada).
+function CalendarioEntregas({ pedidos }) {
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  const mes = hoy.getMonth();
+
+  const diaSemanaPrimerDia = new Date(anio, mes, 1).getDay();
+  const diasDelMes = new Date(anio, mes + 1, 0).getDate();
+  const nombreMes = new Intl.DateTimeFormat("es-SV", { month: "long" }).format(hoy);
+
+  const entregasPorDia = {};
+  pedidos.forEach((pedido) => {
+    if (!ESTADOS_EN_CURSO.includes(pedido.estadoPedido)) return;
+    const fecha = new Date(pedido.fechaEntregaEstimada);
+    if (fecha.getFullYear() === anio && fecha.getMonth() === mes) {
+      entregasPorDia[fecha.getDate()] = (entregasPorDia[fecha.getDate()] || 0) + 1;
+    }
+  });
+
+  return (
+    <div className="dashboard-calendario">
+      <div className="dashboard-calendario__grid">
+        {DIAS_SEMANA.map((dia, indice) => (
+          <span key={indice} className="dashboard-calendario__dia dashboard-calendario__dia--cabecera">{dia}</span>
+        ))}
+
+        {Array.from({ length: diaSemanaPrimerDia }, (_, indice) => (
+          <span key={`vacio-${indice}`} />
+        ))}
+
+        {Array.from({ length: diasDelMes }, (_, indice) => {
+          const dia = indice + 1;
+          const entregas = entregasPorDia[dia];
+          const clases = ["dashboard-calendario__dia"];
+          if (entregas) clases.push("dashboard-calendario__dia--marcado");
+          if (dia === hoy.getDate()) clases.push("dashboard-calendario__dia--hoy");
+
+          return (
+            <span
+              key={dia}
+              className={clases.join(" ")}
+              title={entregas ? `${entregas} ${entregas === 1 ? "entrega" : "entregas"}` : undefined}
+            >
+              {dia}
+            </span>
+          );
+        })}
+      </div>
+      <p className="dashboard-calendario__mes">{nombreMes}</p>
+    </div>
+  );
+}
 
 function Dashboard() {
   const { usuario } = useAuth();
@@ -16,507 +95,238 @@ function Dashboard() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
-  const [resumen, setResumen] = useState({
-    productos: 0,
-    usuarios: 0,
-    pedidos: 0,
-    ventas: 0,
-    stockBajo: 0,
-  });
-
-  const [pedidosRecientes, setPedidosRecientes] = useState([]);
+  // null = ese dato no se pudo cargar (la tarjeta muestra "—" en vez de un 0 engañoso).
+  const [totales, setTotales] = useState({ productos: null, usuarios: null, stockBajo: null });
+  const [conteos, setConteos] = useState(null); // pedidos por estado
+  const [reporteMes, setReporteMes] = useState(null); // pagos completados del mes
+  const [pedidos, setPedidos] = useState([]); // los 100 más recientes (tabla y calendario)
   const [inventarioBajo, setInventarioBajo] = useState([]);
 
-  useEffect(() => {
-    cargarDashboard();
+  const cargarDashboard = useCallback(async () => {
+    setCargando(true);
+    setError("");
+
+    const hoy = new Date();
+    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+    const resultados = await Promise.allSettled([
+      listarProductos({ page: 1, limite: 1 }),
+      listarUsuarios({ page: 1, limite: 1 }),
+      pedidoService.listarPedidos({ page: 1, limite: 100 }),
+      listarInventarioBajoMinimo(),
+      pedidoService.contarPedidosPorEstado(VALORES_ESTADO),
+      obtenerReportePagos({ fechaDesde: aFechaISO(inicioMes), fechaHasta: aFechaISO(hoy) }),
+    ]);
+
+    const valor = (resultado) => (resultado.status === "fulfilled" ? resultado.value : null);
+    const [productos, usuarios, listaPedidos, inventario, conteoEstados, reporte] = resultados.map(valor);
+
+    const totalDe = (respuesta) => (respuesta ? respuesta.totalDoc ?? respuesta.datos?.length ?? 0 : null);
+
+    setTotales({
+      productos: totalDe(productos),
+      usuarios: totalDe(usuarios),
+      stockBajo: totalDe(inventario),
+    });
+    setPedidos(listaPedidos?.datos || []);
+    setInventarioBajo((inventario?.datos || []).slice(0, 5));
+    setConteos(conteoEstados);
+    setReporteMes(reporte);
+
+    if (resultados.some((r) => r.status === "rejected")) {
+      setError("Algunos datos no se pudieron cargar. Puedes intentar de nuevo con “Actualizar”.");
+    }
+    setCargando(false);
   }, []);
 
-  const cargarDashboard = async () => {
-    try {
-      setCargando(true);
-      setError("");
+  useEffect(() => { cargarDashboard(); }, [cargarDashboard]);
 
-      const resultados = await Promise.allSettled([
-        listarProductos({
-          pagina: 1,
-          limite: 1,
-        }),
+  if (cargando) return <Loader texto="Cargando dashboard..." />;
 
-        listarUsuarios({
-          pagina: 1,
-          limite: 1,
-        }),
-
-        pedidoService.listarPedidos({
-          pagina: 1,
-          limite: 5,
-        }),
-
-        listarInventarioBajoMinimo(),
-      ]);
-
-      const productos =
-        resultados[0].status === "fulfilled"
-          ? resultados[0].value
-          : null;
-
-      const usuarios =
-        resultados[1].status === "fulfilled"
-          ? resultados[1].value
-          : null;
-
-      const pedidos =
-        resultados[2].status === "fulfilled"
-          ? resultados[2].value
-          : null;
-
-      const inventario =
-        resultados[3].status === "fulfilled"
-          ? resultados[3].value
-          : null;
-
-      const listaPedidos =
-        pedidos?.datos ||
-        pedidos?.pedidos ||
-        (Array.isArray(pedidos) ? pedidos : []);
-
-      const listaInventario =
-        inventario?.datos ||
-        (Array.isArray(inventario) ? inventario : []);
-
-      /*
-       * Se calcula utilizando los pedidos obtenidos.
-       * Si posteriormente creamos un endpoint de estadísticas,
-       * este cálculo puede trasladarse al backend.
-       */
-      const ventas = listaPedidos
-        .filter((pedido) => pedido.estadoPedido !== "cancelado")
-        .reduce(
-          (total, pedido) =>
-            total + Number(pedido.total || 0),
-          0
-        );
-
-      setResumen({
-        productos:
-          productos?.totalDoc ??
-          productos?.total ??
-          productos?.datos?.length ??
-          0,
-
-        usuarios:
-          usuarios?.totalDoc ??
-          usuarios?.total ??
-          usuarios?.datos?.length ??
-          0,
-
-        pedidos:
-          pedidos?.totalDoc ??
-          pedidos?.total ??
-          listaPedidos.length,
-
-        ventas,
-
-        stockBajo:
-          inventario?.totalDoc ??
-          inventario?.total ??
-          listaInventario.length,
-      });
-
-      setPedidosRecientes(listaPedidos.slice(0, 5));
-      setInventarioBajo(listaInventario.slice(0, 5));
-    } catch (error) {
-      console.error("Error cargando dashboard:", error);
-
-      setError(
-        "No se pudo cargar la información del dashboard."
-      );
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  const formatearMoneda = (cantidad) =>
-    new Intl.NumberFormat("es-SV", {
-      style: "currency",
-      currency: "USD",
-    }).format(cantidad || 0);
-
-  const formatearFecha = (fecha) => {
-    if (!fecha) return "Sin fecha";
-
-    return new Intl.DateTimeFormat("es-SV", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(fecha));
-  };
-
-  const obtenerNombreCliente = (pedido) => {
-    if (pedido.usuarioId?.nombre) {
-      return `${pedido.usuarioId.nombre} ${
-        pedido.usuarioId.apellido || ""
-      }`;
-    }
-
-    if (pedido.usuario?.nombre) {
-      return `${pedido.usuario.nombre} ${
-        pedido.usuario.apellido || ""
-      }`;
-    }
-
-    return "Cliente";
-  };
-
-  if (cargando) {
-    return (
-      <div className="dashboard">
-        <div className="dashboard__cargando">
-          Cargando dashboard...
-        </div>
-      </div>
-    );
-  }
+  const totalPedidos = conteos ? VALORES_ESTADO.reduce((suma, e) => suma + (conteos[e] ?? 0), 0) : null;
+  const pedidosEnCurso = conteos ? ESTADOS_EN_CURSO.reduce((suma, e) => suma + (conteos[e] ?? 0), 0) : null;
+  const mostrar = (numero) => (numero === null ? "—" : numero);
+  const pedidosRecientes = pedidos.slice(0, 5);
 
   return (
-    <div className="dashboard">
-
-      {/* ENCABEZADO */}
-
-      <div className="dashboard__encabezado">
-        <div>
-          <h1>Dashboard</h1>
-
-          <p>
-            Bienvenido,{" "}
-            <strong>{usuario?.nombre || "Administrador"}</strong>.
-            Aquí tienes un resumen de NinaFlowers.
-          </p>
-        </div>
-
-        <button
-          className="dashboard__actualizar"
-          onClick={cargarDashboard}
-        >
+    <>
+      <div className="dashboard-intro">
+        <p>
+          Bienvenido, <strong>{usuario?.nombre || "Administrador"}</strong>. Aquí tienes un resumen de NinaFlowers.
+        </p>
+        <button type="button" className="admin-btn admin-btn--borde" onClick={cargarDashboard}>
+          <span className="material-symbols-outlined">refresh</span>
           Actualizar
         </button>
       </div>
 
-      {error && (
-        <div className="dashboard__error">
-          {error}
-        </div>
-      )}
+      {error && <p className="dashboard-error" role="alert">{error}</p>}
 
-      {/* TARJETAS */}
-
-      <section className="dashboard__tarjetas">
-
-        <article className="dashboard-card">
-          <div className="dashboard-card__icono dashboard-card__icono--pedidos">
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              receipt_long
-            </span>
-          </div>
-
-          <div className="dashboard-card__contenido">
-            <span>Pedidos</span>
-            <h2>{resumen.pedidos}</h2>
-            <p>Pedidos registrados</p>
-          </div>
-        </article>
-
-        <article className="dashboard-card">
-          <div className="dashboard-card__icono dashboard-card__icono--ventas">
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              payments
-            </span>
-          </div>
-
-          <div className="dashboard-card__contenido">
-            <span>Ventas recientes</span>
-            <h2>{formatearMoneda(resumen.ventas)}</h2>
-            <p>Según pedidos consultados</p>
-          </div>
-        </article>
-
-        <article className="dashboard-card">
-          <div className="dashboard-card__icono dashboard-card__icono--productos">
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              local_florist
-            </span>
-          </div>
-
-          <div className="dashboard-card__contenido">
-            <span>Productos</span>
-            <h2>{resumen.productos}</h2>
-            <p>Productos registrados</p>
-          </div>
-        </article>
-
-        <article className="dashboard-card">
-          <div className="dashboard-card__icono dashboard-card__icono--usuarios">
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              group
-            </span>
-          </div>
-
-          <div className="dashboard-card__contenido">
-            <span>Usuarios</span>
-            <h2>{resumen.usuarios}</h2>
-            <p>Usuarios registrados</p>
-          </div>
-        </article>
-
+      {/* ---------- Tarjetas ---------- */}
+      <section className="admin-stats" aria-label="Resumen general">
+        <TarjetaMetrica
+          etiqueta="Pedidos en curso"
+          valor={mostrar(pedidosEnCurso)}
+          nota={totalPedidos === null ? undefined : `${totalPedidos} pedidos registrados`}
+        />
+        <TarjetaMetrica
+          etiqueta="Ingresos del mes"
+          valor={reporteMes ? formatearMoneda(reporteMes.totalRecaudado) : "—"}
+          nota={reporteMes ? `${reporteMes.pagosCompletados} pagos completados` : undefined}
+        />
+        <TarjetaMetrica etiqueta="Productos" valor={mostrar(totales.productos)} nota="Productos registrados" />
+        <TarjetaMetrica etiqueta="Usuarios" valor={mostrar(totales.usuarios)} nota="Clientes y administradores" />
       </section>
 
-      {/* CONTENIDO */}
-
-      <section className="dashboard__contenido">
-
-        {/* PEDIDOS RECIENTES */}
-
-        <div className="dashboard-panel dashboard-panel--pedidos">
-
-          <div className="dashboard-panel__encabezado">
+      {/* ---------- Pedidos recientes + stock bajo ---------- */}
+      <section className="dashboard-fila">
+        <article className="admin-panel">
+          <div className="admin-panel__head">
             <div>
-              <h2>Pedidos recientes</h2>
-              <p>Últimos pedidos registrados</p>
+              <h2 className="admin-panel__titulo">Pedidos recientes</h2>
+              <p className="admin-panel__sub">Últimos pedidos registrados</p>
             </div>
-
-            <button
-              onClick={() => navigate("/admin/pedidos")}
-            >
+            <button type="button" className="admin-btn admin-btn--claro admin-btn--sm" onClick={() => navigate("/admin/pedidos")}>
               Ver todos
             </button>
           </div>
 
           {pedidosRecientes.length === 0 ? (
-            <div className="dashboard__vacio">
-              No hay pedidos registrados.
-            </div>
+            <p className="admin-vacio">No hay pedidos registrados.</p>
           ) : (
-            <div className="dashboard-tabla-contenedor">
-              <table className="dashboard-tabla">
-
+            <div className="admin-tabla-wrap">
+              <table className="admin-tabla">
                 <thead>
                   <tr>
                     <th>Pedido</th>
                     <th>Cliente</th>
                     <th>Fecha</th>
-                    <th>Total</th>
+                    <th className="admin-tabla__num">Total</th>
                     <th>Estado</th>
                   </tr>
                 </thead>
-
                 <tbody>
                   {pedidosRecientes.map((pedido) => (
                     <tr key={pedido._id}>
-
+                      <td className="admin-tabla__id">{idCorto(pedido._id)}</td>
+                      <td>{nombreCompleto(pedido.usuarioId)}</td>
+                      <td>{formatearFechaCorta(pedido.createdAt || pedido.fechaPedido)}</td>
+                      <td className="admin-tabla__num">{formatearMoneda(pedido.total)}</td>
                       <td>
-                        <strong>
-                          #{pedido._id?.slice(-6).toUpperCase()}
-                        </strong>
-                      </td>
-
-                      <td>
-                        {obtenerNombreCliente(pedido)}
-                      </td>
-
-                      <td>
-                        {formatearFecha(
-                          pedido.createdAt ||
-                          pedido.fechaPedido
-                        )}
-                      </td>
-
-                      <td>
-                        {formatearMoneda(pedido.total)}
-                      </td>
-
-                      <td>
-                        <span
-                          className={`dashboard-estado dashboard-estado--${
-                            pedido.estadoPedido || "pendiente"
-                          }`}
-                        >
-                          {(pedido.estadoPedido || "pendiente")
-                            .replaceAll("_", " ")}
+                        <span className={`admin-pill admin-pill--${pedido.estadoPedido || "pendiente"}`}>
+                          {etiquetaEstado(pedido.estadoPedido || "pendiente")}
                         </span>
                       </td>
-
                     </tr>
                   ))}
                 </tbody>
-
               </table>
             </div>
           )}
+        </article>
 
-        </div>
-
-        {/* INVENTARIO */}
-
-        <div className="dashboard-panel">
-
-          <div className="dashboard-panel__encabezado">
+        <article className="admin-panel">
+          <div className="admin-panel__head">
             <div>
-              <h2>Stock bajo</h2>
-              <p>Productos que requieren atención</p>
+              <h2 className="admin-panel__titulo">Stock bajo</h2>
+              <p className="admin-panel__sub">Productos que requieren atención</p>
             </div>
-
-            <span className="dashboard-alerta">
-              {resumen.stockBajo}
-            </span>
+            <span className="admin-pill admin-pill--alerta">{mostrar(totales.stockBajo)}</span>
           </div>
 
-          <div className="dashboard-stock">
-
-            {inventarioBajo.length === 0 ? (
-              <div className="dashboard__vacio">
-                No hay productos con stock bajo.
-              </div>
-            ) : (
-              inventarioBajo.map((item) => (
-                <div
-                  className="dashboard-stock__item"
-                  key={item._id}
-                >
+          {inventarioBajo.length === 0 ? (
+            <p className="admin-vacio">No hay productos con stock bajo.</p>
+          ) : (
+            <ul className="dashboard-stock">
+              {inventarioBajo.map((item) => (
+                <li key={item._id} className="dashboard-stock__item">
                   <div>
-                    <strong>
-                      {item.productoId?.nombre ||
-                        item.producto?.nombre ||
-                        "Producto"}
-                    </strong>
-
-                    <span>
-                      Mínimo: {item.stockMinimo ?? 0}
-                    </span>
+                    <span className="admin-tabla__principal">{item.productoId?.nombre || "Producto"}</span>
+                    <span className="admin-tabla__secundario">Mínimo: {item.stockMinimo ?? 0}</span>
                   </div>
+                  <strong className="dashboard-stock__cantidad">{item.stock ?? 0}</strong>
+                </li>
+              ))}
+            </ul>
+          )}
 
-                  <div className="dashboard-stock__cantidad">
-                    {item.stock ?? 0}
-                    <small> unidades</small>
-                  </div>
-                </div>
-              ))
-            )}
-
-          </div>
-
-          <button
-            className="dashboard-stock__boton"
-            onClick={() => navigate("/admin/inventario")}
-          >
+          <button type="button" className="admin-btn admin-btn--borde admin-btn--full dashboard-stock__boton" onClick={() => navigate("/admin/inventario")}>
             Ver inventario
           </button>
-
-        </div>
-
+        </article>
       </section>
 
-      {/* ACCESOS RÁPIDOS */}
+      {/* ---------- Pedidos por estado + calendario ---------- */}
+      <section className="dashboard-fila dashboard-fila--iguales">
+        <article className="admin-panel">
+          <div className="admin-panel__head">
+            <div>
+              <h2 className="admin-panel__titulo">Pedidos por estado</h2>
+              <p className="admin-panel__sub">Distribución del total de pedidos</p>
+            </div>
+            <span className="dashboard-flor" aria-hidden="true">✿</span>
+          </div>
 
-      <section className="dashboard-panel dashboard-accesos">
+          {conteos === null ? (
+            <p className="admin-vacio">No se pudo cargar la distribución.</p>
+          ) : (
+            <ul className="dashboard-estados">
+              {ESTADOS_PEDIDO.map((estado) => {
+                const cantidad = conteos[estado.valor] ?? 0;
+                const porcentaje = totalPedidos ? Math.round((cantidad / totalPedidos) * 100) : 0;
+                return (
+                  <li key={estado.valor}>
+                    <div className="dashboard-estados__fila">
+                      <span>{estado.etiqueta}</span>
+                      <strong>{cantidad}</strong>
+                    </div>
+                    <div
+                      className="dashboard-progreso"
+                      role="progressbar"
+                      aria-label={estado.etiqueta}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={porcentaje}
+                    >
+                      <span style={{ width: `${porcentaje}%` }} />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </article>
 
-        <div className="dashboard-panel__encabezado">
+        <article className="admin-panel">
+          <div className="admin-panel__head">
+            <div>
+              <h2 className="admin-panel__titulo">Calendario de entregas</h2>
+              <p className="admin-panel__sub">Días con entregas programadas este mes</p>
+            </div>
+          </div>
+          <CalendarioEntregas pedidos={pedidos} />
+        </article>
+      </section>
+
+      {/* ---------- Accesos rápidos ---------- */}
+      <section className="admin-panel">
+        <div className="admin-panel__head">
           <div>
-            <h2>Accesos rápidos</h2>
-            <p>Administración del sistema</p>
+            <h2 className="admin-panel__titulo">Accesos rápidos</h2>
+            <p className="admin-panel__sub">Administración del sistema</p>
           </div>
         </div>
 
-        <div className="dashboard-accesos__grid">
-
-          <button onClick={() => navigate("/admin/productos")}>
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              local_florist
-            </span>
-            <span className="dashboard-accesos__texto">
-              Productos
-            </span>
-          </button>
-
-          <button onClick={() => navigate("/admin/pedidos")}>
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              receipt_long
-            </span>
-            <span className="dashboard-accesos__texto">
-              Pedidos
-            </span>
-          </button>
-
-          <button onClick={() => navigate("/admin/inventario")}>
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              inventory_2
-            </span>
-            <span className="dashboard-accesos__texto">
-              Inventario
-            </span>
-          </button>
-
-          <button onClick={() => navigate("/admin/usuarios")}>
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              group
-            </span>
-            <span className="dashboard-accesos__texto">
-              Usuarios
-            </span>
-          </button>
-
-          <button onClick={() => navigate("/admin/pagos")}>
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              credit_card
-            </span>
-            <span className="dashboard-accesos__texto">
-              Pagos
-            </span>
-          </button>
-
-          <button onClick={() => navigate("/admin/envios")}>
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              local_shipping
-            </span>
-            <span className="dashboard-accesos__texto">
-              Envíos
-            </span>
-          </button>
-
+        <div className="dashboard-accesos">
+          {ACCESOS.map((acceso) => (
+            <button key={acceso.ruta} type="button" className="dashboard-accesos__boton" onClick={() => navigate(acceso.ruta)}>
+              <span className="material-symbols-outlined" aria-hidden="true">{acceso.icono}</span>
+              <span>{acceso.texto}</span>
+            </button>
+          ))}
         </div>
-
       </section>
-
-    </div>
+    </>
   );
 }
 

@@ -1,47 +1,40 @@
 import { useCallback, useEffect, useState } from "react";
 import * as pedidoService from "../../services/pedidoService.js";
 import TablaPedidos from "../../components/admin/TablaPedidos.jsx";
+import PedidoDetalleModal from "../../components/admin/PedidoDetalleModal.jsx";
+import TarjetaMetrica from "../../components/admin/TarjetaMetrica.jsx";
+import TabsEstado from "../../components/admin/TabsEstado.jsx";
 import Paginacion from "../../components/common/Paginacion.jsx";
 import Loader from "../../components/common/Loader.jsx";
 import Toast from "../../components/common/Toast.jsx";
-import { formatearPrecio } from "../../utils/formatearPrecio.js";
-import "./Pedidos.css";
+import { ESTADOS_PEDIDO, ESTADOS_EN_CURSO } from "../../utils/constantes.js";
 
-const ESTADOS = [
-  "pendiente",
-  "pendiente_cotizacion",
-  "confirmado",
-  "en_preparacion",
-  "listo_entrega",
-  "entregado",
-  "cancelado",
-];
-
-const texto = (v) => v.replaceAll("_", " ");
+const VALORES_ESTADO = ESTADOS_PEDIDO.map((e) => e.valor);
 
 function Pedidos() {
-  const [pedidos, setPedidos] = useState([]),
-    [pagina, setPagina] = useState(1),
-    [totalPaginas, setTotalPaginas] = useState(1);
+  const [pedidos, setPedidos] = useState([]);
+  const [pagina, setPagina] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [totalFiltrado, setTotalFiltrado] = useState(0);
 
-  const [estado, setEstado] = useState(""),
-    [cargando, setCargando] = useState(true),
-    [seleccionado, setSeleccionado] = useState(null),
-    [nuevoEstado, setNuevoEstado] = useState(""),
-    [comentario, setComentario] = useState(""),
-    [guardando, setGuardando] = useState(false),
-    [toast, setToast] = useState("");
+  const [estado, setEstado] = useState(""); // "" = todos
+  const [conteos, setConteos] = useState(null); // { pendiente: 4, ... } o null mientras carga
+  const [cargando, setCargando] = useState(true);
+  const [seleccionado, setSeleccionado] = useState(null);
+  const [guardando, setGuardando] = useState(false);
+  const [toast, setToast] = useState("");
 
   const cargar = useCallback(async () => {
     setCargando(true);
     try {
-      const r = await pedidoService.listarPedidos({
+      const resultado = await pedidoService.listarPedidos({
         page: pagina,
         limite: 10,
         estadoPedido: estado || undefined,
       });
-      setPedidos(r.datos);
-      setTotalPaginas(Math.max(1, r.totalPag));
+      setPedidos(resultado.datos);
+      setTotalPaginas(Math.max(1, resultado.totalPag));
+      setTotalFiltrado(resultado.totalDoc);
     } catch {
       setToast("No se pudieron cargar los pedidos.");
     } finally {
@@ -49,192 +42,104 @@ function Pedidos() {
     }
   }, [pagina, estado]);
 
-  useEffect(() => {
-    cargar();
-  }, [cargar]);
+  // Los contadores de las pestañas y las tarjetas. Si falla, quedan en "—"
+  // y la tabla sigue funcionando.
+  const cargarConteos = useCallback(async () => {
+    try {
+      setConteos(await pedidoService.contarPedidosPorEstado(VALORES_ESTADO));
+    } catch {
+      setConteos(null);
+    }
+  }, []);
 
-  const abrir = (p) => {
-    setSeleccionado(p);
-    setNuevoEstado(p.estadoPedido);
-    setComentario("");
-  };
+  useEffect(() => { cargar(); }, [cargar]);
+  useEffect(() => { cargarConteos(); }, [cargarConteos]);
 
-  const guardar = async () => {
+  const guardarEstado = async (nuevoEstado, comentario) => {
     setGuardando(true);
     try {
-      const actualizado = await pedidoService.actualizarEstadoPedido(
-        seleccionado._id,
-        nuevoEstado,
-        comentario
-      );
+      const actualizado = await pedidoService.actualizarEstadoPedido(seleccionado._id, nuevoEstado, comentario);
       setSeleccionado(actualizado);
       setToast("Estado del pedido actualizado.");
-      await cargar();
-    } catch (e) {
-      setToast(e.response?.data?.error || "No se pudo actualizar el pedido.");
+      await Promise.all([cargar(), cargarConteos()]);
+    } catch (error) {
+      setToast(error.response?.data?.error || "No se pudo actualizar el pedido.");
     } finally {
       setGuardando(false);
     }
   };
 
+  const actualizarTodo = () => {
+    cargar();
+    cargarConteos();
+  };
+
+  const cambiarPestana = (valor) => {
+    setEstado(valor);
+    setPagina(1);
+  };
+
+  const sumar = (lista) => (conteos ? lista.reduce((total, e) => total + (conteos[e] ?? 0), 0) : null);
+  const total = sumar(VALORES_ESTADO);
+  const mostrar = (numero) => (numero === null ? "—" : numero);
+
+  const opciones = [
+    { valor: "", etiqueta: "Todos", cantidad: total },
+    ...ESTADOS_PEDIDO.map((e) => ({ valor: e.valor, etiqueta: e.etiqueta, cantidad: conteos?.[e.valor] })),
+  ];
+
   return (
-    <div className="gestion-page">
-      <header className="gestion-header">
-        <div>
-          <p className="gestion-eyebrow">Operaciones</p>
-          <h1>Pedidos</h1>
-          <p>Consulta y administra el ciclo de vida de las órdenes.</p>
-        </div>
-        <div className="gestion-kpi">
-          <strong>{pedidos.length}</strong>
-          <span>en esta página</span>
-        </div>
-      </header>
+    <>
+      <section className="admin-stats" aria-label="Resumen de pedidos">
+        <TarjetaMetrica etiqueta="Total de pedidos" valor={mostrar(total)} nota="Registrados en el sistema" />
+        <TarjetaMetrica etiqueta="En curso" valor={mostrar(sumar(ESTADOS_EN_CURSO))} nota="Pendientes, confirmados, en preparación o listos" />
+        <TarjetaMetrica etiqueta="Entregados" valor={mostrar(sumar(["entregado"]))} nota="Completados con éxito" />
+        <TarjetaMetrica etiqueta="Cancelados" valor={mostrar(sumar(["cancelado"]))} nota="Anulados" />
+      </section>
 
-      <div className="gestion-filtros">
-        <label>
-          Estado
-          <select
-            value={estado}
-            onChange={(e) => {
-              setEstado(e.target.value);
-              setPagina(1);
-            }}
-          >
-            <option value="">Todos</option>
-            {ESTADOS.map((x) => (
-              <option key={x} value={x}>
-                {texto(x)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button onClick={cargar}>Actualizar</button>
-      </div>
+      <section className="admin-panel">
+        <div className="admin-panel__head">
+          <div>
+            <h2 className="admin-panel__titulo">Historial de pedidos</h2>
+            <p className="admin-panel__sub">Consulta y administra el ciclo de vida de las órdenes.</p>
+          </div>
+          <div className="admin-panel__acciones">
+            <button type="button" className="admin-btn admin-btn--claro" onClick={actualizarTodo}>
+              <span className="material-symbols-outlined">refresh</span>
+              Actualizar
+            </button>
+          </div>
+        </div>
 
-      {cargando ? (
-        <Loader texto="Cargando pedidos..." />
-      ) : (
-        <>
-          <TablaPedidos pedidos={pedidos} onVer={abrir} />
-          <Paginacion
-            paginaActual={pagina}
-            totalPaginas={totalPaginas}
-            onCambiarPagina={setPagina}
-          />
-        </>
-      )}
+        <div className="admin-toolbar">
+          <TabsEstado opciones={opciones} activo={estado} onCambiar={cambiarPestana} />
+        </div>
+
+        {cargando ? (
+          <Loader texto="Cargando pedidos..." />
+        ) : (
+          <>
+            <TablaPedidos pedidos={pedidos} onVer={setSeleccionado} />
+            <p className="admin-resumen">
+              Mostrando <strong>{pedidos.length}</strong> de <strong>{totalFiltrado}</strong> pedidos
+            </p>
+            <Paginacion paginaActual={pagina} totalPaginas={totalPaginas} onCambiarPagina={setPagina} />
+          </>
+        )}
+      </section>
 
       {seleccionado && (
-        <div
-          className="gestion-overlay"
-          onMouseDown={(e) =>
-            e.target === e.currentTarget && setSeleccionado(null)
-          }
-        >
-          <section className="gestion-modal">
-            <div className="gestion-modal__head">
-              <div>
-                <p className="gestion-eyebrow">
-                  Pedido #{seleccionado._id.slice(-6).toUpperCase()}
-                </p>
-                <h2>Detalle y seguimiento</h2>
-              </div>
-              <button
-                className="gestion-cerrar"
-                onClick={() => setSeleccionado(null)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="gestion-grid">
-              <div className="gestion-card">
-                <h3>Cliente</h3>
-                <p>
-                  <strong>
-                    {seleccionado.usuarioId?.nombre}{" "}
-                    {seleccionado.usuarioId?.apellido}
-                  </strong>
-                </p>
-                <p>{seleccionado.usuarioId?.correo}</p>
-              </div>
-              <div className="gestion-card">
-                <h3>Entrega</h3>
-                <p>{seleccionado.direccionEntrega?.linea1}</p>
-                <p>{seleccionado.direccionEntrega?.ciudad}</p>
-                <small>{seleccionado.direccionEntrega?.referencia}</small>
-              </div>
-            </div>
-
-            <div className="gestion-card">
-              <h3>Productos</h3>
-              {seleccionado.productos?.map((i, n) => (
-                <div className="gestion-producto" key={n}>
-                  <span>
-                    {i.cantidad}× {i.nombreProducto}
-                  </span>
-                  <strong>{formatearPrecio(i.subtotal)}</strong>
-                </div>
-              ))}
-              <div className="gestion-total">
-                <span>Total</span>
-                <strong>{formatearPrecio(seleccionado.total)}</strong>
-              </div>
-            </div>
-
-            <div className="gestion-card">
-              <h3>Cambiar estado</h3>
-              <div className="gestion-form-row">
-                <select
-                  value={nuevoEstado}
-                  onChange={(e) => setNuevoEstado(e.target.value)}
-                >
-                  {ESTADOS.map((x) => (
-                    <option key={x} value={x}>
-                      {texto(x)}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  value={comentario}
-                  onChange={(e) => setComentario(e.target.value)}
-                  placeholder="Comentario opcional"
-                />
-                <button
-                  onClick={guardar}
-                  disabled={guardando || nuevoEstado === seleccionado.estadoPedido}
-                >
-                  {guardando ? "Guardando..." : "Guardar estado"}
-                </button>
-              </div>
-            </div>
-
-            <div className="gestion-card">
-              <h3>Historial</h3>
-              <div className="gestion-timeline">
-                {[...(seleccionado.historialEstados || [])]
-                  .reverse()
-                  .map((h, n) => (
-                    <div key={n}>
-                      <span></span>
-                      <p>
-                        <strong>{texto(h.estado)}</strong>
-                        <small>
-                          {new Date(h.fecha).toLocaleString("es-SV")}
-                          {h.comentario ? ` · ${h.comentario}` : ""}
-                        </small>
-                      </p>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </section>
-        </div>
+        <PedidoDetalleModal
+          key={`${seleccionado._id}-${seleccionado.estadoPedido}`}
+          pedido={seleccionado}
+          guardando={guardando}
+          onGuardar={guardarEstado}
+          onCerrar={() => setSeleccionado(null)}
+        />
       )}
 
       <Toast mensaje={toast} onCerrar={() => setToast("")} />
-    </div>
+    </>
   );
 }
 

@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Ajustes.css
+   Solo lo propio de la vista de ajustes (rejilla de 2 columnas, interruptores
+   y aviso). Paneles, botones y campos vienen de styles/admin.css.
+   ========================================================================== */
+
+.ajustes-aviso {
+  margin: 0 0 var(--espacio-lg);
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background: var(--color-info-fijo);
+  color: var(--color-en-info-fijo);
+  font-size: var(--tam-body-sm);
+  line-height: 1.5;
+}
+
+.ajustes-rejilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-lg);
+  align-items: start;
+}
+
+.ajustes-rejilla .admin-panel {
+  margin-bottom: 0;
+}
+
+.ajustes-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-md);
+}
+
+.ajustes-fila {
+  display: flex;
+  gap: var(--espacio-md);
+}
+
+.ajustes-fila > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Los campos reutilizan el estilo de los campos de modal. */
+.ajustes-campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+  font-weight: 600;
+}
+
+.ajustes-campo input,
+.ajustes-campo select,
+.ajustes-campo textarea {
+  padding: var(--espacio-sm) var(--espacio-md);
+  border: 1px solid var(--color-borde-variante);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie-contenedor-mas-bajo);
+  color: var(--color-en-superficie);
+  font-size: var(--tam-body-md);
+  font-weight: 400;
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ajustes-campo input:focus,
+.ajustes-campo select:focus,
+.ajustes-campo textarea:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-primario-fijo);
+}
+
+.ajustes-interruptor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  color: var(--color-en-superficie);
+  font-size: var(--tam-body-md);
+  cursor: pointer;
+}
+
+.ajustes-interruptor input {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  accent-color: var(--color-primario);
+  cursor: pointer;
+}
+
+.ajustes-form .admin-btn {
+  align-self: flex-start;
+}
+
+@media (max-width: 1100px) {
+  .ajustes-rejilla {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .ajustes-fila {
+    flex-direction: column;
+  }
+}

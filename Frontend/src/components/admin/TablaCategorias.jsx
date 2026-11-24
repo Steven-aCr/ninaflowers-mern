@@ -1,40 +1,54 @@
-import "./TablaCategorias.css";
-
-function TablaCategorias({ categorias, onEditar, onCambiarEstado }) {
+// "conteos" es { [categoriaId]: cantidad de productos } o null mientras carga / si falla.
+function TablaCategorias({ categorias, conteos, onEditar, onCambiarEstado }) {
   if (categorias.length === 0) {
-    return <p className="tabla-categorias__vacio">No hay categorías registradas.</p>;
+    return <p className="admin-vacio">No hay categorías que coincidan con el filtro.</p>;
   }
 
+  const textoProductos = (id) => {
+    const cantidad = conteos?.[id];
+    if (cantidad === undefined || cantidad === null) return "—";
+    return `${cantidad} ${cantidad === 1 ? "producto" : "productos"}`;
+  };
+
   return (
-    <table className="tabla-categorias">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Estado</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {categorias.map((cat) => (
-          <tr key={cat._id}>
-            <td>{cat.nombre}</td>
-            <td>{cat.descripcion || "—"}</td>
-            <td>
-              <span className={`tabla-categorias__badge ${cat.activo ? "" : "tabla-categorias__badge--inactivo"}`}>
-                {cat.activo ? "Activa" : "Inactiva"}
-              </span>
-            </td>
-            <td className="tabla-categorias__acciones">
-              <button type="button" onClick={() => onEditar(cat)}>Editar</button>
-              <button type="button" onClick={() => onCambiarEstado(cat)}>
-                {cat.activo ? "Desactivar" : "Activar"}
-              </button>
-            </td>
+    <div className="admin-tabla-wrap">
+      <table className="admin-tabla">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Cantidad de productos</th>
+            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          {categorias.map((cat) => (
+            <tr key={cat._id}>
+              <td><span className="admin-tabla__principal">{cat.nombre}</span></td>
+              <td>{cat.descripcion || "—"}</td>
+              <td>{textoProductos(cat._id)}</td>
+              <td>
+                <span className={`admin-pill admin-pill--${cat.activo ? "activo" : "inactivo"}`}>
+                  {cat.activo ? "Activa" : "Inactiva"}
+                </span>
+              </td>
+              <td>
+                <div className="admin-acciones">
+                  <button type="button" className="admin-btn admin-btn--borde admin-btn--sm" onClick={() => onEditar(cat)}>
+                    Editar
+                  </button>
+                  <button type="button" className="admin-btn admin-btn--claro admin-btn--sm" onClick={() => onCambiarEstado(cat)}>
+                    {cat.activo ? "Desactivar" : "Activar"}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

@@ -1,26 +1,151 @@
-.usuarios-page__encabezado {
-  margin-bottom: var(--espacio-md);
+/* ==========================================================================
+   Usuario.css
+   Solo lo propio de la vista de usuarios: la rejilla "tabla + detalle" y la
+   tarjeta de detalle. Todo lo demás viene de styles/admin.css.
+   ========================================================================== */
+
+.usuarios-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(17rem, 1fr);
+  gap: var(--espacio-lg);
+  align-items: start;
 }
 
-.usuarios-page__filtros {
+.usuarios-layout .admin-panel {
+  margin-bottom: 0;
+}
+
+/* Fila de la tabla cuyo detalle está abierto. */
+.admin-tabla tbody tr.usuarios-fila--activa,
+.admin-tabla tbody tr.usuarios-fila--activa:hover {
+  background: var(--color-secundario-fijo);
+}
+
+.usuario-detalle__cabecera {
   display: flex;
-  gap: var(--espacio-sm);
-  margin-bottom: var(--espacio-md);
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--espacio-md);
+  text-align: center;
+}
+
+.usuario-detalle__avatar {
+  width: 4rem;
+  height: 4rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--espacio-sm);
+  border-radius: var(--radio-full);
+  background: var(--color-primario-fijo);
+  color: var(--color-en-primario-fijo);
+  font-size: var(--tam-headline-sm);
+  font-weight: 700;
+}
+
+.usuario-detalle__nombre {
+  margin: 0;
+  font-size: var(--tam-title-md);
+}
+
+.usuario-detalle__etiquetas {
+  display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--espacio-xs);
+  margin-top: var(--espacio-sm);
 }
 
-.usuarios-page__filtros select {
-  padding: var(--espacio-sm);
-  border: 1px solid var(--color-borde-variante);
-  border-radius: var(--radio-md);
+.usuario-detalle__bloque {
+  margin-top: var(--espacio-md);
+  padding-top: var(--espacio-md);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+.usuario-detalle__bloque h3 {
+  margin: 0 0 var(--espacio-sm);
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-caps);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.usuario-detalle__bloque p {
+  margin: 0 0 var(--espacio-xs);
   font-size: var(--tam-body-sm);
-  color: var(--color-en-superficie);
-  background: var(--color-superficie-contenedor-mas-bajo);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
-.usuarios-page__filtros select:focus {
-  outline: none;
-  border-color: var(--color-primario);
-  box-shadow: 0 0 0 3px var(--color-primario-fijo);
+.usuario-detalle__direccion {
+  margin-bottom: var(--espacio-sm);
+}
+
+.usuario-detalle__linea {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-xs) 0;
+  font-size: var(--tam-body-sm);
+}
+
+.usuario-detalle__fin {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  font-weight: 700;
+}
+
+.usuario-detalle p.usuario-detalle__nota,
+.usuario-detalle__nota {
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-label-caps);
+}
+
+.usuario-detalle p.usuario-detalle__vacio,
+.usuario-detalle__vacio {
+  color: var(--color-en-superficie-variante);
+}
+
+.usuario-detalle > .admin-btn {
+  margin-top: var(--espacio-md);
+}
+
+@media (max-width: 1100px) {
+  .usuarios-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .usuarios-layout .admin-panel {
+    margin-bottom: var(--espacio-lg);
+  }
+}
+
+
+/* ==========================================================================
+   TABLA DE USUARIOS - SELECCIÓN DE FILAS
+   ========================================================================== */
+
+/* Indicar que cada fila es seleccionable */
+.admin-tabla tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Efecto al pasar el cursor */
+.admin-tabla tbody tr:hover {
+  background-color: var(--color-superficie-contenedor-bajo);
+}
+
+/* Fila seleccionada */
+.admin-tabla tbody tr.usuarios-fila--activa,
+.admin-tabla tbody tr.usuarios-fila--activa:hover {
+  background-color: var(--color-secundario-fijo);
+}
+
+/* Accesibilidad mediante teclado */
+.admin-tabla tbody tr:focus-visible {
+  outline: 2px solid var(--color-primario-fijo-oscuro);
+  outline-offset: -2px;
 }

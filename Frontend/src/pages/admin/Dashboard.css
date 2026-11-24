@@ -1,539 +1,216 @@
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-lg);
-  color: var(--color-en-superficie);
-}
-
 /* ==========================================================================
-   Encabezado
+   Dashboard.css
+   Solo lo propio del Dashboard: distribución de las filas, barras de progreso,
+   calendario, lista de stock bajo y accesos rápidos.
+   Tarjetas, paneles, tablas, pills y botones vienen de styles/admin.css.
    ========================================================================== */
 
-.dashboard__encabezado {
+.dashboard-intro {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  gap: var(--espacio-lg);
-}
-
-.dashboard__encabezado h1 {
-  margin: 0 0 var(--espacio-xs);
-  font-size: var(--tam-headline-md);
-  font-weight: 700;
-}
-
-.dashboard__encabezado p {
-  margin: 0;
-  color: var(--color-en-superficie-variante);
-  font-size: var(--tam-body-sm);
-}
-
-.dashboard__actualizar {
-  padding: var(--espacio-sm) var(--espacio-lg);
-  border: 1px solid var(--color-borde-variante);
-  border-radius: var(--radio-md);
-  background: var(--color-superficie-contenedor-mas-bajo);
-  color: var(--color-en-superficie);
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.dashboard__actualizar:hover {
-  background: var(--color-superficie-contenedor);
-  border-color: var(--color-primario-fijo-oscuro);
-}
-
-.dashboard__error {
-  padding: var(--espacio-sm) var(--espacio-md);
-  background: color-mix(
-    in srgb,
-    var(--color-error) 10%,
-    var(--color-superficie)
-  );
-  border: 1px solid
-    color-mix(
-      in srgb,
-      var(--color-error) 35%,
-      var(--color-superficie)
-    );
-  border-radius: var(--radio-md);
-  color: var(--color-error);
-}
-
-/* ==========================================================================
-   Tarjetas
-   ========================================================================== */
-
-.dashboard__tarjetas {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  flex-wrap: wrap;
   gap: var(--espacio-md);
-}
-
-.dashboard-card {
-  display: flex;
-  align-items: center;
-  gap: var(--espacio-md);
-  min-width: 0;
-  padding: var(--espacio-lg);
-
-  background: var(--color-superficie-contenedor-mas-bajo);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-suave);
-}
-
-.dashboard-card__icono {
-  width: 48px;
-  height: 48px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  border-radius: var(--radio-md);
-
-  background: var(--color-primario-fijo);
-  color: var(--color-primario);
-}
-
-/*
- * Material Symbols se utiliza para iconografía funcional.
- * De esta forma evitamos emojis dependientes del sistema operativo.
- */
-.dashboard-card__icono .material-symbols-outlined {
-  display: block;
-  margin: 0;
-
-  color: inherit;
-  font-size: 26px;
-  line-height: 1;
-}
-
-/* Pedidos */
-
-.dashboard-card__icono--pedidos {
-  background: var(--color-primario-fijo);
-  color: var(--color-primario);
-}
-
-/* Ventas */
-
-.dashboard-card__icono--ventas {
-  background: var(--color-terciario-fijo);
-  color: var(--color-en-terciario-fijo);
-}
-
-/* Productos */
-
-.dashboard-card__icono--productos {
-  background: var(--color-secundario-fijo);
-  color: var(--color-en-secundario-fijo);
-}
-
-/* Usuarios */
-
-.dashboard-card__icono--usuarios {
-  background: var(--color-superficie-contenedor);
-  color: var(--color-en-superficie);
-}
-
-.dashboard-card__contenido {
-  min-width: 0;
-}
-
-.dashboard-card__contenido > span {
-  display: block;
-  margin-bottom: 5px;
-
-  color: var(--color-en-superficie-variante);
-  font-size: var(--tam-label-md);
-}
-
-.dashboard-card__contenido h2 {
-  margin: 0;
-
-  color: var(--color-en-superficie);
-  font-size: var(--tam-headline-sm);
-}
-
-.dashboard-card__contenido p {
-  margin: 4px 0 0;
-
-  color: var(--color-en-superficie-variante);
-  font-size: var(--tam-label-caps);
-}
-
-/* ==========================================================================
-   Contenido
-   ========================================================================== */
-
-.dashboard__contenido {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-  gap: var(--espacio-md);
-}
-
-.dashboard-panel {
-  min-width: 0;
-  padding: var(--espacio-lg);
-
-  background: var(--color-superficie-contenedor-mas-bajo);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-suave);
-}
-
-.dashboard-panel__encabezado {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--espacio-md);
-
   margin-bottom: var(--espacio-lg);
 }
 
-.dashboard-panel__encabezado h2 {
+.dashboard-intro p {
   margin: 0;
-  font-size: var(--tam-title-md);
-}
-
-.dashboard-panel__encabezado p {
-  margin: 4px 0 0;
-
   color: var(--color-en-superficie-variante);
-  font-size: var(--tam-body-sm);
+  font-size: var(--tam-body-md);
 }
 
-.dashboard-panel__encabezado button {
-  border: none;
-  background: transparent;
-
-  color: var(--color-primario);
-  font-weight: 600;
-
-  cursor: pointer;
+.dashboard-intro strong {
+  color: var(--color-en-superficie);
 }
 
-.dashboard-panel__encabezado button:hover {
-  text-decoration: underline;
-}
-
-/* ==========================================================================
-   Tabla de pedidos
-   ========================================================================== */
-
-.dashboard-tabla-contenedor {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.dashboard-tabla {
-  width: 100%;
-  border-collapse: collapse;
-
-  font-size: var(--tam-body-sm);
-}
-
-.dashboard-tabla th {
+.dashboard-error {
+  margin: 0 0 var(--espacio-lg);
   padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  background: var(--color-error-fijo);
+  color: var(--color-en-error-fijo);
+  font-size: var(--tam-body-sm);
+  font-weight: 600;
+}
 
-  border-bottom: 1px solid var(--color-borde-variante);
+/* ---------- Filas de paneles ---------- */
 
+.dashboard-fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr);
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.dashboard-fila--iguales {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* El espacio entre filas lo da el gap, no el margen del panel. */
+.dashboard-fila > .admin-panel {
+  margin-bottom: 0;
+}
+
+.dashboard-flor {
+  color: var(--color-primario-fijo-oscuro);
+  font-size: var(--tam-headline-sm);
+}
+
+/* ---------- Pedidos por estado ---------- */
+
+.dashboard-estados {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-md);
+}
+
+.dashboard-estados__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   color: var(--color-en-superficie-variante);
-  font-size: var(--tam-label-caps);
+  font-size: var(--tam-body-sm);
   font-weight: 600;
-  text-align: left;
 }
 
-.dashboard-tabla td {
-  padding: var(--espacio-md);
-
-  border-top: 1px solid var(--color-borde-variante);
-
-  vertical-align: middle;
+.dashboard-estados__fila strong {
+  color: var(--color-en-superficie);
 }
 
-.dashboard-tabla tbody tr {
-  transition: background-color 0.2s ease;
-}
-
-.dashboard-tabla tbody tr:hover {
-  background: var(--color-superficie-contenedor-mas-bajo);
-}
-
-.dashboard-tabla tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* ==========================================================================
-   Estados
-   ========================================================================== */
-
-.dashboard-estado {
-  display: inline-block;
-
-  padding: 5px var(--espacio-sm);
-
+.dashboard-progreso {
+  height: 0.625rem;
+  margin-top: var(--espacio-xs);
+  overflow: hidden;
   border-radius: var(--radio-full);
-  background: var(--color-superficie-contenedor);
+  background: var(--color-superficie-contenedor-bajo);
+}
 
-  font-size: var(--tam-label-caps);
-  font-weight: 600;
+.dashboard-progreso span {
+  display: block;
+  height: 100%;
+  border-radius: var(--radio-full);
+  background: linear-gradient(90deg, var(--color-primario-fijo-oscuro), var(--color-secundario-contenedor));
+  transition: width 0.4s ease;
+}
+
+/* ---------- Calendario ---------- */
+
+.dashboard-calendario__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--espacio-xs);
+  text-align: center;
+  font-size: var(--tam-body-sm);
+}
+
+.dashboard-calendario__dia {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  max-height: 2.5rem;
+  border-radius: var(--radio-full);
+}
+
+.dashboard-calendario__dia--cabecera {
+  aspect-ratio: auto;
+  color: var(--color-en-superficie-variante);
+  font-weight: 700;
+}
+
+.dashboard-calendario__dia--marcado {
+  background: var(--color-secundario-fijo);
+  color: var(--color-en-secundario-fijo);
+  font-weight: 700;
+}
+
+.dashboard-calendario__dia--hoy {
+  background: var(--color-en-primario-fijo);
+  color: var(--color-en-primario);
+  font-weight: 700;
+}
+
+.dashboard-calendario__mes {
+  margin: var(--espacio-md) 0 0;
+  color: var(--color-en-superficie-variante);
+  font-size: var(--tam-body-sm);
+  text-align: center;
   text-transform: capitalize;
 }
 
-.dashboard-estado--pendiente,
-.dashboard-estado--pendiente_cotizacion {
-  background: var(--color-secundario-fijo);
-  color: var(--color-en-secundario-fijo);
-}
-
-.dashboard-estado--confirmado,
-.dashboard-estado--en_preparacion {
-  background: var(--color-primario-fijo);
-  color: var(--color-en-primario-fijo);
-}
-
-.dashboard-estado--listo_entrega,
-.dashboard-estado--entregado {
-  background: var(--color-terciario-fijo);
-  color: var(--color-en-terciario-fijo);
-}
-
-.dashboard-estado--cancelado {
-  background: color-mix(
-    in srgb,
-    var(--color-error) 15%,
-    var(--color-superficie)
-  );
-
-  color: var(--color-error);
-}
-
-/* ==========================================================================
-   Inventario bajo
-   ========================================================================== */
-
-.dashboard-alerta {
-  min-width: 30px;
-  height: 30px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0 var(--espacio-sm);
-
-  background: color-mix(
-    in srgb,
-    var(--color-error) 12%,
-    var(--color-superficie)
-  );
-
-  color: var(--color-error);
-  border-radius: var(--radio-full);
-
-  font-size: var(--tam-body-sm);
-  font-weight: 700;
-}
-
-.dashboard-stock {
-  display: flex;
-  flex-direction: column;
-}
+/* ---------- Stock bajo ---------- */
 
 .dashboard-stock__item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: var(--espacio-md);
-
-  padding: var(--espacio-md) 0;
-
-  border-bottom: 1px solid var(--color-borde-variante);
-}
-
-.dashboard-stock__item strong {
-  display: block;
-
-  margin-bottom: 4px;
-
-  font-size: var(--tam-body-sm);
-}
-
-.dashboard-stock__item span {
-  color: var(--color-en-superficie-variante);
-  font-size: var(--tam-label-caps);
+  padding: var(--espacio-sm) 0;
+  border-bottom: 1px solid var(--color-borde-suave);
 }
 
 .dashboard-stock__cantidad {
-  flex-shrink: 0;
-
-  color: var(--color-primario);
-
+  color: var(--color-error);
   font-size: var(--tam-title-md);
-  font-weight: 700;
-}
-
-.dashboard-stock__cantidad small {
-  color: var(--color-en-superficie-variante);
-
-  font-size: var(--tam-label-caps);
-  font-weight: 400;
 }
 
 .dashboard-stock__boton {
-  width: 100%;
-
-  margin-top: var(--espacio-lg);
-  padding: var(--espacio-sm);
-
-  border: 1px solid var(--color-borde-variante);
-  border-radius: var(--radio-md);
-
-  background: var(--color-superficie-contenedor-mas-bajo);
-  color: var(--color-primario);
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
+  margin-top: var(--espacio-md);
 }
 
-.dashboard-stock__boton:hover {
-  background: var(--color-superficie-contenedor);
-  border-color: var(--color-primario-fijo-oscuro);
-}
+/* ---------- Accesos rápidos ---------- */
 
-/* ==========================================================================
-   Accesos rápidos
-   ========================================================================== */
-
-.dashboard-accesos__grid {
+.dashboard-accesos {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--espacio-sm);
 }
 
-.dashboard-accesos__grid button {
-  min-height: 90px;
-
+.dashboard-accesos__boton {
+  min-height: 5.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: var(--espacio-sm);
   padding: var(--espacio-md);
-
-  border: 1px solid var(--color-borde-variante);
-  border-radius: var(--radio-md);
-
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radio-lg);
   background: var(--color-superficie-contenedor-bajo);
   color: var(--color-en-superficie-variante);
-
   font-size: var(--tam-label-md);
   font-weight: 600;
-
-  cursor: pointer;
-
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.dashboard-accesos__grid button:hover {
-  background: var(--color-primario-fijo);
-  border-color: var(--color-primario-fijo-oscuro);
+.dashboard-accesos__boton:hover {
+  background: var(--color-secundario-fijo);
+  border-color: var(--color-secundario-contenedor);
   color: var(--color-en-primario-fijo);
-
-  transform: translateY(-2px);
-  box-shadow: var(--sombra-suave);
 }
 
-.dashboard-accesos__grid .material-symbols-outlined {
+.dashboard-accesos__boton .material-symbols-outlined {
   color: var(--color-primario);
-
   font-size: 28px;
-  font-weight: 400;
-  line-height: 1;
-
-  transition: transform 0.2s ease;
 }
 
-.dashboard-accesos__grid button:hover .material-symbols-outlined {
-  transform: translateY(-2px);
-}
+/* ---------- Responsive ---------- */
 
-.dashboard-accesos__texto {
-  font-size: var(--tam-label-md);
-  font-weight: 600;
-}
-
-/* ==========================================================================
-   Estados generales
-   ========================================================================== */
-
-.dashboard__vacio,
-.dashboard__cargando {
-  padding: var(--espacio-xl) var(--espacio-md);
-
-  color: var(--color-en-superficie-variante);
-
-  text-align: center;
-}
-
-/* ==========================================================================
-   Responsive
-   ========================================================================== */
-
-@media (max-width: 1200px) {
-  .dashboard__tarjetas {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .dashboard-accesos__grid {
-    grid-template-columns: repeat(3, 1fr);
+@media (max-width: 1100px) {
+  .dashboard-accesos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 900px) {
-  .dashboard__contenido {
-    grid-template-columns: 1fr;
+  .dashboard-fila,
+  .dashboard-fila--iguales {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 600px) {
-  .dashboard__encabezado {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .dashboard__actualizar {
-    width: 100%;
-  }
-
-  .dashboard__tarjetas {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-accesos__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .dashboard-panel {
-    padding: var(--espacio-md);
-  }
-
-  .dashboard-stock__item {
-    align-items: flex-start;
+  .dashboard-accesos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

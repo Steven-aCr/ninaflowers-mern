@@ -25,6 +25,7 @@ import MovInventario from "../pages/admin/MovInventario.jsx";
 import Pagos from "../pages/admin/pagos.jsx";
 import Pedidos from "../pages/admin/Pedidos.jsx";
 import Envios from "../pages/admin/Envios.jsx";
+import Ajustes from "../pages/admin/Ajustes.jsx";
 
 function AppRoutes() {
   return (
@@ -59,6 +60,7 @@ function AppRoutes() {
           <Route path="pagos" element={<Pagos />} />
           <Route path="envios" element={<Envios />} />
           <Route path="pedidos" element={<Pedidos />} />
+          <Route path="ajustes" element={<Ajustes />} />
         </Route>
       </Route>
     </Routes>

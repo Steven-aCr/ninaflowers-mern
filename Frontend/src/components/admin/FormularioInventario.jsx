@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./FormularioInventario.css";
+import ModalAdmin from "./ModalAdmin.jsx";
 
 const ESTADO_INICIAL = { productoId: "", stock: 0, stockMinimo: 0, proveedorId: "" };
 
@@ -37,50 +37,57 @@ function FormularioInventario({ productos, proveedores, onGuardar, onCancelar, g
   };
 
   return (
-    <div className="formulario-inventario__overlay">
-      <form className="formulario-inventario" onSubmit={manejarSubmit}>
-        <h2>Nuevo registro de inventario</h2>
+    <ModalAdmin
+      titulo="Nuevo registro de inventario"
+      onCerrar={onCancelar}
+      cerrarBloqueado={guardando}
+      onSubmit={manejarSubmit}
+    >
+      <label className="admin-modal__campo">
+        Producto
+        <select value={form.productoId} onChange={manejarCambio("productoId")} required>
+          <option value="">Selecciona un producto</option>
+          {productos.map((p) => (
+            <option key={p._id} value={p._id}>{p.nombre} ({p.sku})</option>
+          ))}
+        </select>
+      </label>
 
-        <label className="formulario-inventario__campo">
-          Producto
-          <select value={form.productoId} onChange={manejarCambio("productoId")} required>
-            <option value="">Selecciona un producto</option>
-            {productos.map((p) => (
-              <option key={p._id} value={p._id}>{p.nombre} ({p.sku})</option>
-            ))}
-          </select>
-        </label>
-
-        <label className="formulario-inventario__campo">
+      <div className="admin-modal__fila">
+        <label className="admin-modal__campo">
           Stock inicial
           <input type="number" min="0" value={form.stock} onChange={manejarCambio("stock")} />
         </label>
 
-        <label className="formulario-inventario__campo">
+        <label className="admin-modal__campo">
           Stock mínimo
           <input type="number" min="0" value={form.stockMinimo} onChange={manejarCambio("stockMinimo")} required />
         </label>
+      </div>
 
-        {Number(form.stock) > 0 && (
-          <label className="formulario-inventario__campo">
-            Proveedor (de la compra del stock inicial)
-            <select value={form.proveedorId} onChange={manejarCambio("proveedorId")} required>
-              <option value="">Selecciona un proveedor</option>
-              {proveedores.map((prov) => (
-                <option key={prov._id} value={prov._id}>{prov.nombre}</option>
-              ))}
-            </select>
-          </label>
-        )}
+      {Number(form.stock) > 0 && (
+        <label className="admin-modal__campo">
+          Proveedor (de la compra del stock inicial)
+          <select value={form.proveedorId} onChange={manejarCambio("proveedorId")} required>
+            <option value="">Selecciona un proveedor</option>
+            {proveedores.map((prov) => (
+              <option key={prov._id} value={prov._id}>{prov.nombre}</option>
+            ))}
+          </select>
+        </label>
+      )}
 
-        {error && <p className="formulario-inventario__error">{error}</p>}
+      {error && <p className="admin-modal__error">{error}</p>}
 
-        <div className="formulario-inventario__acciones">
-          <button type="button" onClick={onCancelar} disabled={guardando}>Cancelar</button>
-          <button type="submit" disabled={guardando}>{guardando ? "Guardando..." : "Guardar"}</button>
-        </div>
-      </form>
-    </div>
+      <div className="admin-modal__acciones">
+        <button type="button" className="admin-btn admin-btn--borde" onClick={onCancelar} disabled={guardando}>
+          Cancelar
+        </button>
+        <button type="submit" className="admin-btn" disabled={guardando}>
+          {guardando ? "Guardando..." : "Guardar"}
+        </button>
+      </div>
+    </ModalAdmin>
   );
 }
 
